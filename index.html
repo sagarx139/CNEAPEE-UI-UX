@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CNEAPEE - Premium Store</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="flex items-center justify-between px-6 py-4 bg-black text-white shadow-md">
+    <div class="flex items-center gap-2">
+        <img src="cneapeelogo.jpg" alt="CNEAPEE Logo" class="h-10 w-auto object-contain shadow-md opacity-35 " />
+
+
+
+      
+    </div>
+    
+    <ul class="hidden md:flex gap-8 text-center text-xl font-large">
+      <li><a href="products.html" class="hover:text-blue-400">Fashion Store</a></li>
+      <li><a href="electronics.html" class="hover:text-blue-400">Electronics</a></li>
+      <li><a href="sale.html" class="hover:text-blue-400">Hot Summer Sale</a></li>
+    </ul>
+
+    <div class="flex items-center gap-4 text-lg">
+      <button class="hover:text-blue-400">🔍</button>
+      <button class="hover:text-blue-400">🛒</button>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-content">
+      <h1>CNEAPEE</h1>
+      <p>Elevate your style with our premium collection of modern fashion.</p>
+      <button class="shop-btn" onclick="showBanner()">Shop Now</button>
+    </div>
+  </section>
+
+  <section class="py-12 px-4 bg-gradient-to-r from-black to-gray-200 text-center">
+    <h2 class="text-3xl font-bold text-white mb-10">Featured Products</h2>
+  
+    <div class="grid gap-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 max-w-7xl mx-auto">
+      
+      <!-- Product Card Start -->
+      <div class="bg-white rounded-xl shadow-md overflow-hidden flex flex-col hover:shadow-xl transition">
+        <img src="https://image.hm.com/assets/hm/48/c0/48c01498e3ef90e12d984771fdf9fc236cc78c28.jpg?imwidth=564" alt="Men's Shirt" class="h-64 w-full object-cover" />
+        <div class="p-4 flex-1 flex flex-col justify-between">
+          <h3 class="font-semibold text-gray-800 mb-1">Men's Formal Shirt</h3>
+          <p class="text-gray-600 mb-4">₹2,499</p>
+          <button class="bg-purple-700 text-white py-2 font-semibold hover:bg-purple-600 transition">Add to Cart</button>
+        </div>
+      </div>
+      <!-- Product Card End -->
+  
+      <!-- Repeat the above card for all 8 products with your respective data -->
+      
+      <!-- 2 -->
+      <div class="bg-white rounded-xl shadow-md overflow-hidden flex flex-col hover:shadow-xl transition">
+        <img src="https://image.hm.com/assets/hm/cc/c5/ccc564e4a05d11232e3dbcbcec64f5a0d0b325f1.jpg?imwidth=384" alt="Women's Dress" class="h-64 w-full object-cover" />
+        <div class="p-4 flex-1 flex flex-col justify-between">
+          <h3 class="font-semibold text-gray-800 mb-1">Women's A-Line Dress</h3>
+          <p class="text-gray-600 mb-4">₹3,299</p>
+          <button class="bg-purple-700 text-white py-2 font-semibold hover:bg-purple-600 transition">Add to Cart</button>
+        </div>
+      </div>
+  
+      <!-- 3 -->
+      <div class="bg-white rounded-xl shadow-md overflow-hidden flex flex-col hover:shadow-xl transition">
+        <img src="https://image.hm.com/assets/hm/bc/66/bc6698be633109664e28b1b86c0cbe3c9ca72014.jpg?imwidth=564" alt="Kids' T-Shirt" class="h-64 w-full object-cover" />
+        <div class="p-4 flex-1 flex flex-col justify-between">
+          <h3 class="font-semibold text-gray-800 mb-1">Kids' Printed T-Shirt</h3>
+          <p class="text-gray-600 mb-4">₹1,199</p>
+          <button class="bg-purple-700 text-white py-2 font-semibold hover:bg-purple-600 transition">Add to Cart</button>
+        </div>
+      </div>
+  
+      <!-- 4 -->
+      <div class="bg-white rounded-xl shadow-md overflow-hidden flex flex-col hover:shadow-xl transition">
+        <img src="https://image.hm.com/assets/hm/bc/66/bc6698be633109664e28b1b86c0cbe3c9ca72014.jpg?imwidth=564" alt="Men's Chinos" class="h-64 w-full object-cover" />
+        <div class="p-4 flex-1 flex flex-col justify-between">
+          <h3 class="font-semibold text-gray-800 mb-1">Men's Chinos</h3>
+          <p class="text-gray-600 mb-4">₹2,799</p>
+          <button class="bg-purple-700 text-white py-2 font-semibold hover:bg-purple-600 transition">Add to Cart</button>
+        </div>
+      </div>
+  
+      <!-- 5 -->
+      <div class="bg-white rounded-xl shadow-md overflow-hidden flex flex-col hover:shadow-xl transition">
+        <img src="https://image.hm.com/assets/hm/cc/c5/ccc564e4a05d11232e3dbcbcec64f5a0d0b325f1.jpg?imwidth=384" alt="Women's Top" class="h-64 w-full object-cover" />
+        <div class="p-4 flex-1 flex flex-col justify-between">
+          <h3 class="font-semibold text-gray-800 mb-1">Women's Casual Top</h3>
+          <p class="text-gray-600 mb-4">₹1,999</p>
+          <button class="bg-purple-700 text-white py-2 font-semibold hover:bg-purple-600 transition">Add to Cart</button>
+        </div>
+      </div>
+  
+      <!-- 6 -->
+      <div class="bg-white rounded-xl shadow-md overflow-hidden flex flex-col hover:shadow-xl transition">
+        <img src="https://image.hm.com/assets/hm/bc/66/bc6698be633109664e28b1b86c0cbe3c9ca72014.jpg?imwidth=564" alt="Kids' Jeans" class="h-64 w-full object-cover" />
+        <div class="p-4 flex-1 flex flex-col justify-between">
+          <h3 class="font-semibold text-gray-800 mb-1">Kids' Jeans</h3>
+          <p class="text-gray-600 mb-4">₹1,499</p>
+          <button class="bg-purple-700 text-white py-2 font-semibold hover:bg-purple-600 transition">Add to Cart</button>
+        </div>
+      </div>
+  
+      <!-- 7 - Repeat 1st again -->
+      <div class="bg-white rounded-xl shadow-md overflow-hidden flex flex-col hover:shadow-xl transition">
+        <img src="https://image.hm.com/assets/hm/48/c0/48c01498e3ef90e12d984771fdf9fc236cc78c28.jpg?imwidth=564" alt="Men's Shirt" class="h-64 w-full object-cover" />
+        <div class="p-4 flex-1 flex flex-col justify-between">
+          <h3 class="font-semibold text-gray-800 mb-1">Men's Formal Shirt</h3>
+          <p class="text-gray-600 mb-4">₹2,499</p>
+          <button class="bg-purple-700 text-white py-2 font-semibold hover:bg-purple-600 transition">Add to Cart</button>
+        </div>
+      </div>
+  
+      <!-- 8 - Repeat 2nd again -->
+      <div class="bg-white rounded-xl shadow-md overflow-hidden flex flex-col hover:shadow-xl transition">
+        <img src="https://image.hm.com/assets/hm/cc/c5/ccc564e4a05d11232e3dbcbcec64f5a0d0b325f1.jpg?imwidth=384" alt="Women's Dress" class="h-64 w-full object-cover" />
+        <div class="p-4 flex-1 flex flex-col justify-between">
+          <h3 class="font-semibold text-gray-800 mb-1">Women's A-Line Dress</h3>
+          <p class="text-gray-600 mb-4">₹3,299</p>
+          <button class="bg-purple-700 text-white py-2 font-semibold hover:bg-purple-600 transition">Add to Cart</button>
+        </div>
+      </div>
+  
+    </div>
+  </section>
+  
+  <footer class="footer bg-gradient-to-r from-black to-gray-500 text-white py-6">
+    <div class="footer-links flex justify-center space-x-12 text-lg font-semibold">
+      <a href="support.html" class="hover:underline transition">Support</a>
+      <a href="about.html" class="hover:underline transition">About Us</a>
+      <a href="careers.html" class="hover:underline transition">Careers</a>
+    </div>
+  
+    <div class="footer-bottom text-center mt-4 text-sm text-gray-200">
+      <p>&copy; 2025 CNEAPEE. All rights reserved.</p>
+    </div>
+  </footer>
+  
+  
+  
+  
+
+  <!-- ✅ Modal Banner Code (Fixed) -->
+  <div id="bannerOverlay" class="hidden fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50">
+    <div class="block bg-gradient-to-r from-green-200 to-orange-600 p-6 rounded-2xl text-center shadow-xl max-w-sm w-full">
+      <h2 class="text-2xl font-bold mb-5 text-gray-800">Choose Your Store</h2>
+      <div class="space-y-3">
+        <a href="products.html" class="block bg-gradient-to-r from-blue-500 to-purple-600 text-white px-6 py-2 rounded-xl text-lg font-semibold shadow-md hover:scale-105 transition">Fashion Store</a>
+        <a href="electronics.html" class="block bg-gradient-to-r from-green-500 to-teal-600 text-white px-6 py-2 rounded-xl text-lg font-semibold shadow-md hover:scale-105 transition">Electronics</a>
+      </div>
+      <button onclick="hideBanner()" class="mt-5 px-4 py-2 bg-gray-300 hover:bg-gray-400 text-gray-800 rounded-xl font-medium transition">Close</button>
+    </div>
+  </div>
+
+  <!-- ✅ Script to handle modal toggle -->
+  <script>
+    function showBanner() {
+      document.getElementById("bannerOverlay").classList.remove("hidden");
+    }
+    function hideBanner() {
+      document.getElementById("bannerOverlay").classList.add("hidden");
+    }
+  </script>
+<script src="script.js"></script> 
+</body>
+</html>
