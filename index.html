@@ -30,6 +30,36 @@
   </div>
 </nav>
 
+<div id="login-container" class="fixed top-0 left-0 w-full h-full bg-gray-900 bg-opacity-50 flex items-center justify-center">
+  <div class="bg-white p-6 rounded-lg shadow-lg">
+      <h2 class="text-2xl font-bold mb-4">Login</h2>
+      <input type="text" id="username" class="w-full p-2 mb-4 border rounded" placeholder="Username">
+      <input type="password" id="password" class="w-full p-2 mb-4 border rounded" placeholder="Password">
+      <button id="login-btn" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">Login</button>
+      <button id="close-login" class="mt-2 text-gray-500 hover:text-gray-700">Close</button>
+  </div>
+</div>
+
+<div id="chat-popup" class="hidden fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 bg-gray-800 text-white p-6 rounded-lg shadow-lg z-50">
+  <h3 class="text-lg font-bold mb-4">Start a Chat</h3>
+  <select id="user-select" class="w-full p-2 mb-4 bg-gray-700 text-white rounded">
+      <option value="person2">Person 2</option>
+      <option value="person3">Person 3</option>
+  </select>
+  <input type="text" id="chat-input-popup" class="w-full p-2 mb-4 bg-gray-700 text-white rounded" placeholder="Type a message...">
+  <button id="start-chat-btn" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">Start Chat</button>
+  <button id="close-popup" class="mt-2 text-gray-500 hover:text-gray-700">Close</button>
+</div>
+
+<div id="chat-container" class="hidden fixed bottom-0 right-0 w-80 bg-gray-800 text-white p-4 rounded-lg shadow-lg">
+  <h3 class="text-lg font-bold">Chat with <span id="chat-with"></span></h3>
+  <div id="chat-messages" class="h-64 overflow-y-auto mb-4 border-t"></div>
+  <input type="text" id="chat-input" class="w-full p-2 rounded bg-gray-700 text-white" placeholder="Type a message...">
+  <button id="send-btn" class="mt-2 w-full bg-blue-600 text-white py-1 rounded hover:bg-blue-700">Send</button>
+</div>
+
+<img src="chatlogo.jpg" alt="Chat Logo" class="h-12 w-12 rounded-full cursor-pointer fixed bottom-4 right-4" onclick="document.getElementById('login-container').classList.remove('hidden')" />
+
 
 
 <!-- Hero Section -->
@@ -135,11 +165,12 @@
 
   <!-- Modal Banner -->
   <div id="bannerOverlay" class="hidden fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50">
-    <div class="block bg-gradient-to-r from-green-200 to-orange-600 p-6 rounded-2xl text-center shadow-xl max-w-sm w-full">
-      <h2 class="text-2xl font-bold mb-5 text-gray-800">Choose Your Store</h2>
+    <div class="block bg-gradient-to-r from-black to-black p-6 rounded-2xl text-center shadow-xl max-w-sm w-full">
+      <h2 class="text-2xl font-bold mb-5 text-white">Choose Your Store</h2>
       <div class="space-y-3">
-        <a href="products.html" class="block bg-gradient-to-r from-blue-500 to-purple-600 text-white px-6 py-2 rounded-xl text-lg font-semibold shadow-md hover:scale-105 transition">Fashion Store</a>
-        <a href="electronics.html" class="block bg-gradient-to-r from-green-500 to-teal-600 text-white px-6 py-2 rounded-xl text-lg font-semibold shadow-md hover:scale-105 transition">Electronics</a>
+        <a href="products.html" class="block bg-gradient-to-r from-blue-300 to-grey-600 text-white px-6 py-2 rounded-xl text-lg font-semibold shadow-md hover:scale-105 transition">Fashion Store</a>
+        <a href="electronics.html" class="block bg-gradient-to-r from-blue-300 to-grey-600 text-white px-6 py-2 rounded-xl text-lg font-semibold shadow-md hover:scale-105 transition">Electronics</a>
+        <a href="sale.html" class="block bg-gradient-to-r from-blue-300 to-grey-600 text-white px-6 py-2 rounded-xl text-lg font-semibold shadow-md hover:scale-105 transition">Summer Sale</a>
       </div>
       <button onclick="hideBanner()" class="mt-5 px-4 py-2 bg-gray-300 hover:bg-gray-400 text-gray-800 rounded-xl font-medium transition">Close</button>
     </div>
