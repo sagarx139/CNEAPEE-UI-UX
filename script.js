@@ -8,7 +8,6 @@ const products = [
     { id: 5, name: "Women's Casual Top", price: 1999 },
     { id: 6, name: "Kids' Jeans", price: 1499 },
 ];
-
 let cneapeeCart = [];
 
 function addToCart(productId) {
@@ -17,7 +16,7 @@ function addToCart(productId) {
         cneapeeCart.push(product);
         updateCartCount();
         updateCartSummary();
-        console.log(cneapeeCart); // Testing
+        console.log(cneapeeCart); // For debugging
     }
 }
 
@@ -34,11 +33,30 @@ function updateCartSummary() {
         const totalPrice = cneapeeCart.reduce((acc, product) => acc + product.price, 0);
         cartSummaryEl.innerHTML = `
             <h3>Cart Summary</h3>
+            <ul>
+                ${cneapeeCart.map(item => `<li>${item.name} - ₹${item.price}</li>`).join('')}
+            </ul>
             <p>Total items: ${cneapeeCart.length}</p>
             <p>Total price: ₹${totalPrice}</p>
         `;
     }
 }
+
+// Example: Attach addToCart to buttons (call this after DOM is loaded)
+document.addEventListener('DOMContentLoaded', () => {
+    products.forEach(product => {
+        const btn = document.getElementById(`add-to-cart-${product.id}`);
+        if (btn) {
+            btn.addEventListener('click', () => {
+                addToCart(product.id);
+                updateCartCount();
+                updateCartSummary();
+            });
+        }
+    });
+    updateCartCount();
+    updateCartSummary();
+});
 
 const loginContainer = document.getElementById('login-container');
 const chatPopup = document.getElementById('chat-popup');
