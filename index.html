@@ -6,7 +6,7 @@
   <title>CNEAPEE - Premium Store</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="styles.css" />
-  <link rel="icon" href="cneapeelogo.jpg" type="image/x-icon">
+  <link rel="icon" href="assets/cneapeelogo-removebg-preview.png" type="image/x-icon">
 </head>
 <body>
   <!-- Navbar -->
@@ -30,13 +30,22 @@
   </div>
 </nav>
 
-<div id="login-container" class="fixed top-0 left-0 w-full h-full bg-gray-900 bg-opacity-50 flex items-center justify-center">
-  <div class="bg-white p-6 rounded-lg shadow-lg">
-      <h2 class="text-2xl font-bold mb-4">Login</h2>
-      <input type="text" id="username" class="w-full p-2 mb-4 border rounded" placeholder="Username">
-      <input type="password" id="password" class="w-full p-2 mb-4 border rounded" placeholder="Password">
-      <button id="login-btn" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">Login</button>
-      <button id="close-login" class="mt-2 text-gray-500 hover:text-gray-700">Close</button>
+<div id="login-container" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60">
+  <div class="bg-gradient-to-br from-gray-900 via-orange-300 to-gray-700 p-8 rounded-2xl shadow-2xl w-full max-w-sm relative">
+    <button id="close-login" class="absolute top-4 right-4 text-gray-400 hover:text-white text-2xl focus:outline-none" aria-label="Close">&times;</button>
+    <div class="flex flex-col items-center mb-6">
+      <h2 class="text-3xl font-extrabold text-white mb-1 tracking-wide">Welcome</h2>
+      <p class="text-gray-300 text-sm">Sign in to your account</p>
+    </div>
+    <div>
+      <input type="text" id="username" class="w-full p-3 mb-4 rounded-lg bg-gray-800 text-white border border-gray-600 focus:border-blue-500 focus:ring-2 focus:ring-blue-400 outline-none transition" placeholder="Username" autocomplete="username">
+      <input type="password" id="password" class="w-full p-3 mb-6 rounded-lg bg-gray-800 text-white border border-gray-600 focus:border-blue-500 focus:ring-2 focus:ring-blue-400 outline-none transition" placeholder="Password" autocomplete="current-password">
+      <button id="login-btn" class="w-full bg-gradient-to-r from-blue-600 to-purple-700 text-white py-3 rounded-lg font-semibold text-lg shadow-md hover:scale-105 hover:from-blue-700 hover:to-purple-800 transition">Login</button>
+    </div>
+    <div class="mt-4 flex justify-between text-sm">
+      <a href="#" class="text-white hover:underline">Forgot password?</a>
+      <a href="#" class="text-blue-400 hover:underline">Sign up</a>
+    </div>
   </div>
 </div>
 
