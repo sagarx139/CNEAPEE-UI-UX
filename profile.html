@@ -3,16 +3,88 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profile Page</title>
+    <title>CNEAPEE AI - Profile</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            min-height: 100vh;
+            background: linear-gradient(
+                120deg,
+                #444 0%,
+                #000000 50%,
+                #000000 100%
+            );
+            background-size: 200% 200%;
+            animation: waveGradient 8s ease-in-out infinite alternate;
+        }
+        @keyframes waveGradient {
+            0% {
+                background-position: 0% 50%;
+            }
+            100% {
+                background-position: 100% 50%;
+            }
+        }
+        /* Glassmorphism effect */
+        .glass {
+            background: rgba(30, 30, 40, 0.35);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.18);
+            backdrop-filter: blur(18px) saturate(160%);
+            -webkit-backdrop-filter: blur(18px) saturate(160%);
+            border-radius: 2rem;
+            border: 1.5px solid rgba(180, 120, 255, 0.18);
+        }
+    </style>
 </head>
-<body>
-    <div class="min-h-screen flex flex-col items-center justify-center bg-blue-500 bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500">
-        <div class="bg-white bg-opacity-80 rounded-xl shadow-lg p-8 max-w-md text-center">
-            <h1 class="text-3xl font-bold mb-4 text-gray-800">Profile</h1>
-            <p class="mb-2 text-gray-700">Welcome to your profile page!</p>
-            <p class="mb-6 text-gray-600">This Page is under Maintenance</p>
-            <a href="index.html" class="inline-block px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">Go back to Home</a>
+<body class="min-h-screen flex items-center justify-center">
+    <div class="w-full max-w-3xl mx-auto px-4 py-12">
+        <div class="glass p-10 flex flex-col items-center">
+            <!-- Profile Avatar -->
+            <div class="relative">
+                <div class="w-36 h-36 rounded-full overflow-hidden border-4 border-purple-400 shadow-xl ring-4 ring-purple-300/30 animate-pulse bg-gradient-to-br from-purple-700/40 to-gray-900/60">
+                    <img src="assets/profile-picture-icon-0.jpg" alt="Profile" class="w-full h-full object-cover">
+                </div>
+            </div>
+            <!-- Name & ID -->
+            <h1 class="text-4xl font-extrabold mt-6 bg-gradient-to-r from-green-100 to-gray-500 bg-clip-text text-transparent text-center drop-shadow-lg">
+                DEVELOPER PROFILE
+            </h1>
+            <p class="text-gray-200 mt-2 text-lg font-mono tracking-wider">ID: <span class="text-purple-300">N06062500001</span></p>
+            <!-- Role/Description -->
+            <p class="mt-4 text-gray-300 text-center max-w-md"><span id="neuro-badge" class="hidden sm:inline bg-gray-900 text-green-300 text-xs font-semibold px-3 py-1 rounded-full border border-green-400 shadow cursor-pointer">
+              Neuro 1.1
+            </span>
+                <br>
+                <br>
+
+                Welcome to your profile! Here you can manage your account and interact with the CNEAPEE AI chat model.
+            </p>
+            <!-- Navigation Buttons -->
+            <div class="flex flex-wrap justify-center gap-4 mt-8">
+                <a href="index.html" class="px-8 py-3 bg-white/10 border border-purple-400 text-purple-200 rounded-full shadow-lg hover:bg-purple-700/40 hover:text-white transition-all duration-200 font-bold glass">
+                    Chat with CNEAPEE AI
+                </a>
+                <a href="" class="px-8 py-3 bg-gray-800/60 border border-gray-700 text-gray-200 rounded-full shadow-lg hover:bg-gray-700/80 transition-all duration-200 font-bold glass">
+                    Logout
+                </a>
+            </div>
+            <!-- Profile Stats -->
+            <div class="mt-10 grid grid-cols-1 sm:grid-cols-3 gap-6 w-full">
+                <div class="glass rounded-xl p-6 flex flex-col items-center">
+                    <span class="text-2xl font-bold text-purple-300">42</span>
+                    <span class="text-gray-300 text-sm mt-1">Chats</span>
+                </div>
+                <div class="glass rounded-xl p-6 flex flex-col items-center">
+                    <span class="text-2xl font-bold text-pink-300">5</span>
+                    <span class="text-gray-300 text-sm mt-1">Prompts Saved</span>
+                </div>
+                <div class="glass rounded-xl p-6 flex flex-col items-center">
+                   <span id="neuro-badge" class="hidden sm:inline bg-gray-900 text-green-300 text-xs font-semibold px-3 py-1 rounded-full border border-green-400 shadow cursor-pointer">
+              Neuro 1.1 Elite
+            </span>
+                    <span class="text-gray-300 text-sm mt-1">Account Type</span>
+                </div>
+            </div>
         </div>
     </div>
 </body>
