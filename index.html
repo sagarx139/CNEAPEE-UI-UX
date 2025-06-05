@@ -1,205 +1,200 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>CNEAPEE - Premium Store</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="icon" href="assets/cneapeelogo-removebg-preview.png" type="image/x-icon">
-</head>
-<body>
-  <!-- Navbar -->
-<nav class="flex items-center justify-between px-6 py-4 bg-gradient-to-r from-blue-200 to-gray-600 text-white shadow-md">
-  <div class="flex items-center gap-2">
-    <img src="assets/cneapeelogo-removebg-preview.png" alt="CNEAPEE Logo" class="h-10 w-auto object-contain opacity-100" />
-  </div>
-  <ul class="hidden md:flex gap-8 text-center text-xl font-bold">
-    <li><a href="products.html" class="hover:text-blue-400">Fashion Store</a></li>
-    <li><a href="electronics.html" class="hover:text-blue-400">Electronics</a></li>
-    <li><a href="sale.html" class="hover:text-blue-400">Hot Summer Sale</a></li>
-  </ul>
-  <div class="flex items-center gap-4 text-lg">
-    <button class="hover:text-blue-400 flex items-center gap-2" onclick="window.location.href='profile.html'">
-      <img src="assets/profile-picture-icon-0.jpg" alt="profilepic" class="h-12 w-12 rounded-full" />
-    </button>
-    <button class="cart-btn" onclick="toggleCartModal()">
-      <a href="cart.html">🛒</a>
-      <span id="cart-count" class="ml-1 font-bold">0</span>
-    </button>
-  </div>
-</nav>
-
-<div id="login-container" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60">
-  <div class="bg-gradient-to-br from-gray-900 via-orange-300 to-gray-700 p-8 rounded-2xl shadow-2xl w-full max-w-sm relative">
-    <button id="close-login" class="absolute top-4 right-4 text-gray-400 hover:text-white text-2xl focus:outline-none" aria-label="Close">&times;</button>
-    <div class="flex flex-col items-center mb-6">
-      <h2 class="text-3xl font-extrabold text-white mb-1 tracking-wide">Welcome</h2>
-      <p class="text-gray-300 text-sm">Sign in to your account</p>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CNEAPEE AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      @keyframes gradientMove {
+        0%, 100% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        } 
+      }
+      
+      .animate-gradient {
+        background: linear-gradient(120deg, #000 0%, #44464b 50%, #000000 100%);
+        background-size: 200% 200%;
+        animation: gradientMove 8s ease-in-out infinite;
+      }
+    </style>
+  </head>
+  <body class="bg-gradient-to-br from-black via-gray-900 to-white-400 text-white min-h-screen overflow-x-hidden">
+    <!-- Animated Gradient Background -->
+    <div class="fixed inset-0 -z-10 animate-gradient"></div>
+    
+    <!-- Top Navigation -->
+    <div class="fixed top-4 left-4 sm:top-6 sm:left-6 z-40 flex items-center gap-4">
+      <img src="assets/cneapeelogo-removebg-preview.png" alt="CNEAPEE Logo"
+        class="w-10 h-10 sm:w-12 sm:h-12 object-contain rounded-full" />
+      <div class="flex gap-2 px-2 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 shadow-lg">
+        <button class="flex items-center gap-2 px-3 py-1 sm:px-4 sm:py-2 rounded-full text-white font-bold hover:bg-white/20 transition duration-300">
+          <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M4 12L12 5l8 7M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
+          </svg>
+        </button>
+        <button class="flex items-center gap-2 px-3 py-1 sm:px-4 sm:py-2 rounded-full text-white font-bold hover:bg-white/20 transition duration-300">
+          <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M12 4v16m8-8H4" />
+          </svg>
+        </button>
+      </div>
     </div>
-    <div>
-      <input type="text" id="username" class="w-full p-3 mb-4 rounded-lg bg-gray-800 text-white border border-gray-600 focus:border-blue-500 focus:ring-2 focus:ring-blue-400 outline-none transition" placeholder="Username" autocomplete="username">
-      <input type="password" id="password" class="w-full p-3 mb-6 rounded-lg bg-gray-800 text-white border border-gray-600 focus:border-blue-500 focus:ring-2 focus:ring-blue-400 outline-none transition" placeholder="Password" autocomplete="current-password">
-      <button id="login-btn" class="w-full bg-gradient-to-r from-blue-600 to-purple-700 text-white py-3 rounded-lg font-semibold text-lg shadow-md hover:scale-105 hover:from-blue-700 hover:to-purple-800 transition">Login</button>
+
+    <!-- Sign In Button -->
+    <div class="fixed top-4 right-4 sm:top-6 sm:right-6 z-40">
+      <a href="profile.html">
+        <button class="flex items-center gap-2 px-4 sm:px-6 py-2 sm:py-3 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white font-bold shadow-lg hover:bg-white/20 transition duration-300">
+          <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+          </svg>
+          <span class="hidden sm:inline">Sign In</span>
+        </button>
+      </a>
     </div>
-    <div class="mt-4 flex justify-between text-sm">
-      <a href="#" class="text-white hover:underline">Forgot password?</a>
-      <a href="#" class="text-blue-400 hover:underline">Sign up</a>
-    </div>
-  </div>
-</div>
 
-<div id="chat-popup" class="hidden fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 bg-gray-800 text-white p-6 rounded-lg shadow-lg z-50">
-  <h3 class="text-lg font-bold mb-4">Start a Chat</h3>
-  <select id="user-select" class="w-full p-2 mb-4 bg-gray-700 text-white rounded">
-      <option value="person1">Person 1</option>
-      <option value="person2">Person 2</option>
-      <option value="person3">Person 3</option>
-  </select>
-  <input type="text" id="chat-input-popup" class="w-full p-2 mb-4 bg-gray-700 text-white rounded" placeholder="Type a message...">
-  <button id="start-chat-btn" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">Start Chat</button>
-  <button id="close-popup" class="mt-2 text-gray-500 hover:text-gray-700">Close</button>
-</div>
+    <!-- Main Content -->
+    <main class="flex flex-col items-center justify-center text-center min-h-screen px-4 sm:px-8 pt-32 sm:pt-40">
+      <!-- Logo & Heading -->
+      <header class="mb-10 sm:mb-16">
+        <h1 class="text-4xl sm:text-5xl font-semibold text-white tracking-tight">CNEAPEE AI</h1>
+        <p class="mt-4 text-sm sm:text-lg text-gray-300 max-w-xl mx-auto">Single Hub For Smarter and Efficient Use</p>
+        <p class="mt-2 text-xs sm:text-base text-gray-300 max-w-xl mx-auto">"Coming to Beta Users • February 2026 • 2nd Anniversary Drop"</p>
+      </header>
 
-<div id="chat-container" class="hidden fixed bottom-0 right-0 w-80 bg-gray-800 text-white p-4 rounded-lg shadow-lg">
-  <h3 class="text-lg font-bold">Chat with <span id="chat-with"></span></h3>
-  <div id="chat-messages" class="h-64 overflow-y-auto mb-4 border-t"></div>
-  <input type="text" id="chat-input" class="w-full p-2 rounded bg-gray-700 text-white" placeholder="Type a message...">
-  <button id="send-btn" class="mt-2 w-full bg-blue-600 text-white py-1 rounded hover:bg-blue-700">Send</button>
-</div>
+      <!-- Search Input -->
+      <section class="w-full max-w-xl mb-8">
+        <div class="relative bg-gray-800 rounded-xl border border-gray-700 focus-within:border-gray-600 transition-colors flex items-center">
+          <input type="text" placeholder="Ask anything..."
+            class="search-input w-full bg-transparent text-white px-4 sm:px-6 py-3 rounded-xl focus:outline-none text-base sm:text-lg" />
+          <div class="absolute right-3 top-1/2 transform -translate-y-1/2 flex items-center space-x-2">
+            <button class="p-2 rounded-lg hover:bg-gray-700 transition-colors" aria-label="Search">
+              <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </button>
+            <button class="microphone-button p-2 rounded-lg hover:opacity-90 transition-opacity" aria-label="Voice Input">
+              <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+              </svg>
+            </button>
+            <span id="neuro-badge" class="hidden sm:inline bg-gray-900 text-green-300 text-xs font-semibold px-3 py-1 rounded-full border border-green-400 shadow cursor-pointer">
+              Neuro 1.1
+            </span>
+            <!-- Neuro Banner -->
+            <div id="neuro-banner" class="fixed left-1/2 bottom-8 z-50 w-[370px] max-w-xs -translate-x-1/2 bg-white/10 backdrop-blur-lg border border-green-400 rounded-2xl shadow-2xl p-6 text-left text-white transition-all duration-500 opacity-0 pointer-events-none">
+              <div class="flex justify-between items-center mb-2">
+                <span class="text-green-300 font-bold text-lg">CNEAPEE AI Model Neuro 1.1</span>
+                <button id="close-neuro-banner" class="text-gray-400 hover:text-white text-xl font-bold leading-none">&times;</button>
+              </div>
+              <div class="text-xs text-green-200 mb-2">Launch Date: <span class="font-semibold">February 2026</span> | <span class="font-semibold">Beta Access</span></div>
+              <div id="neuro-banner-content" class="text-sm whitespace-pre-line font-mono min-h-[220px]"></div>
+            </div>
+            <script>
+              // Banner text content (letter writing effect)
+              const neuroBannerText = 
+`CNEAPEE AI: Model Neuro 1.1 is a next-gen multimodal assistant built to transform user interaction through intelligent automation, contextual awareness, and real-time responsiveness. Designed for productivity, learning, and wellness, it adapts seamlessly to your needs.
 
-<img src="chatlogo.jpg" alt="Chat Logo" class="h-12 w-12 rounded-full cursor-pointer fixed bottom-4 right-4" onclick="document.getElementById('login-container').classList.remove('hidden')" />
+Key Features:
+• Context-Aware Intelligence – Understands voice & text with precision
+• Modular Tools – Study Hub, Health Insights, Events, News
+• Neural Response Engine – Fast, human-like replies
 
+Beta Launch: February 2026
+Rolling out on our 2nd anniversary for Beta Users.`;
 
+              const neuroBadge = document.getElementById('neuro-badge');
+              const neuroBanner = document.getElementById('neuro-banner');
+              const closeNeuroBanner = document.getElementById('close-neuro-banner');
+              const neuroBannerContent = document.getElementById('neuro-banner-content');
+              let typingTimeout;
 
-<!-- Hero Section and changes -->
-  <section class="hero">
-    <div class="hero-content">
-      <h1>CNEAPEE</h1>
-      <p>Elevate your style with our premium collection of modern fashion</p>
-      <button class="shop-btn" onclick="showBanner()">Shop Now</button>
-    </div>
-  </section>
+              function showNeuroBanner() {
+                neuroBanner.style.opacity = '1';
+                neuroBanner.style.pointerEvents = 'auto';
+                neuroBannerContent.textContent = '';
+                let i = 0;
+                function typeLetter() {
+                  if (i <= neuroBannerText.length) {
+                    neuroBannerContent.textContent = neuroBannerText.slice(0, i);
+                    i++;
+                    typingTimeout = setTimeout(typeLetter, 12);
+                  }
+                }
+                typeLetter();
+              }
 
-  <!-- Featured Products -->
-  <section class="py-12 px-4 bg-gradient-to-r from-black to-gray-200 text-center">
-    <h2 class="text-3xl font-bold text-white mb-10">Featured Products</h2>
+              function hideNeuroBanner() {
+                neuroBanner.style.opacity = '0';
+                neuroBanner.style.pointerEvents = 'none';
+                clearTimeout(typingTimeout);
+              }
 
-    <div class="grid gap-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 max-w-7xl mx-auto">
-      <!-- Product Cards -->
-      <div class="product-card" data-id="1">
-        <img src="https://image.hm.com/assets/hm/48/c0/48c01498e3ef90e12d984771fdf9fc236cc78c28.jpg?imwidth=564" alt="Men's Shirt" class="h-64 w-full object-cover" />
-        <div class="p-4">
-          <h3 class="font-semibold text-gray-800 mb-1">Men's Formal Shirt</h3>
-          <p class="text-gray-600 mb-4">₹2,499</p>
-            <button class="mt-auto bg-purple-800 text-white py-2 font-semibold text-sm rounded hover:bg-teal-600 active:scale-95 transition-transform duration-200 shadow-md hover:shadow-xl" data-id="1">Add to Cart</button>
+              neuroBadge.addEventListener('click', showNeuroBanner);
+              closeNeuroBanner.addEventListener('click', hideNeuroBanner);
+            </script>
+             
           </div>
-          </div>
-
-          <div class="product-card" data-id="2">
-          <img src="https://image.hm.com/assets/hm/cc/c5/ccc564e4a05d11232e3dbcbcec64f5a0d0b325f1.jpg?imwidth=384" alt="Women's Dress" class="h-64 w-full object-cover" />
-          <div class="p-4">
-            <h3 class="font-semibold text-gray-800 mb-1">Women's A-Line Dress</h3>
-            <p class="text-gray-600 mb-4">₹3,299</p>
-            <button class="mt-auto bg-purple-800 text-white py-2 font-semibold text-sm rounded hover:bg-teal-600 active:scale-95 transition-transform duration-200 shadow-md hover:shadow-xl" data-id="2">Add to Cart</button>
-          </div>
-          </div>
-
-          <div class="product-card" data-id="3">
-          <img src="https://image.hm.com/assets/hm/bc/66/bc6698be633109664e28b1b86c0cbe3c9ca72014.jpg?imwidth=564" alt="Kids' T-Shirt" class="h-64 w-full object-cover" />
-          <div class="p-4">
-            <h3 class="font-semibold text-gray-800 mb-1">Kids' Printed T-Shirt</h3>
-            <p class="text-gray-600 mb-4">₹1,199</p>
-            <button class="mt-auto bg-purple-800 text-white py-2 font-semibold text-sm rounded hover:bg-teal-600 active:scale-95 transition-transform duration-200 shadow-md hover:shadow-xl" data-id="3">Add to Cart</button>
-          </div>
-          </div>
-
-          <div class="product-card" data-id="4">
-          <img src="https://image.hm.com/assets/hm/bc/66/bc6698be633109664e28b1b86c0cbe3c9ca72014.jpg?imwidth=564" alt="Men's Chinos" class="h-64 w-full object-cover" />
-          <div class="p-4">
-            <h3 class="font-semibold text-gray-800 mb-1">Men's Chinos</h3>
-            <p class="text-gray-600 mb-4">₹2,799</p>
-            <button class="mt-auto bg-purple-800 text-white py-2 font-semibold text-sm rounded hover:bg-teal-600 active:scale-95 transition-transform duration-200 shadow-md hover:shadow-xl" data-id="4">Add to Cart</button>
-          </div>
-          </div>
-
-          <div class="product-card" data-id="5">
-          <img src="https://image.hm.com/assets/hm/cc/c5/ccc564e4a05d11232e3dbcbcec64f5a0d0b325f1.jpg?imwidth=384" alt="Women's Top" class="h-64 w-full object-cover" />
-          <div class="p-4">
-            <h3 class="font-semibold text-gray-800 mb-1">Women's Casual Top</h3>
-            <p class="text-gray-600 mb-4">₹1,999</p>
-            <button class="mt-auto bg-purple-800 text-white py-2 font-semibold text-sm rounded hover:bg-teal-600 active:scale-95 transition-transform duration-200 shadow-md hover:shadow-xl" data-id="5">Add to Cart</button>
-          </div>
-          </div>
-
-          <div class="product-card" data-id="6">
-          <img src="https://image.hm.com/assets/hm/bc/66/bc6698be633109664e28b1b86c0cbe3c9ca72014.jpg?imwidth=564" alt="Kids' Jeans" class="h-64 w-full object-cover" />
-          <div class="p-4">
-            <h3 class="font-semibold text-gray-800 mb-1">Kids' Jeans</h3>
-            <p class="text-gray-600 mb-4">₹1,499</p>
-            <button class="mt-auto bg-purple-800 text-white py-2 font-semibold text-sm rounded hover:bg-teal-600 active:scale-95 transition-transform duration-200 shadow-md hover:shadow-xl" data-id="6">Add to Cart</button>
-          </div>
-          </div>
-
-          <div class="product-card" data-id="7">
-          <img src="https://image.hm.com/assets/hm/48/c0/48c01498e3ef90e12d984771fdf9fc236cc78c28.jpg?imwidth=564" alt="Men's Shirt" class="h-64 w-full object-cover" />
-          <div class="p-4">
-            <h3 class="font-semibold text-gray-800 mb-1">Men's Formal Shirt</h3>
-            <p class="text-gray-600 mb-4">₹2,499</p>
-            <button class="mt-auto bg-purple-800 text-white py-2 font-semibold text-sm rounded hover:bg-teal-600 active:scale-95 transition-transform duration-200 shadow-md hover:shadow-xl" data-id="1">Add to Cart</button>
-          </div>
-          </div>
-
-          <div class="product-card" data-id="8">
-          <img src="https://image.hm.com/assets/hm/cc/c5/ccc564e4a05d11232e3dbcbcec64f5a0d0b325f1.jpg?imwidth=384" alt="Women's Dress" class="h-64 w-full object-cover" />
-          <div class="p-4">
-            <h3 class="font-semibold text-gray-800 mb-1">Women's A-Line Dress</h3>
-            <p class="text-gray-600 mb-4">₹3,299</p>
-            <button class="mt-auto bg-purple-800 text-white py-2 font-semibold text-sm rounded hover:bg-teal-600 active:scale-95 transition-transform duration-200 shadow-md hover:shadow-xl">Add to Cart</button>
         </div>
-      </div>
-    </div>
-  </section>
+      </section>
 
-  <!-- Footer -->
-  <footer class="footer bg-gradient-to-r from-black to-gray-500 text-white py-6">
-    <div class="footer-links flex justify-center space-x-12 text-lg font-semibold">
-      <a href="support.html" class="hover:underline transition">Support</a>
-      <a href="about.html" class="hover:underline transition">About Us</a>
-      <a href="careers.html" class="hover:underline transition">Careers</a>
-    </div>
-    <div class="footer-bottom text-center mt-4 text-sm text-gray-200">
-      <p>&copy; 2025 CNEAPEE. All rights reserved.</p>
-    </div>
-  </footer>
+      <!-- Pill click Buttons -->
+      <section class="flex flex-wrap gap-3 justify-center mb-10 px-2">
+        <button class="pill-button flex items-center space-x-2 px-4 py-2 bg-gray-800 border border-gray-700 rounded-full text-sm hover:bg-gray-700 transition-colors">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          </svg>
+          <span>Events</span>
+        </button>
+        <button class="pill-button flex items-center space-x-2 px-4 py-2 bg-gray-800 border border-gray-700 rounded-full text-sm hover:bg-gray-700 transition-colors">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+          </svg>
+          <span>Study Hub</span>
+        </button>
+        <button class="pill-button flex items-center space-x-2 px-4 py-2 bg-gray-800 border border-gray-700 rounded-full text-sm hover:bg-gray-700 transition-colors">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+          </svg>
+          <span>Health</span>
+        </button>
+        <a href="news.html">
+          <button class="pill-button flex items-center space-x-2 px-4 py-2 bg-gray-800 border border-gray-700 rounded-full text-sm hover:bg-gray-700 transition-colors">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            <span>News</span>
+          </button>
+        </a>
+      </section>
+    </main>
 
-  <!-- Modal Banner -->
-  <div id="bannerOverlay" class="hidden fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50">
-    <div class="block bg-gradient-to-r from-black to-black p-6 rounded-2xl text-center shadow-xl max-w-sm w-full">
-      <h2 class="text-2xl font-bold mb-5 text-white">Choose Your Store</h2>
-      <div class="space-y-3">
-        <a href="products.html" class="block bg-gradient-to-r from-blue-300 to-grey-600 text-white px-6 py-2 rounded-xl text-lg font-semibold shadow-md hover:scale-105 transition">Fashion Store</a>
-        <a href="electronics.html" class="block bg-gradient-to-r from-blue-300 to-grey-600 text-white px-6 py-2 rounded-xl text-lg font-semibold shadow-md hover:scale-105 transition">Electronics</a>
-        <a href="sale.html" class="block bg-gradient-to-r from-blue-300 to-grey-600 text-white px-6 py-2 rounded-xl text-lg font-semibold shadow-md hover:scale-105 transition">Summer Sale</a>
-      </div>
-      <button onclick="hideBanner()" class="mt-5 px-4 py-2 bg-gray-300 hover:bg-gray-400 text-gray-800 rounded-xl font-medium transition">Close</button>
-    </div>
-  </div>
+    <!-- Footer -->
+    <footer class="w-full py-6 text-center text-sm text-gray-400">
+      © 2025 CNEAPEE. All rights reserved.
+    </footer>
 
-  <!-- Modal Script -->
-  <script>
-    function showBanner() {
-      document.getElementById("bannerOverlay").classList.remove("hidden");
-    }
-    function hideBanner() {
-      document.getElementById("bannerOverlay").classList.add("hidden");
-    }
-    function toggleCartModal() {
-      alert("Cart modal functionality is not implemented yet.");
-    }
-  </script>
-
-  <!-- ✅ JS for cart -->
-  <script src="script.js"></script>
-</body>
+    <script>
+      // Input focus ring
+      const searchInput = document.querySelector('.search-input');
+      searchInput.addEventListener('focus', function () {
+        this.parentElement.classList.add('ring-2', 'ring-blue-500', 'ring-opacity-50');
+      });
+      searchInput.addEventListener('blur', function () {
+        this.parentElement.classList.remove('ring-2', 'ring-blue-500', 'ring-opacity-50');
+      });
+    </script>
+  </body>
 </html>
