@@ -7,7 +7,550 @@
     <title>Health</title>
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5733699332666340"
      crossorigin="anonymous"></script>
+    <style>
+        .disease-button {
+            transition: all 0.3s ease;
+            transform: scale(1);
+        }
+        
+        .disease-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            border: 2px solid #10b981;
+        }
+        
+        .disease-button:active {
+            transform: scale(0.98);
+        }
+        
+        .blur-background {
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+        
+        .modal-enter {
+            animation: modalEnter 0.3s ease-out;
+        }
+        
+        @keyframes modalEnter {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        
+        .pulse-effect {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4);
+            }
+            50% {
+                box-shadow: 0 0 0 10px rgba(16, 185, 129, 0);
+            }
+        }
+    </style>
 </head>
+<script>
+    window.addEventListener('DOMContentLoaded', function() {
+        // Create overlay
+        const overlay = document.createElement('div');
+        overlay.className = 'fixed inset-0 bg-black bg-opacity-50 blur-background flex items-center justify-center z-50';
+        overlay.id = 'welcomePopup';
+
+        // Create popup box
+        const popup = document.createElement('div');
+        popup.className = 'bg-white rounded-lg shadow-lg max-w-md w-full p-6 relative text-center modal-enter';
+
+        // Close button
+        const closeBtn = document.createElement('button');
+        closeBtn.innerHTML = '&times;';
+        closeBtn.className = 'absolute top-2 right-2 text-gray-500 hover:text-red-500 text-2xl transition-colors duration-200';
+        closeBtn.onclick = function() {
+            overlay.style.animation = 'fadeOut 0.3s ease-in';
+            setTimeout(() => overlay.remove(), 300);
+        };
+
+        // Message content
+        popup.innerHTML = `
+            <h2 class="text-xl font-bold mb-2 text-green-700">Important Notice</h2>
+            <p class="mb-4 text-gray-700">
+                <strong>Consult with a doctor in case of emergency.</strong><br>
+                This is a Cneapee AI model (Neuro 1.1 Elite). The results are based on AI generation.
+            </p>
+            <div class="mb-4 text-gray-600 text-sm">
+                <strong>Explanation:</strong> This popup is shown to remind users that the information provided by the Cneapee AI model is for informational purposes only and should not be considered a substitute for professional medical advice. In case of any emergency or serious health concern, always consult a qualified doctor.
+            </div>
+            <button class="mt-2 px-4 py-2 bg-green-600 text-white rounded-full font-semibold shadow hover:bg-green-700 transition-all duration-200 transform hover:scale-105" onclick="document.getElementById('welcomePopup').style.animation='fadeOut 0.3s ease-in'; setTimeout(() => document.getElementById('welcomePopup').remove(), 300)">OK</button>
+        `;
+        
+        // Add fadeOut animation style
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fadeOut {
+                from { opacity: 1; transform: scale(1); }
+                to { opacity: 0; transform: scale(0.8); }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        popup.appendChild(closeBtn);
+        overlay.appendChild(popup);
+        document.body.appendChild(overlay);
+
+        // Auto-close after 10 seconds
+        setTimeout(function() {
+            if (document.getElementById('welcomePopup')) {
+                const popup = document.getElementById('welcomePopup');
+                popup.style.animation = 'fadeOut 0.3s ease-in';
+                setTimeout(() => popup.remove(), 300);
+            }
+        }, 10000);
+    });
+</script>
+<body class="bg-gray-300 min-h-screen">
+    <div class="container mx-auto py-8" id="mainContent">
+        <h1 class="text-3xl font-bold mb-6 text-center">
+            Health Diagnosis <br><span class="font-normal text-lg text-gray-600">Powered by Cneapee AI</span>
+             <span id="neuro-badge"
+            class="ml-2 align-middle bg-gray-900 text-green-300 text-xs font-semibold px-3 py-1 rounded-full border border-green-400 shadow cursor-pointer pulse-effect">
+            Neuro 1.1 Elite
+            </span>
+        </h1>
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <!-- Common Health Issues on Top -->
+            <button onclick="openModal(20)" class="disease-button bg-white shadow rounded-lg p-4 hover:bg-green-50 transition-all duration-300">
+                <div class="font-semibold text-green-700">🤒 Bukhar (Fever)</div>
+            </button>
+            <button onclick="openModal(21)" class="disease-button bg-white shadow rounded-lg p-4 hover:bg-green-50 transition-all duration-300">
+                <div class="font-semibold text-green-700">💪 Badan Dard (Body Ache)</div>
+            </button>
+            <button onclick="openModal(22)" class="disease-button bg-white shadow rounded-lg p-4 hover:bg-green-50 transition-all duration-300">
+                <div class="font-semibold text-green-700">🤧 Sardi (Cold)</div>
+            </button>
+            <button onclick="openModal(23)" class="disease-button bg-white shadow rounded-lg p-4 hover:bg-yellow-50 transition-all duration-300">
+                <div class="font-semibold text-yellow-700">✨ Skin & Body Care</div>
+            </button>
+            <button onclick="openModal(24)" class="disease-button bg-white shadow rounded-lg p-4 hover:bg-yellow-50 transition-all duration-300">
+                <div class="font-semibold text-yellow-700">🔥 Itching</div>
+            </button>
+            <!-- New Sections -->
+            <button onclick="openModal(25)" class="disease-button bg-white shadow rounded-lg p-4 hover:bg-purple-50 transition-all duration-300">
+                <div class="font-semibold text-purple-700">🎯 Vitiligo</div>
+            </button>
+            <button onclick="openModal(26)" class="disease-button bg-white shadow rounded-lg p-4 hover:bg-pink-50 transition-all duration-300">
+                <div class="font-semibold text-pink-700">🔥 Fat Burn</div>
+            </button>
+            <button onclick="openModal(27)" class="disease-button bg-white shadow rounded-lg p-4 hover:bg-indigo-50 transition-all duration-300">
+                <div class="font-semibold text-indigo-700">💪 Exercise</div>
+            </button>
+            <!-- Disease Boxes -->
+            <button onclick="openModal(0)" class="disease-button bg-white shadow rounded-lg p-4 hover:bg-blue-50 transition-all duration-300">
+                <div class="font-semibold text-blue-700">🩺 Diabetes</div>
+            </button>
+            <button onclick="openModal(1)" class="disease-button bg-white shadow rounded-lg p-4 hover:bg-blue-50 transition-all duration-300">
+                <div class="font-semibold text-blue-700">💓 Hypertension</div>
+            </button>
+            <button onclick="openModal(2)" class="disease-button bg-white shadow rounded-lg p-4 hover:bg-blue-50 transition-all duration-300">
+                <div class="font-semibold text-blue-700">🫁 Tuberculosis</div>
+            </button>
+            <button onclick="openModal(3)" class="disease-button bg-white shadow rounded-lg p-4 hover:bg-blue-50 transition-all duration-300">
+                <div class="font-semibold text-blue-700">🦟 Malaria</div>
+            </button>
+            <button onclick="openModal(4)" class="disease-button bg-white shadow rounded-lg p-4 hover:bg-blue-50 transition-all duration-300">
+                <div class="font-semibold text-blue-700">🦟 Dengue</div>
+            </button>
+            <button onclick="openModal(5)" class="disease-button bg-white shadow rounded-lg p-4 hover:bg-blue-50 transition-all duration-300">
+                <div class="font-semibold text-blue-700">🦟 Chikungunya</div>
+            </button>
+            <button onclick="openModal(6)" class="disease-button bg-white shadow rounded-lg p-4 hover:bg-blue-50 transition-all duration-300">
+                <div class="font-semibold text-blue-700">🤒 Typhoid</div>
+            </button>
+            <button onclick="openModal(7)" class="disease-button bg-white shadow rounded-lg p-4 hover:bg-blue-50 transition-all duration-300">
+                <div class="font-semibold text-blue-700">🟡 Hepatitis B</div>
+            </button>
+            <button onclick="openModal(8)" class="disease-button bg-white shadow rounded-lg p-4 hover:bg-blue-50 transition-all duration-300">
+                <div class="font-semibold text-blue-700">🟡 Hepatitis C</div>
+            </button>
+            <button onclick="openModal(9)" class="disease-button bg-white shadow rounded-lg p-4 hover:bg-blue-50 transition-all duration-300">
+                <div class="font-semibold text-blue-700">🔴 HIV/AIDS</div>
+            </button>
+            <button onclick="openModal(10)" class="disease-button bg-white shadow rounded-lg p-4 hover:bg-blue-50 transition-all duration-300">
+                <div class="font-semibold text-blue-700">❤️ Coronary Heart Disease</div>
+            </button>
+            <button onclick="openModal(11)" class="disease-button bg-white shadow rounded-lg p-4 hover:bg-blue-50 transition-all duration-300">
+                <div class="font-semibold text-blue-700">🧠 Stroke</div>
+            </button>
+            <button onclick="openModal(12)" class="disease-button bg-white shadow rounded-lg p-4 hover:bg-blue-50 transition-all duration-300">
+                <div class="font-semibold text-blue-700">🫁 Asthma</div>
+            </button>
+            <button onclick="openModal(13)" class="disease-button bg-white shadow rounded-lg p-4 hover:bg-blue-50 transition-all duration-300">
+                <div class="font-semibold text-blue-700">🫁 COPD</div>
+            </button>
+            <button onclick="openModal(14)" class="disease-button bg-white shadow rounded-lg p-4 hover:bg-blue-50 transition-all duration-300">
+                <div class="font-semibold text-blue-700">🎗️ Cancer</div>
+            </button>
+            <button onclick="openModal(15)" class="disease-button bg-white shadow rounded-lg p-4 hover:bg-blue-50 transition-all duration-300">
+                <div class="font-semibold text-blue-700">💧 Diarrheal Diseases</div>
+            </button>
+            <button onclick="openModal(16)" class="disease-button bg-white shadow rounded-lg p-4 hover:bg-blue-50 transition-all duration-300">
+                <div class="font-semibold text-blue-700">🔬 Leprosy</div>
+            </button>
+            <button onclick="openModal(17)" class="disease-button bg-white shadow rounded-lg p-4 hover:bg-blue-50 transition-all duration-300">
+                <div class="font-semibold text-blue-700">🫁 Pneumonia</div>
+            </button>
+            <button onclick="openModal(18)" class="disease-button bg-white shadow rounded-lg p-4 hover:bg-blue-50 transition-all duration-300">
+                <div class="font-semibold text-blue-700">🐷 Swine Flu</div>
+            </button>
+            <button onclick="openModal(19)" class="disease-button bg-white shadow rounded-lg p-4 hover:bg-blue-50 transition-all duration-300">
+                <div class="font-semibold text-blue-700">😷 COVID-19</div>
+            </button>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="diseaseModal" class="fixed inset-0 bg-black bg-opacity-60 blur-background flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg shadow-2xl max-w-md w-full p-6 relative modal-enter mx-4">
+            <button onclick="closeModal()" class="absolute top-2 right-2 text-gray-500 hover:text-red-500 text-2xl transition-colors duration-200 hover:scale-110 transform">&times;</button>
+            <h2 id="modalTitle" class="text-xl font-bold mb-2 text-green-700"></h2>
+            <div id="modalBrief" class="mb-2 text-gray-700 text-sm bg-gray-50 p-3 rounded-lg"></div>
+            <h3 class="font-semibold text-green-600 mt-4 mb-2">🔍 Symptoms:</h3>
+            <ul id="modalSymptoms" class="list-disc list-inside mb-4 text-gray-700"></ul>
+            <h3 class="font-semibold text-blue-600 mb-2">🛡️ Precautions:</h3>
+            <ul id="modalPrecautions" class="list-disc list-inside mb-4 text-gray-700"></ul>
+            <h3 class="font-semibold text-purple-600 mb-2">💊 Medicines (for cure/management):</h3>
+            <ul id="modalMedicines" class="list-disc list-inside text-gray-700"></ul>
+        </div>
+    </div>
+
+    <footer class="mt-12 bg-gray-800 text-gray-200 py-6">
+        <div class="container mx-auto flex flex-col items-center space-y-2">
+            <p class="text-sm text-center">
+                <strong>Consult with a doctor in case of emergency.</strong><br>
+                This is a Cneapee AI model (Neuro 1.1 Elite). The results are based on AI generation.
+                The popup shown to remind users that the information provided by the Cneapee AI model is for informational purposes only and should not be considered a substitute for professional medical advice. In case of any emergency or serious health concern, always consult a qualified doctor.
+            </p>
+            <a href="index.html" class="inline-flex items-center px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-full font-semibold shadow transition-all duration-200 transform hover:scale-105">
+                🏠 Home
+            </a>
+        </div>
+    </footer>
+
+    <script>
+        const diseases = [
+            {
+                name: "Diabetes",
+                symptoms: ["Frequent urination", "Increased thirst", "Unexplained weight loss", "Fatigue"],
+                precautions: ["Maintain healthy diet", "Regular exercise", "Monitor blood sugar", "Avoid sugary foods"],
+                medicines: ["Metformin", "Insulin", "Sulfonylureas", "DPP-4 inhibitors"]
+            },
+            {
+                name: "Hypertension",
+                symptoms: ["Headache", "Dizziness", "Blurred vision", "Nosebleeds"],
+                precautions: ["Reduce salt intake", "Regular exercise", "Manage stress", "Monitor blood pressure"],
+                medicines: ["Amlodipine", "Losartan", "Enalapril", "Hydrochlorothiazide"]
+            },
+            {
+                name: "Tuberculosis",
+                symptoms: ["Persistent cough", "Chest pain", "Weight loss", "Fever", "Night sweats"],
+                precautions: ["Cover mouth while coughing", "Complete medication course", "Good ventilation", "Regular screening"],
+                medicines: ["Isoniazid", "Rifampicin", "Ethambutol", "Pyrazinamide"]
+            },
+            {
+                name: "Malaria",
+                symptoms: ["Fever", "Chills", "Sweating", "Headache", "Nausea"],
+                precautions: ["Use mosquito nets", "Apply repellents", "Remove stagnant water", "Wear full sleeves"],
+                medicines: ["Chloroquine", "Artemisinin-based combination therapy", "Quinine"]
+            },
+            {
+                name: "Dengue",
+                symptoms: ["High fever", "Severe headache", "Pain behind eyes", "Joint pain", "Rash"],
+                precautions: ["Avoid mosquito bites", "Use nets/repellents", "Remove stagnant water", "Wear protective clothing"],
+                medicines: ["Paracetamol (for fever/pain)", "IV fluids (for severe cases)"]
+            },
+            {
+                name: "Chikungunya",
+                symptoms: ["Fever", "Joint pain", "Muscle pain", "Headache", "Rash"],
+                precautions: ["Avoid mosquito bites", "Use repellents", "Remove stagnant water", "Wear full sleeves"],
+                medicines: ["Paracetamol", "NSAIDs (for pain)", "Supportive care"]
+            },
+            {
+                name: "Typhoid",
+                symptoms: ["High fever", "Weakness", "Stomach pain", "Headache", "Loss of appetite"],
+                precautions: ["Drink clean water", "Eat well-cooked food", "Wash hands", "Vaccination"],
+                medicines: ["Ciprofloxacin", "Azithromycin", "Ceftriaxone"]
+            },
+            {
+                name: "Hepatitis B",
+                symptoms: ["Jaundice", "Fatigue", "Abdominal pain", "Loss of appetite", "Nausea"],
+                precautions: ["Vaccination", "Avoid sharing needles", "Safe sex", "Screen blood transfusions"],
+                medicines: ["Tenofovir", "Entecavir", "Lamivudine"]
+            },
+            {
+                name: "Hepatitis C",
+                symptoms: ["Fatigue", "Jaundice", "Abdominal pain", "Dark urine"],
+                precautions: ["Avoid sharing needles", "Safe sex", "Screen blood transfusions", "Use disposable syringes"],
+                medicines: ["Sofosbuvir", "Ledipasvir", "Daclatasvir"]
+            },
+            {
+                name: "HIV/AIDS",
+                symptoms: ["Fever", "Fatigue", "Weight loss", "Recurrent infections"],
+                precautions: ["Safe sex", "Avoid sharing needles", "Screen blood transfusions", "Regular testing"],
+                medicines: ["Antiretroviral therapy (ART)", "Tenofovir", "Efavirenz", "Lamivudine"]
+            },
+            {
+                name: "Coronary Heart Disease",
+                symptoms: ["Chest pain", "Shortness of breath", "Fatigue", "Irregular heartbeat"],
+                precautions: ["Healthy diet", "Regular exercise", "Avoid smoking", "Manage cholesterol"],
+                medicines: ["Aspirin", "Atorvastatin", "Nitroglycerin", "Beta-blockers"]
+            },
+            {
+                name: "Stroke",
+                symptoms: ["Sudden numbness", "Confusion", "Trouble speaking", "Loss of balance"],
+                precautions: ["Control blood pressure", "Healthy diet", "Exercise", "Avoid smoking"],
+                medicines: ["Aspirin", "Clopidogrel", "Alteplase (for ischemic stroke)", "Statins"]
+            },
+            {
+                name: "Asthma",
+                symptoms: ["Shortness of breath", "Wheezing", "Coughing", "Chest tightness"],
+                precautions: ["Avoid triggers", "Use inhaler", "Regular check-ups", "Maintain clean environment"],
+                medicines: ["Salbutamol inhaler", "Budesonide", "Montelukast"]
+            },
+            {
+                name: "COPD",
+                symptoms: ["Chronic cough", "Shortness of breath", "Wheezing", "Fatigue"],
+                precautions: ["Avoid smoking", "Avoid air pollution", "Regular medication", "Pulmonary rehab"],
+                medicines: ["Tiotropium", "Salbutamol", "Budesonide", "Theophylline"]
+            },
+            {
+                name: "Cancer",
+                symptoms: ["Unexplained weight loss", "Fatigue", "Lumps", "Persistent pain"],
+                precautions: ["Regular screening", "Healthy lifestyle", "Avoid tobacco", "Limit alcohol"],
+                medicines: ["Chemotherapy (varies by cancer type)", "Radiotherapy", "Immunotherapy"]
+            },
+            {
+                name: "Diarrheal Diseases",
+                symptoms: ["Loose stools", "Abdominal cramps", "Dehydration", "Fever"],
+                precautions: ["Drink clean water", "Wash hands", "Eat hygienic food", "Proper sanitation"],
+                medicines: ["ORS (Oral Rehydration Solution)", "Zinc tablets", "Antibiotics (if bacterial)"]
+            },
+            {
+                name: "Leprosy",
+                symptoms: ["Skin lesions", "Numbness", "Muscle weakness", "Eye problems"],
+                precautions: ["Early diagnosis", "Complete treatment", "Avoid close contact", "Personal hygiene"],
+                medicines: ["Dapsone", "Rifampicin", "Clofazimine"]
+            },
+            {
+                name: "Pneumonia",
+                symptoms: ["Cough", "Fever", "Chest pain", "Difficulty breathing"],
+                precautions: ["Vaccination", "Good hygiene", "Avoid smoking", "Treat respiratory infections early"],
+                medicines: ["Amoxicillin", "Azithromycin", "Ceftriaxone"]
+            },
+            {
+                name: "Swine Flu",
+                symptoms: ["Fever", "Cough", "Sore throat", "Body aches"],
+                precautions: ["Vaccination", "Hand hygiene", "Avoid crowded places", "Use mask"],
+                medicines: ["Oseltamivir (Tamiflu)", "Zanamivir"]
+            },
+            {
+                name: "COVID-19",
+                symptoms: ["Fever", "Cough", "Shortness of breath", "Loss of taste/smell"],
+                precautions: ["Wear mask", "Hand hygiene", "Social distancing", "Vaccination"],
+                medicines: ["Paracetamol", "Remdesivir (for severe cases)", "Supportive care"]
+            },
+            // Added Common Health Issues
+            {
+                name: "Bukhar (Fever)",
+                brief: "Fever is a temporary increase in body temperature, often due to an infection. It is a common symptom indicating the body is fighting an illness.",
+                symptoms: [
+                    "High temperature (above 100.4°F/38°C)",
+                    "Chills and shivering",
+                    "Sweating",
+                    "Headache",
+                    "Weakness",
+                    "Loss of appetite"
+                ],
+                precautions: [
+                    "Rest in a cool, comfortable environment",
+                    "Drink plenty of fluids (water, ORS, soup)",
+                    "Wear light clothing",
+                    "Monitor temperature regularly",
+                    "Consult doctor if fever persists more than 3 days or is very high"
+                ],
+                medicines: [
+                    "For Child: Paracetamol syrup (dose as per weight, consult doctor), sponge bath if high fever",
+                    "For Adult: Paracetamol tablets, Ibuprofen (if not allergic), stay hydrated",
+                    "Avoid giving aspirin to children"
+                ]
+            },
+            {
+                name: "Badan Dard (Body Ache)",
+                brief: "Body ache refers to pain or discomfort in muscles and joints, commonly caused by viral infections, overexertion, or stress.",
+                symptoms: [
+                    "Muscle pain or soreness",
+                    "Joint pain",
+                    "Fatigue",
+                    "General discomfort",
+                    "Sometimes mild fever"
+                ],
+                precautions: [
+                    "Take adequate rest",
+                    "Gentle stretching or light massage",
+                    "Stay hydrated",
+                    "Avoid heavy physical activity",
+                    "Warm compress for relief"
+                ],
+                medicines: [
+                    "For Child: Paracetamol syrup (dose as per weight, consult doctor)",
+                    "For Adult: Paracetamol tablets, Ibuprofen, Diclofenac gel (for local pain), warm compress"
+                ]
+            },
+            {
+                name: "Sardi (Cold)",
+                brief: "Common cold is a viral infection of the nose and throat, leading to symptoms like runny nose, sneezing, and mild fever. It usually resolves on its own.",
+                symptoms: [
+                    "Runny or stuffy nose",
+                    "Sneezing",
+                    "Sore throat",
+                    "Mild fever",
+                    "Cough",
+                    "Watery eyes"
+                ],
+                precautions: [
+                    "Avoid cold drinks and ice creams",
+                    "Stay warm and wear appropriate clothing",
+                    "Practice hand hygiene",
+                    "Avoid close contact with infected people",
+                    "Use disposable tissues"
+                ],
+                medicines: [
+                    "For Child: Paracetamol syrup (for fever), saline nasal drops, consult doctor before giving any cough/cold syrup",
+                    "For Adult: Paracetamol tablets, antihistamines (Cetirizine, Levocetirizine), steam inhalation, cough syrup if needed"
+                ]
+            },
+            {
+                name: "Skin & Body Care",
+                brief: "Skin and body care involves maintaining hygiene and protecting the skin from dryness, rashes, and infections. Regular care helps prevent common skin problems.",
+                symptoms: ["Dry skin", "Rashes", "Acne", "Itching"],
+                precautions: ["Keep skin clean", "Moisturize regularly", "Avoid harsh chemicals", "Use sunscreen"],
+                medicines: ["Moisturizing lotion", "Aloe vera gel", "Mild soap", "Sunscreen"]
+            },
+            {
+                name: "Itching / Dinei",
+                symptoms: ["Itching", "Redness", "Rash", "Irritation"],
+                precautions: ["Keep area clean", "Avoid scratching", "Wear loose clothes", "Use mild soap"],
+                medicines: ["Calamine lotion", "Antihistamine tablets", "Hydrocortisone cream"]
+            },
+            // New Sections
+            {
+                name: "Vitiligo",
+                symptoms: ["White patches on skin", "Premature graying of hair", "Loss of skin color"],
+                precautions: ["Protect skin from sun", "Avoid skin trauma", "Use sunscreen", "Manage stress"],
+                medicines: ["Topical corticosteroids", "Tacrolimus ointment", "Phototherapy", "Depigmentation therapy (for extensive cases)"]
+            },
+            {
+                name: "Fat Burn",
+                symptoms: ["Excess body fat", "Low energy", "Difficulty in weight loss"],
+                precautions: ["Balanced diet", "Regular exercise", "Avoid junk food", "Stay hydrated"],
+                medicines: ["Orlistat (under medical supervision)", "Green tea extract (supplement)", "Consult doctor before using any fat burners"]
+            },
+            {
+                name: "Exercise",
+                symptoms: ["Lack of physical activity", "Muscle weakness", "Low stamina"],
+                precautions: ["Warm up before exercise", "Stay hydrated", "Use proper technique", "Do not overexert"],
+                medicines: ["Not applicable. Focus on regular physical activity and healthy lifestyle"]
+            }
+        ];
+
+        // Brief explanations for specific sections
+        const briefExplanations = {
+            20: diseases[20].brief,
+            21: diseases[21].brief,
+            22: diseases[22].brief,
+            23: diseases[23].brief
+        };
+
+        function openModal(index) {
+            const modal = document.getElementById('diseaseModal');
+            const mainContent = document.getElementById('mainContent');
+            
+            // Apply blur to background
+            mainContent.style.filter = 'blur(5px)';
+            mainContent.style.transition = 'filter 0.3s ease';
+            
+            document.getElementById('modalTitle').textContent = diseases[index].name;
+            document.getElementById('modalSymptoms').innerHTML = diseases[index].symptoms.map(s => `<li>${s}</li>`).join('');
+            document.getElementById('modalPrecautions').innerHTML = diseases[index].precautions.map(p => `<li>${p}</li>`).join('');
+            document.getElementById('modalMedicines').innerHTML = diseases[index].medicines.map(m => `<li>${m}</li>`).join('');
+            
+            // Show brief explanation for Fever, Body Ache, Cold, Skin & Body Care
+            if (briefExplanations[index]) {
+                document.getElementById('modalBrief').textContent = briefExplanations[index];
+                document.getElementById('modalBrief').style.display = 'block';
+            } else {
+                document.getElementById('modalBrief').textContent = '';
+                document.getElementById('modalBrief').style.display = 'none';
+            }
+            
+            modal.classList.remove('hidden');
+            
+            // Close modal when clicking outside
+            modal.onclick = function(event) {
+                if (event.target === modal) {
+                    closeModal();
+                }
+            };
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('diseaseModal');
+            const mainContent = document.getElementById('mainContent');
+            
+            // Remove blur from background
+            mainContent.style.filter = 'none';
+            
+            // Add exit animation
+            const modalContent = modal.querySelector('.modal-enter');
+            modalContent.style.animation = 'modalExit 0.3s ease-in';
+            
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modalContent.style.animation = '';
+            }, 300);
+        }
+        
+        // Add exit animation keyframes
+        const exitStyle = document.createElement('style');
+        exitStyle.textContent = `
+            @keyframes modalExit {
+                from {
+                    opacity: 1;
+                    transform: scale(1);
+                }
+                to {
+                    opacity: 0;
+                    transform: scale(0.8);
+                }
+            }
+        `;
+        document.head.appendChild(exitStyle);
+        
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                const modal = document.getElementById('diseaseModal');
+                if (!modal.classList.contains('hidden')) {
+                    closeModal();
+                }
+            }
+        });
+    </script>
 
 </body>
 </html>

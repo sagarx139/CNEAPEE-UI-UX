@@ -64,9 +64,51 @@
                 <a href="index.html" class="px-8 py-3 bg-white/10 border border-purple-400 text-purple-200 rounded-full shadow-lg hover:bg-purple-700/40 hover:text-white transition-all duration-200 font-bold glass">
                     Chat with CNEAPEE AI
                 </a>
-                <a href="" class="px-8 py-3 bg-gray-800/60 border border-gray-700 text-gray-200 rounded-full shadow-lg hover:bg-gray-700/80 transition-all duration-200 font-bold glass">
+                <a href="#" id="logout-btn" class="px-8 py-3 bg-gray-800/60 border border-gray-700 text-gray-200 rounded-full shadow-lg hover:bg-gray-700/80 transition-all duration-200 font-bold glass">
                     Logout
                 </a>
+                <!-- Logout Popup -->
+                <div id="logout-popup" class="fixed inset-0 flex items-center justify-center bg-black/40 z-50 hidden">
+                    <div class="glass p-8 rounded-2xl shadow-2xl flex flex-col items-center">
+                        <span class="text-2xl font-bold text-purple-200 mb-2">Logout</span>
+                        <p class="text-gray-200 mb-4 text-center">You have logged out.<br>All edits are locked until launch.</p>
+                        <div class="loader mt-2"></div>
+                    </div>
+                </div>
+                <script>
+                    const logoutBtn = document.getElementById('logout-btn');
+                    const popup = document.getElementById('logout-popup');
+                    let popupActive = false;
+
+                    logoutBtn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        if (popupActive) return;
+                        popup.classList.remove('hidden');
+                        popupActive = true;
+                        // Lock all inputs/buttons
+                        document.querySelectorAll('input, button, textarea, a').forEach(el => {
+                            if (el !== logoutBtn) el.setAttribute('tabindex', '-1');
+                        });
+                        setTimeout(() => {
+                            popup.classList.add('hidden');
+                            popupActive = false;
+                        }, 5000);
+                    });
+                </script>
+                <style>
+                    .loader {
+                        border: 4px solid #ddd;
+                        border-top: 4px solid #a78bfa;
+                        border-radius: 50%;
+                        width: 32px;
+                        height: 32px;
+                        animation: spin 1s linear infinite;
+                    }
+                    @keyframes spin {
+                        0% { transform: rotate(0deg);}
+                        100% { transform: rotate(360deg);}
+                    }
+                </style>
             </div>
             <!-- Profile Stats -->
             <div class="mt-10 grid grid-cols-1 sm:grid-cols-3 gap-6 w-full">

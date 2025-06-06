@@ -1,17 +1,113 @@
-
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>sale</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>News Room</title>
 
   <!-- ✅ Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5733699332666340"
-     crossorigin="anonymous"></script>
+    crossorigin="anonymous"></script>
 </head>
-<body class="bg-gray-100 flex items-center justify-center min-h-screen" style="background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(235, 52, 52, 0.74)), linear-gradient(90deg, #66a587ec, #333e77);">
 
+<body class="bg-gradient-to-br from-black to-gray-600 min-h-screen flex items-center justify-center"></body>
+  <div class="relative w-full max-w-6xl mx-auto p-6 flex flex-col items-center">
+    <div
+      class="bg-white/20 backdrop-blur-2xl border border-white/30 rounded-3xl shadow-2xl w-full px-8 py-10 md:py-14 md:px-12"
+      style="box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);">
+      <h1 class="text-3xl font-bold text-white mb-2 text-center drop-shadow-lg">
+        News Room Powered by CNEAPEE AI
+      </h1>
+      <div class="flex justify-center mb-8">
+        <span id="neuro-badge"
+          class="bg-gray-900 text-green-300 text-xs font-semibold px-3 py-1 rounded-full border border-green-400 shadow cursor-pointer">
+          Neuro 1.1 Elite
+        </span>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="newsGrid">
+        <!-- News articles will be injected here by JavaScript -->
+      </div>
+    </div>
+    <!-- Popup Banner for displaying the full article -->
+    <div id="articleBanner" class="fixed inset-0 flex items-center justify-center z-50" style="display: none;">
+      <div id="bannerBackdrop" class="absolute inset-0 bg-black/30 backdrop-blur-md transition-all duration-200"
+        onclick="closeBanner()"></div>
+      <div
+        class="relative max-w-lg w-full rounded-2xl shadow-2xl p-8 z-10 bg-white/30 backdrop-blur-xl border border-white/40"
+        style="box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);">
+        <h2 id="bannerTitle" class="text-2xl font-bold mb-4 text-gray-900"></h2>
+        <div id="bannerContent" class="text-gray-800 mb-6"></div>
+        <button onclick="closeBanner()"
+          class="bg-gray-700 text-white py-2 px-6 rounded-lg hover:bg-gray-900 transition">Close</button>
+      </div>
+    </div>
+  </div>
+  <script>
+    const fullArticles = [
+      // Tech News
+      { title: "AI Revolutionizes Search Engines", content: "Major tech companies are integrating generative AI into their search platforms, promising smarter and more contextual results. This move is expected to change how users interact with information online, making searches more intuitive and personalized." },
+      { title: "Quantum Computing Breakthrough", content: "Researchers announce a new quantum processor that could accelerate cryptography and complex simulations. This breakthrough brings us closer to practical quantum computing applications in various industries." },
+      { title: "Electric Vehicles See Record Sales", content: "Global EV sales hit an all-time high as more countries push for greener transportation solutions. Automakers are investing heavily in battery technology and charging infrastructure." },
+      { title: "5G Networks Expand Globally", content: "Telecom companies are rapidly rolling out 5G networks, enabling faster connectivity and new applications in IoT and smart cities." },
+      { title: "Cybersecurity Threats on the Rise", content: "A surge in ransomware and phishing attacks prompts organizations to invest more in cybersecurity solutions and employee training." },
+      { title: "Tech Giants Invest in Green Energy", content: "Leading technology firms commit to renewable energy projects to reduce their carbon footprint and promote sustainability." },
+      { title: "Breakthrough in Battery Technology", content: "Scientists develop a new battery with higher capacity and faster charging, potentially revolutionizing portable electronics and EVs." },
+      { title: "Wearable Devices Gain Popularity", content: "Smartwatches and fitness trackers see increased adoption as consumers focus on health and wellness." },
+      { title: "Cloud Computing Adoption Soars", content: "Businesses accelerate their migration to cloud platforms for scalability, security, and cost savings." },
+      // Politics News
+      { title: "Global Leaders Meet for Climate Summit", content: "World leaders gather to discuss urgent climate action and new international agreements. The summit aims to address carbon emissions and promote sustainable development." },
+      { title: "Election Results Announced", content: "The latest national election results are in, with major shifts in parliamentary seats. Political analysts predict significant policy changes in the coming months." },
+      { title: "New Policy on Data Privacy", content: "Governments introduce stricter data privacy laws to protect citizens in the digital age. Companies are now required to be more transparent about data collection and usage." },
+      { title: "International Trade Talks Resume", content: "Countries return to the negotiating table to resolve trade disputes and foster economic cooperation." },
+      { title: "Major Cabinet Reshuffle", content: "The government announces a major reshuffle, appointing new ministers to key portfolios." },
+      { title: "Protests Erupt Over Policy Changes", content: "Citizens take to the streets in response to controversial policy reforms, demanding government action." },
+      { title: "Diplomatic Relations Restored", content: "Two neighboring countries restore diplomatic ties after years of tension, opening new avenues for collaboration." },
+      { title: "Parliament Passes Landmark Bill", content: "A landmark bill is passed, aiming to improve social welfare and economic growth." },
+      { title: "Supreme Court Issues Historic Ruling", content: "The Supreme Court delivers a historic verdict, setting a new legal precedent." },
+      // Indian GDP Growth News
+      { title: "India's GDP Grows 8.2% in FY24", content: "India's economy posts robust growth, driven by manufacturing and services sectors, according to official data. Experts believe this trend will continue with ongoing reforms." },
+      { title: "IMF Raises India's Growth Forecast", content: "The IMF revises India's GDP growth forecast upwards, citing strong domestic demand and investment. This positions India as one of the fastest-growing major economies." },
+      { title: "Exports Boost Indian Economy", content: "A surge in exports and FDI inflows contribute to India's impressive GDP numbers this quarter. The government is focusing on trade agreements to sustain this momentum." },
+      { title: "Inflation Remains Under Control", content: "Despite global uncertainties, India's inflation rate remains within the central bank's target range." },
+      { title: "Manufacturing Sector Expands", content: "India's manufacturing sector records significant expansion, supported by government incentives and rising demand." },
+      { title: "Services Sector Drives Growth", content: "The services sector continues to be a major contributor to India's GDP, with IT and finance leading the way." },
+      { title: "Rural Economy Shows Resilience", content: "Strong agricultural output and rural spending help stabilize the Indian economy amid global headwinds." },
+      { title: "FDI Inflows Hit Record High", content: "Foreign direct investment into India reaches a new peak, reflecting investor confidence in the country's growth prospects." },
+      { title: "Government Launches New Reforms", content: "The government unveils a series of economic reforms aimed at boosting investment and job creation." },
+      // General News
+      { title: "Global Oil Prices Fluctuate", content: "Volatility in global oil markets impacts fuel prices and inflation across several countries." },
+      { title: "Space Mission Achieves Milestone", content: "A national space agency successfully launches a new satellite, marking a significant achievement in space exploration." },
+      { title: "Breakthrough in Cancer Research", content: "Scientists announce a promising new treatment for cancer, offering hope to millions of patients worldwide." },
+      { title: "Education Sector Embraces Digital", content: "Schools and universities increasingly adopt digital tools and online learning platforms." },
+      { title: "Tourism Industry Recovers", content: "The tourism sector shows signs of recovery as travel restrictions ease and demand rebounds." },
+      { title: "Sports Event Draws Global Audience", content: "A major international sports event captivates viewers and boosts local economies." }
+    ];
+
+    // Render articles
+    const newsGrid = document.getElementById('newsGrid');
+    fullArticles.forEach((article, idx) => {
+      const div = document.createElement('div');
+      div.className = "bg-white/40 rounded-xl shadow-lg overflow-hidden backdrop-blur-md cursor-pointer p-5 transition hover:bg-white/60 border border-white/30";
+      div.innerHTML = `
+        <h2 class="text-lg font-semibold mb-2 text-gray-900">${article.title}</h2>
+        <p class="text-gray-700">${article.content.substring(0, 80)}${article.content.length > 80 ? '...' : ''}</p>
+      `;
+      div.addEventListener('click', () => showArticle(article.title, article.content));
+      newsGrid.appendChild(div);
+    });
+
+    function showArticle(title, content) {
+      document.getElementById('articleBanner').style.display = 'flex';
+      document.getElementById('bannerTitle').innerText = title;
+      document.getElementById('bannerContent').innerText = content;
+      document.body.classList.add('overflow-hidden');
+    }
+
+    function closeBanner() {
+      document.getElementById('articleBanner').style.display = 'none';
+      document.body.classList.remove('overflow-hidden');
+    }
+  </script>
 </body>
-</html>

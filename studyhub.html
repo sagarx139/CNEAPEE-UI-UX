@@ -2,14 +2,446 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Electronics</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Study Hub Neuro 1.1</title>
 
-  <!-- ✅ Tailwind CSS CDN -->
+  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+
+  <!-- AdSense -->
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5733699332666340"
-     crossorigin="anonymous"></script>
+    crossorigin="anonymous"></script>
+
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      /* Animated tsunami wave gradient */
+      background: linear-gradient(120deg, #d1d5db, #502abb, #0f172a, #8f3c8f, #8d6159, #d1d5db);
+      background-size: 400% 400%;
+      animation: tsunami-gradient 12s ease-in-out infinite;
+      color: #e5e7eb;
+    }
+
+    @keyframes tsunami-gradient {
+      0% {
+        background-position: 0% 50%;
+      }
+      25% {
+        background-position: 50% 100%;
+      }
+      50% {
+        background-position: 100% 50%;
+      }
+      75% {
+        background-position: 50% 0%;
+      }
+      100% {
+        background-position: 0% 50%;
+      }
+    }
+
+    .navbar {
+      background: rgba(15, 23, 42, 0.7);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    .nav-link {
+      color: #cbd5e1;
+      transition: color 0.3s ease;
+    }
+
+    .nav-link:hover {
+      color: #60a5fa;
+    }
+
+    .glass-card {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      transition: all 0.3s ease-in-out;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    }
+
+    .glass-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.5);
+    }
+
+    .course-item {
+      transition: all 0.3s ease-in-out;
+      cursor: pointer;
+    }
+
+    .course-item:hover {
+      background-color: rgba(59, 130, 246, 0.2);
+      color: #3b82f6;
+      border-radius: 0.5rem;
+      padding: 0.5rem;
+    }
+
+    .btn {
+      padding-left: 1rem;
+      padding-right: 1rem;
+      padding-top: 0.5rem;
+      padding-bottom: 0.5rem;
+      border-radius: 0.25rem;
+      color: #fff;
+      background-color: #2563eb;
+      transition: background-color 0.2s;
+    }
+    .btn:hover {
+      background-color: #1d4ed8;
+    }
+  </style>
 </head>
+
+<body class="min-h-screen flex flex-col">
+  <!-- Navigation -->
+  <nav class="navbar fixed top-0 w-full z-50 py-4 px-6">
+    <div class="max-w-7xl mx-auto flex justify-between items-center">
+      <h1 class="text-2xl md:text-3xl font-bold text-white flex items-center gap-3">
+        Study Hub
+        <span id="neuro-badge" class="hidden sm:inline bg-gray-900 text-green-300 text-xs font-semibold px-3 py-1 rounded-full border border-green-400 shadow cursor-pointer">
+          Neuro 1.1 Elite
+        </span>
+      </h1>
+      <div class="space-x-6">
+        <a href="/" class="nav-link font-medium text-base">Home</a>
+        <a href="#school-courses" class="nav-link font-medium text-base">School Courses</a>
+        <a href="#core-subjects" class="nav-link font-medium text-base">Core Subjects</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main -->
+  <main class="max-w-7xl mx-auto pt-28 pb-16 px-4 space-y-16">
+    <!-- School Courses -->
+    <section id="school-courses">
+      <h2 class="text-3xl font-bold mb-6 text-blue-400">School Courses</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <!-- Class Cards -->
+        <div class="glass-card rounded-xl p-6">
+          <h3 class="text-xl font-semibold mb-3 text-blue-300">Class 9th</h3>
+          <ul class="space-y-2 text-gray-300">
+            <li class="course-item">Mathematics</li>
+            <li class="course-item">Science</li>
+            <li class="course-item">Social Studies</li>
+          </ul>
+        </div>
+        <div class="glass-card rounded-xl p-6">
+          <h3 class="text-xl font-semibold mb-3 text-blue-300">Class 10th</h3>
+          <ul class="space-y-2 text-gray-300">
+            <li class="course-item">Mathematics</li>
+            <li class="course-item">Science</li>
+            <li class="course-item">Social Studies</li>
+          </ul>
+        </div>
+        <div class="glass-card rounded-xl p-6">
+          <h3 class="text-xl font-semibold mb-3 text-blue-300">Class 11th</h3>
+          <ul class="space-y-2 text-gray-300">
+            <li class="course-item">Physics</li>
+            <li class="course-item">Chemistry</li>
+            <li class="course-item">Maths/Biology</li>
+          </ul>
+        </div>
+        <div class="glass-card rounded-xl p-6">
+          <h3 class="text-xl font-semibold mb-3 text-blue-300">Class 12th</h3>
+          <ul class="space-y-2 text-gray-300">
+            <li class="course-item">Physics</li>
+            <li class="course-item">Chemistry</li>
+            <li class="course-item">Maths/Biology</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Core Subjects -->
+    <section id="core-subjects">
+      <h2 class="text-3xl font-bold mb-6 text-blue-400">Core Subjects</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- B.Tech -->
+      <div class="glass-card rounded-xl p-6 flex flex-col">
+        <h3 class="text-xl font-semibold mb-3 text-blue-300">Engineering (B.Tech)</h3>
+        <ul class="space-y-2 text-gray-300 overflow-hidden" id="eng-subjects" style="max-height: 220px; transition: max-height 0.4s;">
+        <li class="course-item">Engineering Mathematics</li>
+        <li class="course-item">Engineering Physics</li>
+        <li class="course-item">Engineering Chemistry</li>
+        <li class="course-item">Computer Programming</li>
+        <li class="course-item">Basic Electrical Engineering</li>
+        <li class="course-item">Engineering Mechanics</li>
+        <li class="course-item hidden">Thermodynamics</li>
+        <li class="course-item hidden">Fluid Mechanics</li>
+        <li class="course-item hidden">Strength of Materials</li>
+        <li class="course-item hidden">Electronics Engineering</li>
+        <li class="course-item hidden">Signals and Systems</li>
+        <li class="course-item hidden">Control Systems</li>
+        <li class="course-item hidden">Digital Logic Design</li>
+        <li class="course-item hidden">Data Structures</li>
+        <li class="course-item hidden">Operating Systems</li>
+        <li class="course-item hidden">Database Management Systems</li>
+        <li class="course-item hidden">Software Engineering</li>
+        <li class="course-item hidden">Computer Networks</li>
+        <li class="course-item hidden">Compiler Design</li>
+        <li class="course-item hidden">Discrete Mathematics</li>
+        <li class="course-item hidden">Machine Design</li>
+        <li class="course-item hidden">Heat Transfer</li>
+        <li class="course-item hidden">Power Systems</li>
+        <li class="course-item hidden">Electrical Machines</li>
+        <li class="course-item hidden">Microprocessors</li>
+        <li class="course-item hidden">Embedded Systems</li>
+        <li class="course-item hidden">VLSI Design</li>
+        <li class="course-item hidden">Communication Systems</li>
+        <li class="course-item hidden">Environmental Engineering</li>
+        <li class="course-item hidden">Structural Analysis</li>
+        <li class="course-item hidden">Geotechnical Engineering</li>
+        <li class="course-item hidden">Transportation Engineering</li>
+        <li class="course-item hidden">Surveying</li>
+        <li class="course-item hidden">Hydraulics</li>
+        <li class="course-item hidden">Production Engineering</li>
+        <li class="course-item hidden">Industrial Engineering</li>
+        <li class="course-item hidden">Robotics</li>
+        <li class="course-item hidden">Artificial Intelligence</li>
+        <li class="course-item hidden">Machine Learning</li>
+        <li class="course-item hidden">Internet of Things (IoT)</li>
+        <li class="course-item hidden">Cyber Security</li>
+        </ul>
+        <button id="eng-view-all" class="btn mt-4">View All</button>
+      </div>
+
+      <!-- Medical -->
+      <div class="glass-card rounded-xl p-6 flex flex-col">
+        <h3 class="text-xl font-semibold mb-3 text-blue-300">Medical</h3>
+        <ul class="space-y-2 text-gray-300 overflow-hidden" id="med-subjects" style="max-height: 220px; transition: max-height 0.4s;">
+        <li class="course-item">Human Anatomy</li>
+        <li class="course-item">Physiology</li>
+        <li class="course-item">Biochemistry</li>
+        <li class="course-item">Pharmacology</li>
+        <li class="course-item">Pathology</li>
+        <li class="course-item">Microbiology</li>
+        <li class="course-item hidden">Forensic Medicine</li>
+        <li class="course-item hidden">Community Medicine</li>
+        <li class="course-item hidden">Ophthalmology</li>
+        <li class="course-item hidden">Otorhinolaryngology (ENT)</li>
+        <li class="course-item hidden">General Medicine</li>
+        <li class="course-item hidden">General Surgery</li>
+        <li class="course-item hidden">Obstetrics and Gynaecology</li>
+        <li class="course-item hidden">Pediatrics</li>
+        <li class="course-item hidden">Orthopaedics</li>
+        <li class="course-item hidden">Dermatology</li>
+        <li class="course-item hidden">Psychiatry</li>
+        <li class="course-item hidden">Radiology</li>
+        <li class="course-item hidden">Anaesthesiology</li>
+        <li class="course-item hidden">Dentistry</li>
+        <li class="course-item hidden">Physical Medicine & Rehabilitation</li>
+        <li class="course-item hidden">Emergency Medicine</li>
+        <li class="course-item hidden">Nuclear Medicine</li>
+        <li class="course-item hidden">Cardiology</li>
+        <li class="course-item hidden">Neurology</li>
+        <li class="course-item hidden">Nephrology</li>
+        <li class="course-item hidden">Endocrinology</li>
+        <li class="course-item hidden">Gastroenterology</li>
+        <li class="course-item hidden">Oncology</li>
+        <li class="course-item hidden">Pulmonology</li>
+        <li class="course-item hidden">Urology</li>
+        <li class="course-item hidden">Plastic Surgery</li>
+        <li class="course-item hidden">Cardiothoracic Surgery</li>
+        <li class="course-item hidden">Neurosurgery</li>
+        <li class="course-item hidden">Paediatric Surgery</li>
+        <li class="course-item hidden">Geriatrics</li>
+        <li class="course-item hidden">Immunology</li>
+        <li class="course-item hidden">Genetics</li>
+        <li class="course-item hidden">Transfusion Medicine</li>
+        <li class="course-item hidden">Tropical Medicine</li>
+        </ul>
+        <button id="med-view-all" class="btn mt-4">View All</button>
+      </div>
+
+              <!-- BBA -->
+        <div class="glass-card rounded-xl p-6 flex flex-col">
+          <h3 class="text-xl font-semibold mb-3 text-blue-300">BBA</h3>
+          <ul class="space-y-2 text-gray-300 overflow-hidden" id="bba-subjects" style="max-height: 220px; transition: max-height 0.4s;">
+            <li class="course-item">Principles of Management</li>
+            <li class="course-item">Business Economics</li>
+            <li class="course-item">Financial Accounting</li>
+            <li class="course-item">Business Communication</li>
+            <li class="course-item">Marketing Management</li>
+            <li class="course-item">Human Resource Management</li>
+            <li class="course-item hidden">Business Law</li>
+            <li class="course-item hidden">Organizational Behaviour</li>
+            <li class="course-item hidden">Business Mathematics</li>
+            <li class="course-item hidden">Business Statistics</li>
+            <li class="course-item hidden">Operations Management</li>
+            <li class="course-item hidden">Financial Management</li>
+            <li class="course-item hidden">Entrepreneurship Development</li>
+            <li class="course-item hidden">International Business</li>
+            <li class="course-item hidden">Management Information Systems</li>
+            <li class="course-item hidden">Production Management</li>
+            <li class="course-item hidden">Research Methodology</li>
+            <li class="course-item hidden">Strategic Management</li>
+            <li class="course-item hidden">Project Management</li>
+            <li class="course-item hidden">Business Ethics & Corporate Governance</li>
+          </ul>
+          <button id="bba-view-all" class="btn mt-4">View All</button>
+        </div>
+
+        <!-- BCA -->
+        <div class="glass-card rounded-xl p-6 flex flex-col">
+          <h3 class="text-xl font-semibold mb-3 text-blue-300">BCA</h3>
+          <ul class="space-y-2 text-gray-300 overflow-hidden" id="bca-subjects" style="max-height: 220px; transition: max-height 0.4s;">
+            <li class="course-item">Programming in C</li>
+            <li class="course-item">Mathematics</li>
+            <li class="course-item">Computer Fundamentals</li>
+            <li class="course-item">Database Management Systems</li>
+            <li class="course-item">Data Structures</li>
+            <li class="course-item">Operating Systems</li>
+            <li class="course-item hidden">Object Oriented Programming (C++)</li>
+            <li class="course-item hidden">Web Technologies</li>
+            <li class="course-item hidden">Software Engineering</li>
+            <li class="course-item hidden">Computer Networks</li>
+            <li class="course-item hidden">Java Programming</li>
+            <li class="course-item hidden">Discrete Mathematics</li>
+            <li class="course-item hidden">Visual Programming</li>
+            <li class="course-item hidden">Microprocessor</li>
+            <li class="course-item hidden">Numerical Methods</li>
+            <li class="course-item hidden">Multimedia Systems</li>
+            <li class="course-item hidden">Mobile Application Development</li>
+            <li class="course-item hidden">Python Programming</li>
+            <li class="course-item hidden">Cloud Computing</li>
+            <li class="course-item hidden">Cyber Security</li>
+          </ul>
+          <button id="bca-view-all" class="btn mt-4">View All</button>
+        </div>
+
+                <!-- UPSC -->
+        <div class="glass-card rounded-xl p-6">
+          <h3 class="text-xl font-semibold mb-3 text-blue-300">Civil Services</h3>
+          <ul class="space-y-2 text-gray-300 overflow-hidden" id="upsc-subjects" style="max-height: 220px; transition: max-height 0.4s;">
+            <li class="course-item">Polity</li>
+            <li class="course-item">Economy</li>
+            <li class="course-item">Geography</li>
+            <li class="course-item">Current Affairs</li>
+            <li class="course-item">History</li>
+            <li class="course-item">Environment & Ecology</li>
+            <li class="course-item hidden">Science & Technology</li>
+            <li class="course-item hidden">International Relations</li>
+            <li class="course-item hidden">Ethics, Integrity & Aptitude</li>
+            <li class="course-item hidden">Governance</li>
+            <li class="course-item hidden">Social Justice</li>
+            <li class="course-item hidden">Indian Society</li>
+            <li class="course-item hidden">Art & Culture</li>
+            <li class="course-item hidden">Disaster Management</li>
+            <li class="course-item hidden">Internal Security</li>
+            <li class="course-item hidden">Indian Constitution</li>
+            <li class="course-item hidden">Public Administration</li>
+            <li class="course-item hidden">General Science</li>
+            <li class="course-item hidden">Logical Reasoning & Analytical Ability</li>
+            <li class="course-item hidden">Decision Making & Problem Solving</li>
+            <li class="course-item hidden">Comprehension</li>
+            <li class="course-item hidden">Interpersonal Skills</li>
+            <li class="course-item hidden">Essay</li>
+            <li class="course-item hidden">Optional Subjects</li>
+          </ul>
+          <button id="upsc-view-all" class="btn mt-4">View All</button>
+        </div>
+
+     <!-- Banner Modal -->
+<div id="subject-banner" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 hidden px-4">
+  <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-3xl w-full relative overflow-hidden">
+    <!-- Close Button -->
+    <button id="close-banner" class="absolute top-4 right-4 text-gray-600 hover:text-red-600 text-3xl font-bold transition duration-200">&times;</button>
+    
+    <!-- Title -->
+    <h3 id="banner-title" class="text-3xl font-semibold text-blue-700 mb-6 text-center tracking-wide border-b pb-2">Subject Title</h3>
+    
+    <!-- Subject Grid -->
+    <div id="banner-list" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 max-h-[400px] overflow-y-auto pr-2">
+      <!-- Dynamic subject items will be injected here -->
+    </div>
+  </div>
+</div>
+
+
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="w-full py-4 text-center text-gray-400 bg-black/30 mt-auto">
+    <p>&copy; 2025 CNEAPEE. All rights reserved.</p>
+  </footer>
+
+  <!-- Scripts -->
+  <script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const banner = document.getElementById('subject-banner');
+    const bannerTitle = document.getElementById('banner-title');
+    const bannerList = document.getElementById('banner-list');
+    const closeBannerBtn = document.getElementById('close-banner');
+
+    function showBanner(title, allItems) {
+      bannerTitle.textContent = title;
+      bannerList.innerHTML = '';
+      allItems.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'bg-blue-50 border border-blue-100 text-blue-900 font-medium p-3 rounded-lg shadow-sm hover:bg-blue-100 transition-all';
+        div.textContent = item.textContent;
+        bannerList.appendChild(div);
+      });
+      banner.classList.remove('hidden');
+    }
+
+    // Engineering View All
+    const engViewAll = document.getElementById('eng-view-all');
+    engViewAll.addEventListener('click', () => {
+      const allItems = Array.from(document.querySelectorAll('#eng-subjects .course-item'));
+      showBanner('Engineering Subjects', allItems);
+    });
+
+    // Medical View All
+    const medViewAll = document.getElementById('med-view-all');
+    medViewAll.addEventListener('click', () => {
+      const allItems = Array.from(document.querySelectorAll('#med-subjects .course-item'));
+      showBanner('Medical Subjects', allItems);
+    });
+
+    // BBA View All
+    const bbaViewAll = document.getElementById('bba-view-all');
+    bbaViewAll.addEventListener('click', () => {
+      const allItems = Array.from(document.querySelectorAll('#bba-subjects .course-item'));
+      showBanner('BBA Subjects', allItems);
+    });
+
+    // BCA View All
+    const bcaViewAll = document.getElementById('bca-view-all');
+    bcaViewAll.addEventListener('click', () => {
+      const allItems = Array.from(document.querySelectorAll('#bca-subjects .course-item'));
+      showBanner('BCA Subjects', allItems);
+    });
+
+    // UPSC View All (shows all)
+    const upscViewAll = document.getElementById('upsc-view-all');
+    upscViewAll.addEventListener('click', () => {
+      const allItems = Array.from(document.querySelectorAll('#upsc-subjects .course-item'));
+      showBanner('UPSC Subjects', allItems);
+    });
+
+    // Close banner
+    closeBannerBtn.addEventListener('click', () => {
+      banner.classList.add('hidden');
+    });
+
+    // Optional: Hide on outside click
+    banner.addEventListener('click', (e) => {
+      if (e.target === banner) banner.classList.add('hidden');
+    });
+  });
+</script>
 
 </body>
 </html>
