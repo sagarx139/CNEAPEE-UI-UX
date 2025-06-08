@@ -15,99 +15,216 @@
   <!-- AdSense -->
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5733699332666340"
     crossorigin="anonymous"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
-  <style>
-    body {
-      font-family: 'Inter', sans-serif;
-      /* Animated tsunami wave gradient */
-      background: linear-gradient(120deg, #d1d5db, #502abb, #0f172a, #8f3c8f, #8d6159, #d1d5db);
-      background-size: 400% 400%;
-      animation: tsunami-gradient 12s ease-in-out infinite;
-      color: #e5e7eb;
-    }
+body {
+  background-color: #000000;
+  background-attachment: fixed;
+  font-family: 'Inter', sans-serif;
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  margin: 0;
+  padding: 0;
+  color: #ffffff;
+  overflow-x: hidden;
+}
 
-    @keyframes tsunami-gradient {
-      0% {
-        background-position: 0% 50%;
-      }
-      25% {
-        background-position: 50% 100%;
-      }
-      50% {
-        background-position: 100% 50%;
-      }
-      75% {
-        background-position: 50% 0%;
-      }
-      100% {
-        background-position: 0% 50%;
-      }
-    }
+/* Enhanced Particle Background */
+.particles {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: -1;
+  overflow: hidden;
+}
 
-    .navbar {
-      background: rgba(15, 23, 42, 0.7);
-      backdrop-filter: blur(14px);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
-    }
+.particle {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+}
 
-    .nav-link {
-      color: #cbd5e1;
-      transition: color 0.3s ease;
-    }
+/* Different particle sizes and animations */
+.particle-small {
+  width: 2px;
+  height: 2px;
+  background: #3b82f6;
+  animation: floatUp 12s infinite linear;
+}
 
-    .nav-link:hover {
-      color: #60a5fa;
-    }
+.particle-medium {
+  width: 4px;
+  height: 4px;
+  background: #1d4ed8;
+  animation: floatUp 15s infinite linear;
+}
 
-    .glass-card {
-      background: rgba(255, 255, 255, 0.05);
-      backdrop-filter: blur(14px);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      transition: all 0.3s ease-in-out;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-    }
+.particle-large {
+  width: 6px;
+  height: 6px;
+  background: #60a5fa;
+  animation: floatUp 18s infinite linear;
+}
 
-    .glass-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.5);
-    }
+.particle-glow {
+  width: 3px;
+  height: 3px;
+  background: #3b82f6;
+  box-shadow: 0 0 10px #3b82f6, 0 0 20px #3b82f6;
+  animation: floatDiagonal 20s infinite linear;
+}
 
-    .course-item {
-      transition: all 0.3s ease-in-out;
-      cursor: pointer;
-    }
+@keyframes floatUp {
+  0% {
+    transform: translateY(100vh) translateX(0) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-10vh) translateX(50px) rotate(360deg);
+    opacity: 0;
+  }
+}
 
-    .course-item:hover {
-      background-color: rgba(59, 130, 246, 0.2);
-      color: #3b82f6;
-      border-radius: 0.5rem;
-      padding: 0.5rem;
-    }
+@keyframes floatDiagonal {
+  0% {
+    transform: translateY(100vh) translateX(-50px) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.8;
+  }
+  90% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateY(-10vh) translateX(100px) rotate(-180deg);
+    opacity: 0;
+  }
+}
 
-    .btn {
-      padding-left: 1rem;
-      padding-right: 1rem;
-      padding-top: 0.5rem;
-      padding-bottom: 0.5rem;
-      border-radius: 0.25rem;
-      color: #fff;
-      background-color: #2563eb;
-      transition: background-color 0.2s;
-    }
-    .btn:hover {
-      background-color: #1d4ed8;
-    }
-  </style>
+/* Slide in Animation */
+@keyframes slideInDown {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Navbar Styling */
+.navbar {
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(59, 130, 246, 0.2);
+  box-shadow: 0 1px 4px rgba(59, 130, 246, 0.1);
+}
+
+/* Navigation Links */
+.nav-link {
+  color: #cbd5e1;
+  transition: color 0.3s ease;
+}
+
+.nav-link:hover {
+  color: #60a5fa;
+}
+
+/* Glass Effect Cards */
+.glass-card {
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  box-shadow: 0 10px 25px rgba(59, 130, 246, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.glass-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 35px rgba(59, 130, 246, 0.2);
+  border-color: rgba(59, 130, 246, 0.5);
+}
+
+/* Course Items */
+.course-item {
+  transition: all 0.3s ease-in-out;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 0.25rem;
+}
+
+.course-item:hover {
+  background-color: rgba(59, 130, 246, 0.2);
+  color: #60a5fa;
+  transform: translateX(5px);
+}
+
+/* Button Styling */
+.btn {
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  color: #ffffff;
+  background: linear-gradient(135deg, #1d4ed8, #3b82f6);
+  transition: all 0.3s ease;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  font-weight: 600;
+}
+
+.btn:hover {
+  background: linear-gradient(135deg, #1e40af, #2563eb);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
+}
+
+/* Footer */
+.footer {
+  background: rgba(0, 0, 0, 0.9);
+  border-top: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+/* Modal Styling */
+.modal-content {
+  background: linear-gradient(145deg, #000000, #0f172a);
+  border: 2px solid rgba(59, 130, 246, 0.3);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.8);
+}
+
+.modal-item {
+  background: rgba(59, 130, 246, 0.1);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  color: #e2e8f0;
+  transition: all 0.3s ease;
+}
+
+.modal-item:hover {
+  background: rgba(59, 130, 246, 0.2);
+  color: #60a5fa;
+  transform: translateY(-2px);
+}
+</style>
 </head>
 
 <body class="min-h-screen flex flex-col">
+  <!-- Particle Background -->
+  <div class="particles" id="particles-container"></div>
+
   <!-- Navigation -->
   <nav class="navbar fixed top-0 w-full z-50 py-4 px-6">
     <div class="max-w-7xl mx-auto flex justify-between items-center">
       <h1 class="text-2xl md:text-3xl font-bold text-white flex items-center gap-3">
         Study Hub
-        <span id="neuro-badge" class="hidden sm:inline bg-gray-900 text-green-300 text-xs font-semibold px-3 py-1 rounded-full border border-green-400 shadow cursor-pointer">
+        <span id="neuro-badge" class="hidden sm:inline bg-black text-blue-300 text-xs font-semibold px-3 py-1 rounded-full border border-blue-400 shadow cursor-pointer">
           Neuro 1.1 Elite
         </span>
       </h1>
@@ -351,13 +468,13 @@
         </div>
 
      <!-- Banner Modal -->
-<div id="subject-banner" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 hidden px-4">
-  <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-3xl w-full relative overflow-hidden">
+<div id="subject-banner" class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 hidden px-4">
+  <div class="modal-content rounded-2xl shadow-2xl p-8 max-w-3xl w-full relative overflow-hidden">
     <!-- Close Button -->
-    <button id="close-banner" class="absolute top-4 right-4 text-gray-600 hover:text-red-600 text-3xl font-bold transition duration-200">&times;</button>
+    <button id="close-banner" class="absolute top-4 right-4 text-gray-400 hover:text-blue-400 text-3xl font-bold transition duration-200">&times;</button>
     
     <!-- Title -->
-    <h3 id="banner-title" class="text-3xl font-semibold text-blue-700 mb-6 text-center tracking-wide border-b pb-2">Subject Title</h3>
+    <h3 id="banner-title" class="text-3xl font-semibold text-blue-400 mb-6 text-center tracking-wide border-b border-blue-800 pb-2">Subject Title</h3>
     
     <!-- Subject Grid -->
     <div id="banner-list" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 max-h-[400px] overflow-y-auto pr-2">
@@ -373,13 +490,54 @@
   </main>
 
   <!-- Footer -->
-  <footer class="w-full py-4 text-center text-gray-400 bg-black/30 mt-auto">
+  <footer class="footer w-full py-4 text-center text-gray-400 mt-auto">
     <p>&copy; 2025 CNEAPEE. All rights reserved.</p>
   </footer>
 
   <!-- Scripts -->
   <script>
+  // Particle Animation System
+  function createParticles() {
+    const container = document.getElementById('particles-container');
+    const particleCount = 50;
+    
+    function createParticle() {
+      const particle = document.createElement('div');
+      particle.className = 'particle';
+      
+      // Random particle type
+      const types = ['particle-small', 'particle-medium', 'particle-large', 'particle-glow'];
+      const randomType = types[Math.floor(Math.random() * types.length)];
+      particle.classList.add(randomType);
+      
+      // Random starting position
+      particle.style.left = Math.random() * 100 + 'vw';
+      particle.style.animationDelay = Math.random() * 20 + 's';
+      particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
+      
+      container.appendChild(particle);
+      
+      // Remove particle after animation
+      setTimeout(() => {
+        if (particle.parentNode) {
+          particle.parentNode.removeChild(particle);
+        }
+      }, 25000);
+    }
+    
+    // Create initial particles
+    for (let i = 0; i < particleCount; i++) {
+      setTimeout(createParticle, i * 200);
+    }
+    
+    // Continue creating particles
+    setInterval(createParticle, 800);
+  }
+
   document.addEventListener('DOMContentLoaded', () => {
+    // Initialize particles
+    createParticles();
+    
     const banner = document.getElementById('subject-banner');
     const bannerTitle = document.getElementById('banner-title');
     const bannerList = document.getElementById('banner-list');
@@ -390,7 +548,7 @@
       bannerList.innerHTML = '';
       allItems.forEach(item => {
         const div = document.createElement('div');
-        div.className = 'bg-blue-50 border border-blue-100 text-blue-900 font-medium p-3 rounded-lg shadow-sm hover:bg-blue-100 transition-all';
+        div.className = 'modal-item font-medium p-3 rounded-lg shadow-sm transition-all cursor-pointer';
         div.textContent = item.textContent;
         bannerList.appendChild(div);
       });
@@ -425,7 +583,7 @@
       showBanner('BCA Subjects', allItems);
     });
 
-    // UPSC View All (shows all)
+    // UPSC View All
     const upscViewAll = document.getElementById('upsc-view-all');
     upscViewAll.addEventListener('click', () => {
       const allItems = Array.from(document.querySelectorAll('#upsc-subjects .course-item'));
@@ -437,7 +595,7 @@
       banner.classList.add('hidden');
     });
 
-    // Optional: Hide on outside click
+    // Hide on outside click
     banner.addEventListener('click', (e) => {
       if (e.target === banner) banner.classList.add('hidden');
     });

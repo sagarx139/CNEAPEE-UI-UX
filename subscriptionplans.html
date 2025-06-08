@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CNEAPEE AI - Professional Subscription Plans</title>
+    <style>
+        :root {
+            --primary-blue: #0066ff;
+            --secondary-blue: #00aaff;
+            --accent-blue: #0044cc;
+            --light-blue: #3388ff;
+            --bg-black: #000000;
+            --card-black: #0a0a0a;
+            --border-blue: rgba(0, 102, 255, 0.2);
+            --text-white: #ffffff;
+            --text-gray: #cccccc;
+            --text-muted: #888888;
+            --gradient-primary: linear-gradient(135deg, #0066ff, #00aaff);
+            --gradient-secondary: linear-gradient(135deg, #000000, #001133);
+            --shadow-blue: rgba(0, 102, 255, 0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+            background: var(--bg-black);
+            color: var(--text-white);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Animated Background */
+        .background-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: 
+                radial-gradient(circle at 25% 25%, rgba(0, 102, 255, 0.08) 0%, transparent 60%),
+                radial-gradient(circle at 75% 75%, rgba(0, 170, 255, 0.06) 0%, transparent 60%),
+                radial-gradient(circle at 50% 100%, rgba(0, 68, 204, 0.04) 0%, transparent 80%);
+            animation: backgroundFloat 25s ease-in-out infinite;
+        }
+
+        @keyframes backgroundFloat {
+            0%, 100% { opacity: 0.8; transform: scale(1) rotate(0deg); }
+            50% { opacity: 1; transform: scale(1.1) rotate(2deg); }
+        }
+
+        /* Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Header */
+        .header {
+            padding: 32px 0 16px;
+            border-bottom: 1px solid var(--border-blue);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .logo {
+            font-size: 2.25rem;
+            font-weight: 800;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.025em;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 32px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-gray);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-blue);
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 80px 0 120px;
+            text-align: center;
+            position: relative;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            height: 1px;
+            background: var(--gradient-primary);
+            opacity: 0.3;
+        }
+
+        .hero-title {
+            font-size: clamp(3rem, 8vw, 5rem);
+            font-weight: 900;
+            margin-bottom: 24px;
+            background: linear-gradient(135deg, var(--text-white), var(--secondary-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.1;
+            letter-spacing: -0.02em;
+        }
+
+        .hero-subtitle {
+            font-size: 1.25rem;
+            color: var(--text-gray);
+            max-width: 600px;
+            margin: 0 auto 40px;
+            font-weight: 400;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(0, 102, 255, 0.1);
+            border: 1px solid var(--border-blue);
+            border-radius: 50px;
+            padding: 12px 24px;
+            margin-bottom: 32px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--secondary-blue);
+        }
+
+        /* Pricing Section */
+        .pricing {
+            padding: 80px 0;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 16px;
+            color: var(--text-white);
+        }
+
+        .section-subtitle {
+            text-align: center;
+            font-size: 1.125rem;
+            color: var(--text-muted);
+            margin-bottom: 64px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 32px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .pricing-card {
+            background: var(--card-black);
+            border: 1px solid var(--border-blue);
+            border-radius: 24px;
+            padding: 40px 32px;
+            position: relative;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(10px);
+            overflow: hidden;
+        }
+
+        .pricing-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: var(--gradient-primary);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-12px);
+            border-color: var(--primary-blue);
+            box-shadow: 0 32px 64px var(--shadow-blue);
+        }
+
+        .pricing-card:hover::before {
+            opacity: 1;
+        }
+
+        .pricing-card.popular {
+            border-color: var(--primary-blue);
+            background: linear-gradient(135deg, var(--card-black), rgba(0, 102, 255, 0.05));
+            transform: scale(1.05);
+        }
+
+        .popular-badge {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--gradient-primary);
+            color: white;
+            padding: 8px 24px;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
+        }
+
+        .plan-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .plan-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--secondary-blue);
+            margin-bottom: 8px;
+        }
+
+        .plan-description {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 24px;
+        }
+
+        .plan-price {
+            display: flex;
+            align-items: baseline;
+            justify-content: center;
+            gap: 4px;
+            margin-bottom: 8px;
+        }
+
+        .currency {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-gray);
+        }
+
+        .price {
+            font-size: 4rem;
+            font-weight: 900;
+            color: var(--text-white);
+            line-height: 1;
+        }
+
+        .period {
+            font-size: 1rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .plan-features {
+            list-style: none;
+            margin: 32px 0;
+        }
+
+        .plan-features li {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 0;
+            font-size: 0.95rem;
+            color: var(--text-gray);
+        }
+
+        .feature-icon {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: bold;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .feature-icon.unavailable {
+            background: var(--text-muted);
+            opacity: 0.5;
+        }
+
+        .cta-button {
+            width: 100%;
+            padding: 16px 24px;
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .cta-button:hover::before {
+            left: 100%;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px var(--shadow-blue);
+        }
+
+        .cta-button.secondary {
+            background: transparent;
+            border: 2px solid var(--primary-blue);
+            color: var(--primary-blue);
+        }
+
+        .cta-button.secondary:hover {
+            background: var(--primary-blue);
+            color: white;
+        }
+
+        /* Features Section */
+        .features {
+            padding: 80px 0;
+            background: rgba(0, 102, 255, 0.02);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 32px;
+            margin-top: 64px;
+        }
+
+        .feature-card {
+            text-align: center;
+            padding: 32px 24px;
+            border-radius: 16px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--border-blue);
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--primary-blue);
+        }
+
+        .feature-card-icon {
+            width: 64px;
+            height: 64px;
+            background: var(--gradient-primary);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            font-size: 1.5rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-white);
+            margin-bottom: 16px;
+        }
+
+        .feature-card p {
+            color: var(--text-gray);
+            line-height: 1.6;
+        }
+
+        /* Footer */
+        .footer {
+            padding: 64px 0 32px;
+            border-top: 1px solid var(--border-blue);
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .footer h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-blue);
+            margin-bottom: 16px;
+        }
+
+        .footer p {
+            color: var(--text-gray);
+            margin-bottom: 32px;
+            line-height: 1.6;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 32px;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary-blue);
+        }
+
+        .copyright {
+            color: var(--text-muted);
+            font-size: 0.875rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 16px;
+            }
+
+            .header-content {
+                justify-content: center;
+                text-align: center;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .hero {
+                padding: 60px 0 80px;
+            }
+
+            .pricing-grid {
+                grid-template-columns: 1fr;
+                gap: 24px;
+            }
+
+            .pricing-card.popular {
+                transform: none;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+                gap: 24px;
+            }
+
+            .footer-links {
+                gap: 16px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .pricing-card {
+                padding: 32px 24px;
+            }
+
+            .plan-price .price {
+                font-size: 3rem;
+            }
+
+            .popular-badge {
+                font-size: 0.75rem;
+                padding: 6px 16px;
+            }
+        }
+
+        /* Advanced Animations */
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .pricing-card {
+            animation: slideUp 0.6s ease-out;
+        }
+
+        .pricing-card:nth-child(1) { animation-delay: 0.1s; }
+        .pricing-card:nth-child(2) { animation-delay: 0.2s; }
+        .pricing-card:nth-child(3) { animation-delay: 0.3s; }
+    </style>
+</head>
+<body>
+    <div class="background-animation"></div>
+    
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">CNEAPEE AI</div>
+                <nav>
+                    <ul class="nav-links">
+                        <li><a href="#pricing">Pricing</a></li>
+                        <li><a href="#features">Features</a></li>
+                        <li><a href="#support">Support</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="container">
+            <div class="hero-badge">
+                🚀 Neuro 1.1 Model - Next Generation AI
+            </div>
+            <h1 class="hero-title">Professional AI Subscription Plans</h1>
+            <p class="hero-subtitle">
+                Unlock specialized AI capabilities for education, healthcare, and news with our advanced Neuro 1.1 model. 
+                Choose the perfect plan for your needs.
+            </p>
+        </div>
+    </section>
+
+    <section class="pricing" id="pricing">
+        <div class="container">
+            <h2 class="section-title">Choose Your Plan</h2>
+            <p class="section-subtitle">
+                Flexible pricing options designed to grow with your needs. From individual use to enterprise solutions.
+            </p>
+            
+            <div class="pricing-grid">
+                <!-- Basic Plan -->
+                <div class="pricing-card">
+                    <div class="plan-header">
+                        <h3 class="plan-name">Basic</h3>
+                        <p class="plan-description">Perfect for individuals getting started</p>
+                        <div class="plan-price">
+                            <span class="currency">$</span>
+                            <span class="price">0</span>
+                            <span class="period">/month</span>
+                        </div>
+                    </div>
+                    
+                    <ul class="plan-features">
+                        <li><span class="feature-icon">✓</span>Basic Neuro 1.1 Model Access</li>
+                        <li><span class="feature-icon">✓</span>50 Queries per Day</li>
+                        <li><span class="feature-icon">✓</span>Standard Response Time</li>
+                        <li><span class="feature-icon">✓</span>Community Support</li>
+                        <li><span class="feature-icon">✓</span>Basic Study Hub</li>
+                        <li><span class="feature-icon unavailable">✗</span>Ad-Free Experience</li>
+                        <li><span class="feature-icon unavailable">✗</span>Personalized Insights</li>
+                        <li><span class="feature-icon unavailable">✗</span>Priority Support</li>
+                    </ul>
+                    
+                    <button class="cta-button secondary">Get Started Free</button>
+                </div>
+
+                <!-- Elite Plan -->
+                <div class="pricing-card popular">
+                    <div class="popular-badge">Most Popular</div>
+                    <div class="plan-header">
+                        <h3 class="plan-name">Elite</h3>
+                        <p class="plan-description">Ideal for professionals and power users</p>
+                        <div class="plan-price">
+                            <span class="currency">$</span>
+                            <span class="price">9.99</span>
+                            <span class="period">/month</span>
+                        </div>
+                    </div>
+                    
+                    <ul class="plan-features">
+                        <li><span class="feature-icon">✓</span>Enhanced Neuro 1.1 Model</li>
+                        <li><span class="feature-icon">✓</span>Unlimited Daily Queries</li>
+                        <li><span class="feature-icon">✓</span>Fast Response Time</li>
+                        <li><span class="feature-icon">✓</span>Priority Support</li>
+                        <li><span class="feature-icon">✓</span>Full Study Hub Access</li>
+                        <li><span class="feature-icon">✓</span>Ad-Free Experience</li>
+                        <li><span class="feature-icon">✓</span>Personalized Health Insights</li>
+                        <li><span class="feature-icon">✓</span>Custom Language Settings</li>
+                    </ul>
+                    
+                    <button class="cta-button">Upgrade to Elite</button>
+                </div>
+
+                <!-- Xen Plan -->
+                <div class="pricing-card">
+                    <div class="plan-header">
+                        <h3 class="plan-name">Xen</h3>
+                        <p class="plan-description">Enterprise-grade solution with premium features</p>
+                        <div class="plan-price">
+                            <span class="currency">$</span>
+                            <span class="price">49.99</span>
+                            <span class="period">/month</span>
+                        </div>
+                    </div>
+                    
+                    <ul class="plan-features">
+                        <li><span class="feature-icon">✓</span>Premium Neuro 1.1 Model</li>
+                        <li><span class="feature-icon">✓</span>Unlimited Everything</li>
+                        <li><span class="feature-icon">✓</span>Instant Response Time</li>
+                        <li><span class="feature-icon">✓</span>VIP Support & Consultation</li>
+                        <li><span class="feature-icon">✓</span>Premium Study Resources</li>
+                        <li><span class="feature-icon">✓</span>Advanced AI Insights</li>
+                        <li><span class="feature-icon">✓</span>API Access</li>
+                        <li><span class="feature-icon">✓</span>Custom Model Training</li>
+                    </ul>
+                    
+                    <button class="cta-button">Go Premium</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="features" id="features">
+        <div class="container">
+            <h2 class="section-title">Why Choose CNEAPEE AI?</h2>
+            <p class="section-subtitle">
+                Our specialized AI model delivers unmatched performance in education, healthcare, and news domains.
+            </p>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-card-icon">🎓</div>
+                    <h3>Education Excellence</h3>
+                    <p>Specialized algorithms trained on educational content provide accurate, curriculum-aligned assistance for students and educators.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-card-icon">🏥</div>
+                    <h3>Healthcare Insights</h3>
+                    <p>Advanced medical knowledge base with personalized health recommendations and evidence-based information.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-card-icon">📰</div>
+                    <h3>News Intelligence</h3>
+                    <p>Real-time news analysis with multilingual support and personalized content curation based on your interests.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <h3>Ready to Experience the Future of AI?</h3>
+                <p>Join thousands of professionals who trust CNEAPEE AI for their specialized AI needs. Get started today with our risk-free trial.</p>
+                
+                <div class="footer-links">
+                    <a href="#privacy">Privacy Policy</a>
+                    <a href="#terms">Terms of Service</a>
+                    <a href="#support">Support</a>
+                    <a href="#api">API Documentation</a>
+                    <a href="#contact">Contact Us</a>
+                </div>
+                
+                <p class="copyright">&copy; 2025 CNEAPEE AI. All rights reserved. Powered by Neuro 1.1 Technology.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Enhanced button interactions
+        document.querySelectorAll('.cta-button').forEach(button => {
+            button.addEventListener('click', function(e) {
+                // Create ripple effect
+                const ripple = document.createElement('span');
+                const rect = this.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                const x = e.clientX - rect.left - size / 2;
+                const y = e.clientY - rect.top - size / 2;
+                
+                ripple.style.width = ripple.style.height = size + 'px';
+                ripple.style.left = x + 'px';
+                ripple.style.top = y + 'px';
+                ripple.style.position = 'absolute';
+                ripple.style.borderRadius = '50%';
+                ripple.style.background = 'rgba(255, 255, 255, 0.3)';
+                ripple.style.transform = 'scale(0)';
+                ripple.style.animation = 'ripple 0.6s linear';
+                ripple.style.pointerEvents = 'none';
+                
+                this.appendChild(ripple);
+                
+                setTimeout(() => {
+                    ripple.remove();
+                }, 600);
+            });
+        });
+
+        // Add ripple animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes ripple {
+                to {
+                    transform: scale(4);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Intersection Observer for animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Observe elements for animation
+        document.querySelectorAll('.feature-card, .pricing-card').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>

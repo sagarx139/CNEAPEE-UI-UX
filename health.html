@@ -5,20 +5,49 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="google-adsense-account" content="ca-pub-5733699332666340">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <title>Health</title>
-    <link rel="icon" type="image/png" href="assets/cneapeelogo-removebg-preview.png">
+    <title>Health Diagnosis</title>
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5733699332666340"
      crossorigin="anonymous"></script>
     <style>
+        body {
+            background: #000000;
+            overflow-x: hidden;
+        }
+        
+        /* Particle Canvas */
+        #particles-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+        
+        /* Content Layer */
+        .content-layer {
+            position: relative;
+            z-index: 10;
+        }
+        
         .disease-button {
-            transition: all 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             transform: scale(1);
+            background: rgba(30, 41, 59, 0.95);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            color: #3b82f6;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.1);
         }
         
         .disease-button:hover {
-            transform: scale(1.05);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-            border: 2px solid #10b981;
+            transform: scale(1.05) translateY(-5px);
+            box-shadow: 0 20px 40px rgba(59, 130, 246, 0.3);
+            border: 1px solid rgba(59, 130, 246, 0.7);
+            background: rgba(30, 41, 59, 0.98);
+            color: #60a5fa;
         }
         
         .disease-button:active {
@@ -26,224 +55,454 @@
         }
         
         .blur-background {
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
         }
         
         .modal-enter {
-            animation: modalEnter 0.3s ease-out;
+            animation: modalEnter 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
         
         @keyframes modalEnter {
             from {
                 opacity: 0;
-                transform: scale(0.8);
+                transform: scale(0.8) translateY(50px);
             }
             to {
                 opacity: 1;
-                transform: scale(1);
+                transform: scale(1) translateY(0);
             }
         }
         
         .pulse-effect {
-            animation: pulse 2s infinite;
+            animation: pulse 3s infinite;
         }
         
         @keyframes pulse {
             0%, 100% {
-                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4);
+                box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4);
             }
             50% {
-                box-shadow: 0 0 0 10px rgba(16, 185, 129, 0);
+                box-shadow: 0 0 0 15px rgba(59, 130, 246, 0);
             }
+        }
+        
+        /* Custom Modal Styling */
+        .modal-content {
+            background: rgba(15, 23, 42, 0.95);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            color: #e2e8f0;
+        }
+        
+        .modal-title {
+            color: #60a5fa;
+        }
+        
+        .modal-section-title {
+            color: #3b82f6;
+        }
+        
+        /* Footer Styling */
+        .footer-bg {
+            background: rgba(15, 23, 42, 0.95);
+            border-top: 1px solid rgba(59, 130, 246, 0.3);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+        }
+        
+        /* Header Styling */
+        .main-title {
+            color: #e2e8f0;
+            text-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+        }
+        
+        .subtitle {
+            color: #94a3b8;
+        }
+        
+        .neuro-badge {
+            background: rgba(15, 23, 42, 0.9);
+            color: #60a5fa;
+            border: 1px solid rgba(59, 130, 246, 0.5);
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.3);
+        }
+        
+        /* Popup Styling */
+        .popup-content {
+            background: rgba(15, 23, 42, 0.98);
+            border: 1px solid rgba(59, 130, 246, 0.4);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            color: #e2e8f0;
+        }
+        
+        .popup-title {
+            color: #60a5fa;
+        }
+        
+        .popup-button {
+            background: linear-gradient(135deg, #3b82f6, #1e40af);
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+        }
+        
+        .popup-button:hover {
+            background: linear-gradient(135deg, #60a5fa, #3b82f6);
+            transform: scale(1.05);
+        }
+        
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.5);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: rgba(59, 130, 246, 0.5);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(59, 130, 246, 0.7);
         }
     </style>
 </head>
-<script>
-    window.addEventListener('DOMContentLoaded', function() {
-        // Create overlay
-        const overlay = document.createElement('div');
-        overlay.className = 'fixed inset-0 bg-black bg-opacity-50 blur-background flex items-center justify-center z-50';
-        overlay.id = 'welcomePopup';
+<body class="min-h-screen">
+    <!-- Particles Canvas -->
+    <canvas id="particles-canvas"></canvas>
+    
+    <!-- Content Layer -->
+    <div class="content-layer">
+        <!-- Welcome Popup Script -->
+        <script>
+            window.addEventListener('DOMContentLoaded', function() {
+                // Create overlay
+                const overlay = document.createElement('div');
+                overlay.className = 'fixed inset-0 bg-black bg-opacity-70 blur-background flex items-center justify-center z-50';
+                overlay.id = 'welcomePopup';
 
-        // Create popup box
-        const popup = document.createElement('div');
-        popup.className = 'bg-white rounded-lg shadow-lg max-w-md w-full p-6 relative text-center modal-enter';
+                // Create popup box
+                const popup = document.createElement('div');
+                popup.className = 'popup-content rounded-lg shadow-2xl max-w-md w-full p-6 relative text-center modal-enter mx-4';
 
-        // Close button
-        const closeBtn = document.createElement('button');
-        closeBtn.innerHTML = '&times;';
-        closeBtn.className = 'absolute top-2 right-2 text-gray-500 hover:text-red-500 text-2xl transition-colors duration-200';
-        closeBtn.onclick = function() {
-            overlay.style.animation = 'fadeOut 0.3s ease-in';
-            setTimeout(() => overlay.remove(), 300);
-        };
+                // Close button
+                const closeBtn = document.createElement('button');
+                closeBtn.innerHTML = '&times;';
+                closeBtn.className = 'absolute top-2 right-2 text-gray-400 hover:text-red-400 text-2xl transition-colors duration-200 hover:scale-110 transform';
+                closeBtn.onclick = function() {
+                    overlay.style.animation = 'fadeOut 0.3s ease-in';
+                    setTimeout(() => overlay.remove(), 300);
+                };
 
-        // Message content
-        popup.innerHTML = `
-            <h2 class="text-xl font-bold mb-2 text-green-700">Important Notice</h2>
-            <p class="mb-4 text-gray-700">
-                <strong>Consult with a doctor in case of emergency.</strong><br>
-                This is a Cneapee AI model (Neuro 1.1 Elite). The results are based on AI generation.
-            </p>
-            <div class="mb-4 text-gray-600 text-sm">
-                <strong>Explanation:</strong> This popup is shown to remind users that the information provided by the Cneapee AI model is for informational purposes only and should not be considered a substitute for professional medical advice. In case of any emergency or serious health concern, always consult a qualified doctor.
+                // Message content
+                popup.innerHTML = `
+                    <h2 class="popup-title text-xl font-bold mb-2">Important Notice</h2>
+                    <p class="mb-4 text-gray-300">
+                        <strong>Consult with a doctor in case of emergency.</strong><br>
+                        This is a Cneapee AI model (Neuro 1.1 Elite). The results are based on AI generation.
+                    </p>
+                    <div class="mb-4 text-gray-400 text-sm">
+                        <strong>Explanation:</strong> This popup is shown to remind users that the information provided by the Cneapee AI model is for informational purposes only and should not be considered a substitute for professional medical advice. In case of any emergency or serious health concern, always consult a qualified doctor.
+                    </div>
+                    <button class="popup-button mt-2 px-6 py-2 text-white rounded-full font-semibold shadow transition-all duration-200 transform" onclick="document.getElementById('welcomePopup').style.animation='fadeOut 0.3s ease-in'; setTimeout(() => document.getElementById('welcomePopup').remove(), 300)">OK</button>
+                `;
+                
+                // Add fadeOut animation style
+                const style = document.createElement('style');
+                style.textContent = `
+                    @keyframes fadeOut {
+                        from { opacity: 1; transform: scale(1); }
+                        to { opacity: 0; transform: scale(0.8); }
+                    }
+                `;
+                document.head.appendChild(style);
+                
+                popup.appendChild(closeBtn);
+                overlay.appendChild(popup);
+                document.body.appendChild(overlay);
+
+                // Auto-close after 10 seconds
+                setTimeout(function() {
+                    if (document.getElementById('welcomePopup')) {
+                        const popup = document.getElementById('welcomePopup');
+                        popup.style.animation = 'fadeOut 0.3s ease-in';
+                        setTimeout(() => popup.remove(), 300);
+                    }
+                }, 10000);
+            });
+        </script>
+
+        <div class="container mx-auto py-8" id="mainContent">
+            <h1 class="main-title text-3xl font-bold mb-6 text-center">
+                Health Diagnosis <br><span class="subtitle font-normal text-lg">Powered by Cneapee AI</span>
+                 <span id="neuro-badge"
+                class="neuro-badge ml-2 align-middle text-xs font-semibold px-3 py-1 rounded-full shadow cursor-pointer pulse-effect">
+                Neuro 1.1 Elite
+                </span>
+            </h1>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <!-- Common Health Issues on Top -->
+                <button onclick="openModal(20)" class="disease-button shadow-lg rounded-lg p-4 transition-all duration-300">
+                    <div class="font-semibold">🤒 Bukhar (Fever)</div>
+                </button>
+                <button onclick="openModal(21)" class="disease-button shadow-lg rounded-lg p-4 transition-all duration-300">
+                    <div class="font-semibold">💪 Badan Dard (Body Ache)</div>
+                </button>
+                <button onclick="openModal(22)" class="disease-button shadow-lg rounded-lg p-4 transition-all duration-300">
+                    <div class="font-semibold">🤧 Sardi (Cold)</div>
+                </button>
+                <button onclick="openModal(23)" class="disease-button shadow-lg rounded-lg p-4 transition-all duration-300">
+                    <div class="font-semibold">✨ Skin & Body Care</div>
+                </button>
+                <button onclick="openModal(24)" class="disease-button shadow-lg rounded-lg p-4 transition-all duration-300">
+                    <div class="font-semibold">🔥 Itching</div>
+                </button>
+                <!-- New Sections -->
+                <button onclick="openModal(25)" class="disease-button shadow-lg rounded-lg p-4 transition-all duration-300">
+                    <div class="font-semibold">🎯 Vitiligo</div>
+                </button>
+                <button onclick="openModal(26)" class="disease-button shadow-lg rounded-lg p-4 transition-all duration-300">
+                    <div class="font-semibold">🔥 Fat Burn</div>
+                </button>
+                <button onclick="openModal(27)" class="disease-button shadow-lg rounded-lg p-4 transition-all duration-300">
+                    <div class="font-semibold">💪 Exercise</div>
+                </button>
+                <!-- Disease Boxes -->
+                <button onclick="openModal(0)" class="disease-button shadow-lg rounded-lg p-4 transition-all duration-300">
+                    <div class="font-semibold">🩺 Diabetes</div>
+                </button>
+                <button onclick="openModal(1)" class="disease-button shadow-lg rounded-lg p-4 transition-all duration-300">
+                    <div class="font-semibold">💓 Hypertension</div>
+                </button>
+                <button onclick="openModal(2)" class="disease-button shadow-lg rounded-lg p-4 transition-all duration-300">
+                    <div class="font-semibold">🫁 Tuberculosis</div>
+                </button>
+                <button onclick="openModal(3)" class="disease-button shadow-lg rounded-lg p-4 transition-all duration-300">
+                    <div class="font-semibold">🦟 Malaria</div>
+                </button>
+                <button onclick="openModal(4)" class="disease-button shadow-lg rounded-lg p-4 transition-all duration-300">
+                    <div class="font-semibold">🦟 Dengue</div>
+                </button>
+                <button onclick="openModal(5)" class="disease-button shadow-lg rounded-lg p-4 transition-all duration-300">
+                    <div class="font-semibold">🦟 Chikungunya</div>
+                </button>
+                <button onclick="openModal(6)" class="disease-button shadow-lg rounded-lg p-4 transition-all duration-300">
+                    <div class="font-semibold">🤒 Typhoid</div>
+                </button>
+                <button onclick="openModal(7)" class="disease-button shadow-lg rounded-lg p-4 transition-all duration-300">
+                    <div class="font-semibold">🟡 Hepatitis B</div>
+                </button>
+                <button onclick="openModal(8)" class="disease-button shadow-lg rounded-lg p-4 transition-all duration-300">
+                    <div class="font-semibold">🟡 Hepatitis C</div>
+                </button>
+                <button onclick="openModal(9)" class="disease-button shadow-lg rounded-lg p-4 transition-all duration-300">
+                    <div class="font-semibold">🔴 HIV/AIDS</div>
+                </button>
+                <button onclick="openModal(10)" class="disease-button shadow-lg rounded-lg p-4 transition-all duration-300">
+                    <div class="font-semibold">❤️ Coronary Heart Disease</div>
+                </button>
+                <button onclick="openModal(11)" class="disease-button shadow-lg rounded-lg p-4 transition-all duration-300">
+                    <div class="font-semibold">🧠 Stroke</div>
+                </button>
+                <button onclick="openModal(12)" class="disease-button shadow-lg rounded-lg p-4 transition-all duration-300">
+                    <div class="font-semibold">🫁 Asthma</div>
+                </button>
+                <button onclick="openModal(13)" class="disease-button shadow-lg rounded-lg p-4 transition-all duration-300">
+                    <div class="font-semibold">🫁 COPD</div>
+                </button>
+                <button onclick="openModal(14)" class="disease-button shadow-lg rounded-lg p-4 transition-all duration-300">
+                    <div class="font-semibold">🎗️ Cancer</div>
+                </button>
+                <button onclick="openModal(15)" class="disease-button shadow-lg rounded-lg p-4 transition-all duration-300">
+                    <div class="font-semibold">💧 Diarrheal Diseases</div>
+                </button>
+                <button onclick="openModal(16)" class="disease-button shadow-lg rounded-lg p-4 transition-all duration-300">
+                    <div class="font-semibold">🔬 Leprosy</div>
+                </button>
+                <button onclick="openModal(17)" class="disease-button shadow-lg rounded-lg p-4 transition-all duration-300">
+                    <div class="font-semibold">🫁 Pneumonia</div>
+                </button>
+                <button onclick="openModal(18)" class="disease-button shadow-lg rounded-lg p-4 transition-all duration-300">
+                    <div class="font-semibold">🐷 Swine Flu</div>
+                </button>
+                <button onclick="openModal(19)" class="disease-button shadow-lg rounded-lg p-4 transition-all duration-300">
+                    <div class="font-semibold">😷 COVID-19</div>
+                </button>
             </div>
-            <button class="mt-2 px-4 py-2 bg-green-600 text-white rounded-full font-semibold shadow hover:bg-green-700 transition-all duration-200 transform hover:scale-105" onclick="document.getElementById('welcomePopup').style.animation='fadeOut 0.3s ease-in'; setTimeout(() => document.getElementById('welcomePopup').remove(), 300)">OK</button>
-        `;
-        
-        // Add fadeOut animation style
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes fadeOut {
-                from { opacity: 1; transform: scale(1); }
-                to { opacity: 0; transform: scale(0.8); }
-            }
-        `;
-        document.head.appendChild(style);
-        
-        popup.appendChild(closeBtn);
-        overlay.appendChild(popup);
-        document.body.appendChild(overlay);
-
-        // Auto-close after 10 seconds
-        setTimeout(function() {
-            if (document.getElementById('welcomePopup')) {
-                const popup = document.getElementById('welcomePopup');
-                popup.style.animation = 'fadeOut 0.3s ease-in';
-                setTimeout(() => popup.remove(), 300);
-            }
-        }, 10000);
-    });
-</script>
-<body class="bg-gray-300 min-h-screen">
-    <div class="container mx-auto py-8" id="mainContent">
-        <h1 class="text-3xl font-bold mb-6 text-center">
-            Health Diagnosis <br><span class="font-normal text-lg text-gray-600">Powered by Cneapee AI</span>
-             <span id="neuro-badge"
-            class="ml-2 align-middle bg-gray-900 text-green-300 text-xs font-semibold px-3 py-1 rounded-full border border-green-400 shadow cursor-pointer pulse-effect">
-            Neuro 1.1 Elite
-            </span>
-        </h1>
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            <!-- Common Health Issues on Top -->
-            <button onclick="openModal(20)" class="disease-button bg-white shadow rounded-lg p-4 hover:bg-green-50 transition-all duration-300">
-                <div class="font-semibold text-green-700">🤒 Bukhar (Fever)</div>
-            </button>
-            <button onclick="openModal(21)" class="disease-button bg-white shadow rounded-lg p-4 hover:bg-green-50 transition-all duration-300">
-                <div class="font-semibold text-green-700">💪 Badan Dard (Body Ache)</div>
-            </button>
-            <button onclick="openModal(22)" class="disease-button bg-white shadow rounded-lg p-4 hover:bg-green-50 transition-all duration-300">
-                <div class="font-semibold text-green-700">🤧 Sardi (Cold)</div>
-            </button>
-            <button onclick="openModal(23)" class="disease-button bg-white shadow rounded-lg p-4 hover:bg-yellow-50 transition-all duration-300">
-                <div class="font-semibold text-yellow-700">✨ Skin & Body Care</div>
-            </button>
-            <button onclick="openModal(24)" class="disease-button bg-white shadow rounded-lg p-4 hover:bg-yellow-50 transition-all duration-300">
-                <div class="font-semibold text-yellow-700">🔥 Itching</div>
-            </button>
-            <!-- New Sections -->
-            <button onclick="openModal(25)" class="disease-button bg-white shadow rounded-lg p-4 hover:bg-purple-50 transition-all duration-300">
-                <div class="font-semibold text-purple-700">🎯 Vitiligo</div>
-            </button>
-            <button onclick="openModal(26)" class="disease-button bg-white shadow rounded-lg p-4 hover:bg-pink-50 transition-all duration-300">
-                <div class="font-semibold text-pink-700">🔥 Fat Burn</div>
-            </button>
-            <button onclick="openModal(27)" class="disease-button bg-white shadow rounded-lg p-4 hover:bg-indigo-50 transition-all duration-300">
-                <div class="font-semibold text-indigo-700">💪 Exercise</div>
-            </button>
-            <!-- Disease Boxes -->
-            <button onclick="openModal(0)" class="disease-button bg-white shadow rounded-lg p-4 hover:bg-blue-50 transition-all duration-300">
-                <div class="font-semibold text-blue-700">🩺 Diabetes</div>
-            </button>
-            <button onclick="openModal(1)" class="disease-button bg-white shadow rounded-lg p-4 hover:bg-blue-50 transition-all duration-300">
-                <div class="font-semibold text-blue-700">💓 Hypertension</div>
-            </button>
-            <button onclick="openModal(2)" class="disease-button bg-white shadow rounded-lg p-4 hover:bg-blue-50 transition-all duration-300">
-                <div class="font-semibold text-blue-700">🫁 Tuberculosis</div>
-            </button>
-            <button onclick="openModal(3)" class="disease-button bg-white shadow rounded-lg p-4 hover:bg-blue-50 transition-all duration-300">
-                <div class="font-semibold text-blue-700">🦟 Malaria</div>
-            </button>
-            <button onclick="openModal(4)" class="disease-button bg-white shadow rounded-lg p-4 hover:bg-blue-50 transition-all duration-300">
-                <div class="font-semibold text-blue-700">🦟 Dengue</div>
-            </button>
-            <button onclick="openModal(5)" class="disease-button bg-white shadow rounded-lg p-4 hover:bg-blue-50 transition-all duration-300">
-                <div class="font-semibold text-blue-700">🦟 Chikungunya</div>
-            </button>
-            <button onclick="openModal(6)" class="disease-button bg-white shadow rounded-lg p-4 hover:bg-blue-50 transition-all duration-300">
-                <div class="font-semibold text-blue-700">🤒 Typhoid</div>
-            </button>
-            <button onclick="openModal(7)" class="disease-button bg-white shadow rounded-lg p-4 hover:bg-blue-50 transition-all duration-300">
-                <div class="font-semibold text-blue-700">🟡 Hepatitis B</div>
-            </button>
-            <button onclick="openModal(8)" class="disease-button bg-white shadow rounded-lg p-4 hover:bg-blue-50 transition-all duration-300">
-                <div class="font-semibold text-blue-700">🟡 Hepatitis C</div>
-            </button>
-            <button onclick="openModal(9)" class="disease-button bg-white shadow rounded-lg p-4 hover:bg-blue-50 transition-all duration-300">
-                <div class="font-semibold text-blue-700">🔴 HIV/AIDS</div>
-            </button>
-            <button onclick="openModal(10)" class="disease-button bg-white shadow rounded-lg p-4 hover:bg-blue-50 transition-all duration-300">
-                <div class="font-semibold text-blue-700">❤️ Coronary Heart Disease</div>
-            </button>
-            <button onclick="openModal(11)" class="disease-button bg-white shadow rounded-lg p-4 hover:bg-blue-50 transition-all duration-300">
-                <div class="font-semibold text-blue-700">🧠 Stroke</div>
-            </button>
-            <button onclick="openModal(12)" class="disease-button bg-white shadow rounded-lg p-4 hover:bg-blue-50 transition-all duration-300">
-                <div class="font-semibold text-blue-700">🫁 Asthma</div>
-            </button>
-            <button onclick="openModal(13)" class="disease-button bg-white shadow rounded-lg p-4 hover:bg-blue-50 transition-all duration-300">
-                <div class="font-semibold text-blue-700">🫁 COPD</div>
-            </button>
-            <button onclick="openModal(14)" class="disease-button bg-white shadow rounded-lg p-4 hover:bg-blue-50 transition-all duration-300">
-                <div class="font-semibold text-blue-700">🎗️ Cancer</div>
-            </button>
-            <button onclick="openModal(15)" class="disease-button bg-white shadow rounded-lg p-4 hover:bg-blue-50 transition-all duration-300">
-                <div class="font-semibold text-blue-700">💧 Diarrheal Diseases</div>
-            </button>
-            <button onclick="openModal(16)" class="disease-button bg-white shadow rounded-lg p-4 hover:bg-blue-50 transition-all duration-300">
-                <div class="font-semibold text-blue-700">🔬 Leprosy</div>
-            </button>
-            <button onclick="openModal(17)" class="disease-button bg-white shadow rounded-lg p-4 hover:bg-blue-50 transition-all duration-300">
-                <div class="font-semibold text-blue-700">🫁 Pneumonia</div>
-            </button>
-            <button onclick="openModal(18)" class="disease-button bg-white shadow rounded-lg p-4 hover:bg-blue-50 transition-all duration-300">
-                <div class="font-semibold text-blue-700">🐷 Swine Flu</div>
-            </button>
-            <button onclick="openModal(19)" class="disease-button bg-white shadow rounded-lg p-4 hover:bg-blue-50 transition-all duration-300">
-                <div class="font-semibold text-blue-700">😷 COVID-19</div>
-            </button>
         </div>
+
+        <!-- Modal -->
+        <div id="diseaseModal" class="fixed inset-0 bg-black bg-opacity-70 blur-background flex items-center justify-center z-50 hidden">
+            <div class="modal-content rounded-lg shadow-2xl max-w-md w-full p-6 relative modal-enter mx-4">
+                <button onclick="closeModal()" class="absolute top-2 right-2 text-gray-400 hover:text-red-400 text-2xl transition-colors duration-200 hover:scale-110 transform">&times;</button>
+                <h2 id="modalTitle" class="modal-title text-xl font-bold mb-2"></h2>
+                <div id="modalBrief" class="mb-2 text-gray-300 text-sm bg-gray-900 bg-opacity-50 p-3 rounded-lg border border-blue-500 border-opacity-30"></div>
+                <h3 class="modal-section-title font-semibold mt-4 mb-2">🔍 Symptoms:</h3>
+                <ul id="modalSymptoms" class="list-disc list-inside mb-4 text-gray-300"></ul>
+                <h3 class="modal-section-title font-semibold mb-2">🛡️ Precautions:</h3>
+                <ul id="modalPrecautions" class="list-disc list-inside mb-4 text-gray-300"></ul>
+                <h3 class="modal-section-title font-semibold mb-2">💊 Medicines (for cure/management):</h3>
+                <ul id="modalMedicines" class="list-disc list-inside text-gray-300"></ul>
+            </div>
+        </div>
+
+        <footer class="mt-12 footer-bg py-6">
+            <div class="container mx-auto flex flex-col items-center space-y-2">
+                <p class="text-sm text-center text-gray-300">
+                    <strong>Consult with a doctor in case of emergency.</strong><br>
+                    This is a Cneapee AI model (Neuro 1.1 Elite). The results are based on AI generation.
+                    The popup shown to remind users that the information provided by the Cneapee AI model is for informational purposes only and should not be considered a substitute for professional medical advice. In case of any emergency or serious health concern, always consult a qualified doctor.
+                </p>
+                <a href="index.html" class="inline-flex items-center px-6 py-2 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-full font-semibold shadow-lg transition-all duration-200 transform hover:scale-105">
+                    🏠 Home
+                </a>
+            </div>
+        </footer>
     </div>
 
-    <!-- Modal -->
-    <div id="diseaseModal" class="fixed inset-0 bg-black bg-opacity-60 blur-background flex items-center justify-center z-50 hidden">
-        <div class="bg-white rounded-lg shadow-2xl max-w-md w-full p-6 relative modal-enter mx-4">
-            <button onclick="closeModal()" class="absolute top-2 right-2 text-gray-500 hover:text-red-500 text-2xl transition-colors duration-200 hover:scale-110 transform">&times;</button>
-            <h2 id="modalTitle" class="text-xl font-bold mb-2 text-green-700"></h2>
-            <div id="modalBrief" class="mb-2 text-gray-700 text-sm bg-gray-50 p-3 rounded-lg"></div>
-            <h3 class="font-semibold text-green-600 mt-4 mb-2">🔍 Symptoms:</h3>
-            <ul id="modalSymptoms" class="list-disc list-inside mb-4 text-gray-700"></ul>
-            <h3 class="font-semibold text-blue-600 mb-2">🛡️ Precautions:</h3>
-            <ul id="modalPrecautions" class="list-disc list-inside mb-4 text-gray-700"></ul>
-            <h3 class="font-semibold text-purple-600 mb-2">💊 Medicines (for cure/management):</h3>
-            <ul id="modalMedicines" class="list-disc list-inside text-gray-700"></ul>
-        </div>
-    </div>
+    <!-- Particle Animation Script -->
+    <script>
+        class ParticleSystem {
+            constructor() {
+                this.canvas = document.getElementById('particles-canvas');
+                this.ctx = this.canvas.getContext('2d');
+                this.particles = [];
+                this.mouse = { x: 0, y: 0 };
+                this.resize();
+                this.init();
+                this.animate();
+                
+                window.addEventListener('resize', () => this.resize());
+                window.addEventListener('mousemove', (e) => {
+                    this.mouse.x = e.clientX;
+                    this.mouse.y = e.clientY;
+                });
+            }
+            
+            resize() {
+                this.canvas.width = window.innerWidth;
+                this.canvas.height = window.innerHeight;
+            }
+            
+            init() {
+                const particleCount = Math.floor((this.canvas.width * this.canvas.height) / 15000);
+                for (let i = 0; i < particleCount; i++) {
+                    this.particles.push(new Particle(this.canvas.width, this.canvas.height));
+                }
+            }
+            
+            animate() {
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                
+                this.particles.forEach(particle => {
+                    particle.update(this.mouse);
+                    particle.draw(this.ctx);
+                });
+                
+                this.connectParticles();
+                requestAnimationFrame(() => this.animate());
+            }
+            
+            connectParticles() {
+                for (let i = 0; i < this.particles.length; i++) {
+                    for (let j = i + 1; j < this.particles.length; j++) {
+                        const dx = this.particles[i].x - this.particles[j].x;
+                        const dy = this.particles[i].y - this.particles[j].y;
+                        const distance = Math.sqrt(dx * dx + dy * dy);
+                        
+                        if (distance < 100) {
+                            const opacity = 1 - distance / 100;
+                            this.ctx.strokeStyle = `rgba(59, 130, 246, ${opacity * 0.3})`;
+                            this.ctx.lineWidth = 0.5;
+                            this.ctx.beginPath();
+                            this.ctx.moveTo(this.particles[i].x, this.particles[i].y);
+                            this.ctx.lineTo(this.particles[j].x, this.particles[j].y);
+                            this.ctx.stroke();
+                        }
+                    }
+                }
+            }
+        }
+        
+        class Particle {
+            constructor(canvasWidth, canvasHeight) {
+                this.x = Math.random() * canvasWidth;
+                this.y = Math.random() * canvasHeight;
+                this.vx = (Math.random() - 0.5) * 2;
+                this.vy = (Math.random() - 0.5) * 2;
+                this.radius = Math.random() * 3 + 1;
+                this.canvasWidth = canvasWidth;
+                this.canvasHeight = canvasHeight;
+                this.originalVx = this.vx;
+                this.originalVy = this.vy;
+            }
+            
+            update(mouse) {
+                // Calculate distance to mouse
+                const dx = mouse.x - this.x;
+                const dy = mouse.y - this.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                
+                // Mouse interaction
+                if (distance < 150) {
+                    const force = (150 - distance) / 150;
+                    this.vx += (dx / distance) * force * 0.5;
+                    this.vy += (dy / distance) * force * 0.5;
+                } else {
+                    // Return to original velocity
+                    this.vx += (this.originalVx - this.vx) * 0.05;
+                    this.vy += (this.originalVy - this.vy) * 0.05;
+                }
+                
+                this.x += this.vx;
+                this.y += this.vy;
+                
+                // Boundary collision
+                if (this.x < 0 || this.x > this.canvasWidth) {
+                    this.vx = -this.vx;
+                    this.originalVx = -this.originalVx;
+                }
+                if (this.y < 0 || this.y > this.canvasHeight) {
+                    this.vy = -this.vy;
+                    this.originalVy = -this.originalVy;
+                }
+                
+                // Keep within bounds
+                this.x = Math.max(0, Math.min(this.canvasWidth, this.x));
+                this.y = Math.max(0, Math.min(this.canvasHeight, this.y));
+            }
+            
+            draw(ctx) {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                
+                // Create gradient for particle
+                const gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.radius);
+                gradient.addColorStop(0, 'rgba(59, 130, 246, 0.8)');
+                gradient.addColorStop(1, 'rgba(59, 130, 246, 0.2)');
+                
+                ctx.fillStyle = gradient;
+                ctx.fill();
+                
+                // Add glow effect
+                ctx.shadowBlur = 10;
+                ctx.shadowColor = 'rgba(59, 130, 246, 0.5)';
+                ctx.fill();
+                ctx.shadowBlur = 0;
+            }
+        }
+        
+        // Initialize particle system when page loads
+        window.addEventListener('load', () => {
+            new ParticleSystem();
+        });
+    </script>
 
-    <footer class="mt-12 bg-gray-800 text-gray-200 py-6">
-        <div class="container mx-auto flex flex-col items-center space-y-2">
-            <p class="text-sm text-center">
-                <strong>Consult with a doctor in case of emergency.</strong><br>
-                This is a Cneapee AI model (Neuro 1.1 Elite). The results are based on AI generation.
-                The popup shown to remind users that the information provided by the Cneapee AI model is for informational purposes only and should not be considered a substitute for professional medical advice. In case of any emergency or serious health concern, always consult a qualified doctor.
-            </p>
-            <a href="index.html" class="inline-flex items-center px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-full font-semibold shadow transition-all duration-200 transform hover:scale-105">
-                🏠 Home
-            </a>
-        </div>
-    </footer>
-
+    <!-- Disease Data and Modal Functions -->
     <script>
         const diseases = [
             {
@@ -368,7 +627,7 @@
             },
             // Added Common Health Issues
             {
-                name: "Bukhar (Fever)",
+                name: "Illness (Fever)",
                 brief: "Fever is a temporary increase in body temperature, often due to an infection. It is a common symptom indicating the body is fighting an illness.",
                 symptoms: [
                     "High temperature (above 100.4°F/38°C)",
@@ -392,7 +651,7 @@
                 ]
             },
             {
-                name: "Badan Dard (Body Ache)",
+                name: "Body Pain (Body Ache)",
                 brief: "Body ache refers to pain or discomfort in muscles and joints, commonly caused by viral infections, overexertion, or stress.",
                 symptoms: [
                     "Muscle pain or soreness",
@@ -414,7 +673,7 @@
                 ]
             },
             {
-                name: "Sardi (Cold)",
+                name: "Sneezing (Cold)",
                 brief: "Common cold is a viral infection of the nose and throat, leading to symptoms like runny nose, sneezing, and mild fever. It usually resolves on its own.",
                 symptoms: [
                     "Runny or stuffy nose",
@@ -444,7 +703,7 @@
                 medicines: ["Moisturizing lotion", "Aloe vera gel", "Mild soap", "Sunscreen"]
             },
             {
-                name: "Itching / Dinei",
+                name: "Itching",
                 symptoms: ["Itching", "Redness", "Rash", "Irritation"],
                 precautions: ["Keep area clean", "Avoid scratching", "Wear loose clothes", "Use mild soap"],
                 medicines: ["Calamine lotion", "Antihistamine tablets", "Hydrocortisone cream"]
