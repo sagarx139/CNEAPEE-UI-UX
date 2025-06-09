@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CNEAPEE AI Neuro 1.1 - Professional Interface</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary': '#0066ff',
+                        'secondary': '#1e40af',
+                        'accent': '#60a5fa',
+                        'dark': '#0a0a0f',
+                        'surface': '#1a1a2e',
+                        'surface-light': '#16213e',
+                        'border': 'rgba(96, 165, 250, 0.2)',
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'glow': 'glow 2s ease-in-out infinite alternate',
+                        'slide-up': 'slideUp 0.5s ease-out',
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+        
+        * {
+            scrollbar-width: thin;
+            scrollbar-color: #60a5fa #1a1a2e;
+        }
+        
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #1a1a2e;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #60a5fa, #1e40af);
+            border-radius: 3px;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0a0a0f;
+            background-image: 
+                radial-gradient(circle at 20% 20%, rgba(30, 64, 175, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(96, 165, 250, 0.2) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(0, 102, 255, 0.1) 0%, transparent 50%);
+            background-attachment: fixed;
+            overflow-x: hidden;
+        }
+        
+        .glass-morphism {
+            background: rgba(26, 26, 46, 0.7);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(96, 165, 250, 0.2);
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+        
+        .glass-light {
+            background: rgba(22, 33, 62, 0.6);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(96, 165, 250, 0.15);
+        }
+        
+        .gradient-border {
+            position: relative;
+            background: linear-gradient(135deg, rgba(26, 26, 46, 0.9), rgba(22, 33, 62, 0.9));
+            border-radius: 20px;
+        }
+        
+        .gradient-border::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            padding: 1px;
+            background: linear-gradient(135deg, #60a5fa, #1e40af, #0066ff);
+            border-radius: inherit;
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask-composite: xor;
+            -webkit-mask-composite: xor;
+        }
+        
+        .chat-container {
+            height: calc(100vh - 2rem);
+            max-height: 900px;
+        }
+        
+        .messages-container {
+            height: calc(100% - 140px);
+        }
+        
+        .message-enter {
+            animation: messageEnter 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        .floating-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(1px);
+            animation: float 8s ease-in-out infinite;
+        }
+        
+        .orb-1 {
+            width: 120px;
+            height: 120px;
+            background: radial-gradient(circle, rgba(96, 165, 250, 0.4), transparent);
+            top: 10%;
+            left: 5%;
+            animation-delay: -2s;
+        }
+        
+        .orb-2 {
+            width: 80px;
+            height: 80px;
+            background: radial-gradient(circle, rgba(30, 64, 175, 0.3), transparent);
+            top: 60%;
+            right: 10%;
+            animation-delay: -4s;
+        }
+        
+        .orb-3 {
+            width: 60px;
+            height: 60px;
+            background: radial-gradient(circle, rgba(0, 102, 255, 0.3), transparent);
+            bottom: 20%;
+            left: 15%;
+            animation-delay: -6s;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            25% { transform: translateY(-20px) rotate(90deg); }
+            50% { transform: translateY(-40px) rotate(180deg); }
+            75% { transform: translateY(-20px) rotate(270deg); }
+        }
+        
+        @keyframes messageEnter {
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        
+        @keyframes glow {
+            from { box-shadow: 0 0 20px rgba(96, 165, 250, 0.5); }
+            to { box-shadow: 0 0 30px rgba(96, 165, 250, 0.8), 0 0 40px rgba(96, 165, 250, 0.3); }
+        }
+        
+        @keyframes slideUp {
+            from { transform: translateY(100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, #60a5fa, #1e40af, #0066ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            background-size: 200% 200%;
+            animation: gradientShift 3s ease infinite;
+        }
+        
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #60a5fa, #1e40af);
+            animation: typingPulse 1.4s infinite;
+        }
+        
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+        
+        @keyframes typingPulse {
+            0%, 60%, 100% { transform: scale(1); opacity: 0.7; }
+            30% { transform: scale(1.2); opacity: 1; }
+        }
+        
+        .input-glow:focus {
+            box-shadow: 
+                0 0 0 1px rgba(96, 165, 250, 0.5),
+                0 0 20px rgba(96, 165, 250, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+        
+        .send-button {
+            background: linear-gradient(135deg, #0066ff, #1e40af);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .send-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .send-button:hover::before {
+            left: 100%;
+        }
+        
+        .send-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 102, 255, 0.4);
+        }
+        
+        .status-indicator {
+            position: relative;
+        }
+        
+        .status-indicator::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: inherit;
+            transform: translate(-50%, -50%);
+            animation: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+        }
+        
+        .logo-glow {
+            background: linear-gradient(135deg, #0066ff, #1e40af);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+        
+        .message-user {
+            background: linear-gradient(135deg, #0066ff, #1e40af);
+            border: 1px solid rgba(96, 165, 250, 0.3);
+        }
+        
+        .message-ai {
+            background: rgba(26, 26, 46, 0.8);
+            border: 1px solid rgba(96, 165, 250, 0.2);
+        }
+        
+        .professional-header {
+            background: linear-gradient(135deg, rgba(26, 26, 46, 0.95), rgba(22, 33, 62, 0.95));
+            backdrop-filter: blur(20px);
+        }
+    </style>
+</head>
+<body class="min-h-screen text-white relative">
+    <!-- Floating Orbs -->
+    <div class="floating-orb orb-1"></div>
+    <div class="floating-orb orb-2"></div>
+    <div class="floating-orb orb-3"></div>
+    
+    <div class="max-w-5xl mx-auto p-4 relative z-10">
+        <!-- Professional Chatbot Container -->
+        <div class="gradient-border chat-container">
+            <div class="h-full rounded-[19px] overflow-hidden">
+                <!-- Professional Header -->
+                <div class="professional-header flex items-center justify-between p-6 border-b border-accent/20">
+                    <div class="flex items-center space-x-4">
+                        <div class="logo-glow w-12 h-12 rounded-xl flex items-center justify-center font-bold text-lg relative">
+                            <span class="relative z-10">AI</span>
+                        </div>
+                        <div>
+                            <h1 class="text-2xl font-bold gradient-text tracking-tight">CNEAPEE AI Neuro 1.1</h1>
+                            <p class="text-sm text-blue-200/70 font-medium">Professional AI Assistant</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <div class="hidden md:flex items-center space-x-2 px-3 py-1 rounded-full glass-light">
+                            <div class="w-2 h-2 bg-green-400 rounded-full status-indicator"></div>
+                            <span class="text-xs font-medium text-green-200">Online</span>
+                        </div>
+                        <div class="flex items-center space-x-1">
+                            <div class="w-1 h-4 bg-accent/60 rounded-full"></div>
+                            <div class="w-1 h-6 bg-accent/80 rounded-full"></div>
+                            <div class="w-1 h-3 bg-accent/40 rounded-full"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Messages Container -->
+                <div id="messagesContainer" class="messages-container overflow-y-auto p-6 space-y-6">
+                    <!-- Welcome Message -->
+                    <div class="flex items-start space-x-4 message-enter">
+                        <div class="w-10 h-10 logo-glow rounded-xl flex items-center justify-center text-sm font-bold flex-shrink-0">
+                            AI
+                        </div>
+                        <div class="message-ai rounded-2xl rounded-tl-sm p-5 max-w-lg">
+                            <p class="text-blue-50 leading-relaxed">
+                                Welcome to CNEAPEE AI Neuro 1.1! I'm your professional AI assistant, ready to help you with complex tasks, creative projects, and intelligent conversations. How may I assist you today?
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Typing Indicator -->
+                <div id="typingIndicator" class="hidden px-6 pb-4">
+                    <div class="flex items-start space-x-4">
+                        <div class="w-10 h-10 logo-glow rounded-xl flex items-center justify-center text-sm font-bold flex-shrink-0">
+                            AI
+                        </div>
+                        <div class="glass-light rounded-2xl rounded-tl-sm p-5">
+                            <div class="typing-indicator">
+                                <div class="typing-dot"></div>
+                                <div class="typing-dot"></div>
+                                <div class="typing-dot"></div>
+                                <span class="ml-2 text-blue-200/70 text-sm">AI is thinking...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Professional Input Container -->
+                <div class="p-6 border-t border-accent/20 bg-gradient-to-r from-surface/50 to-surface-light/50 backdrop-blur-sm">
+                    <div class="flex items-end space-x-4">
+                        <div class="flex-1 relative">
+                            <textarea 
+                                id="messageInput" 
+                                placeholder="Enter your message... (Press Enter to send, Shift+Enter for new line)"
+                                class="w-full px-6 py-4 bg-surface/60 border border-accent/30 rounded-2xl text-white placeholder-blue-200/50 focus:outline-none input-glow transition-all duration-300 resize-none overflow-hidden backdrop-blur-sm"
+                                rows="1"
+                                onkeydown="handleKeyDown(event)"
+                                oninput="autoResize(this)"
+                            ></textarea>
+                            <div class="absolute right-6 bottom-4 text-blue-300/50">
+                                <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <button 
+                            id="sendButton"
+                            onclick="sendMessage()"
+                            class="send-button p-4 rounded-2xl transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-accent/50 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                        >
+                            <svg width="20" height="20" fill="white" viewBox="0 0 24 24" class="relative z-10">
+                                <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="flex items-center justify-between mt-3 text-xs text-blue-200/50">
+                        <span>Powered by Advanced Neural Networks</span>
+                        <span id="messageCount">0 messages</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_CONFIG = {
+            endpoint: '/chat',
+            useMockAPI: false
+        };
+
+        let messages = [];
+        let isTyping = false;
+        let messageCount = 0;
+
+        const messagesContainer = document.getElementById('messagesContainer');
+        const messageInput = document.getElementById('messageInput');
+        const sendButton = document.getElementById('sendButton');
+        const typingIndicator = document.getElementById('typingIndicator');
+        const messageCountEl = document.getElementById('messageCount');
+
+        function updateMessageCount() {
+            messageCount++;
+            messageCountEl.textContent = `${messageCount} message${messageCount !== 1 ? 's' : ''}`;
+        }
+
+        function autoResize(textarea) {
+            textarea.style.height = 'auto';
+            textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
+        }
+
+        function addMessage(content, isUser = false) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `flex items-start space-x-4 message-enter ${isUser ? 'flex-row-reverse space-x-reverse' : ''}`;
+            
+            const avatarContent = isUser ? 'U' : 'AI';
+            const avatarClass = isUser ? 'bg-gradient-to-br from-emerald-500 to-blue-600' : 'logo-glow';
+            const messageClass = isUser ? 'message-user' : 'message-ai';
+            const alignment = isUser ? 'ml-auto' : '';
+
+            messageDiv.innerHTML = `
+                <div class="w-10 h-10 ${avatarClass} rounded-xl flex items-center justify-center text-sm font-bold flex-shrink-0">
+                    ${avatarContent}
+                </div>
+                <div class="${messageClass} ${alignment} rounded-2xl ${isUser ? 'rounded-tr-sm' : 'rounded-tl-sm'} p-5 max-w-lg">
+                    <p class="text-blue-50 leading-relaxed">${content}</p>
+                </div>
+            `;
+
+            messagesContainer.appendChild(messageDiv);
+            updateMessageCount();
+            scrollToBottom();
+        }
+
+        function showTyping() {
+            typingIndicator.classList.remove('hidden');
+            isTyping = true;
+            scrollToBottom();
+        }
+
+        function hideTyping() {
+            typingIndicator.classList.add('hidden');
+            isTyping = false;
+        }
+
+        function scrollToBottom() {
+            setTimeout(() => {
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }, 100);
+        }
+
+        async function sendToAPI(message) {
+            if (API_CONFIG.useMockAPI) {
+                return new Promise((resolve) => {
+                    const responses = [
+                        "I understand your request and I'm here to help you with that. Let me provide you with a comprehensive response.",
+                        "That's an excellent question! Based on my analysis, I can offer several insights and recommendations for you.",
+                        "I appreciate you sharing that with me. Here's my professional assessment and suggested approach.",
+                        "Thank you for the detailed information. I've processed your request and have some valuable insights to share.",
+                        "This is a fascinating topic! Let me break down the key points and provide you with actionable recommendations."
+                    ];
+                    setTimeout(() => resolve(responses[Math.floor(Math.random() * responses.length)]), 1500);
+                });
+            }
+
+            try {
+                const response = await fetch(API_CONFIG.endpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ message })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    return data.reply;
+                } else {
+                    throw new Error(data.error || 'Unknown error');
+                }
+            } catch (error) {
+                console.error('API Error:', error);
+                return "I apologize, but I'm experiencing connectivity issues at the moment. Please try again shortly, and I'll be happy to assist you.";
+            }
+        }
+
+        async function sendMessage() {
+            const message = messageInput.value.trim();
+            if (!message || isTyping) return;
+
+            addMessage(message, true);
+            messages.push({ role: 'user', content: message });
+
+            messageInput.value = '';
+            messageInput.style.height = 'auto';
+            sendButton.disabled = true;
+            showTyping();
+
+            try {
+                const response = await sendToAPI(message);
+                hideTyping();
+                addMessage(response, false);
+                messages.push({ role: 'assistant', content: response });
+            } catch (error) {
+                hideTyping();
+                addMessage("I apologize, but I encountered a technical issue. Please try again, and I'll do my best to assist you.", false);
+            } finally {
+                sendButton.disabled = false;
+                messageInput.focus();
+            }
+        }
+
+        function handleKeyDown(event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                sendMessage();
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function () {
+            messageInput.focus();
+            
+            // Enable mock API for demonstration
+            API_CONFIG.useMockAPI = true;
+        });
+    </script>
+</body>
+</html>
