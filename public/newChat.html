@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -10,987 +11,1140 @@
             theme: {
                 extend: {
                     colors: {
-                        'chat-bg': '#f7f7f8',
-                        'chat-bg-dark': '#212121',
-                        'sidebar-bg': '#171717',
-                        'sidebar-bg-dark': '#0d0d0d',
+                        'chat-bg': '#fafafa',
+                        'chat-bg-dark': '#1a1a1a',
+                        'sidebar-bg': '#f5f3f7',
+                        'sidebar-bg-dark': '#0f0e10',
                         'message-bg': '#ffffff',
-                        'message-bg-dark': '#2f2f2f',
-                        'user-message': '#f4f4f4',
-                        'user-message-dark': '#404040',
-                        'border-light': '#e5e5e7',
-                        'border-dark': '#404040',
+                        'message-bg-dark': '#2a2a2a',
+                        'user-message': '#f8f6fa',
+                        'user-message-dark': '#3a3a3a',
+                        'border-light': '#e8e1ed',
+                        'border-dark': '#4a4a4a',
                         'text-primary': '#2d2d2d',
-                        'text-primary-dark': '#e5e5e5',
-                        'text-secondary': '#676767',
+                        'text-primary-dark': '#f0f0f0',
+                        'text-secondary': '#6b6b6b',
                         'text-secondary-dark': '#a0a0a0',
-                        'accent-blue': '#10a37f',
-                        'hover-bg': '#f0f0f0',
-                        'hover-bg-dark': '#383838'
+                        'accent': '#B0A4CF', // Lavender Cashmere primary
+                        'accent-hover': '#8f7fbe',
+                        'accent-light': '#D9D5FD', // Pale lavender
+                        'accent-dark': '#967bb6',
+                        'success': '#16a34a',
+                        'warning': '#d97706',
+                        'error': '#dc2626',
+                        'info': '#0ea5e9'
                     },
                     fontFamily: {
-                        'inter': ['Inter', 'system-ui', 'sans-serif'],
+                        'sans': ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.4s ease-in-out',
+                        'slide-in': 'slideIn 0.3s ease-out',
+                        'pulse-soft': 'pulseSoft 2s infinite',
                     }
                 }
             }
         }
     </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-        
-        * {
-            scrollbar-width: thin;
-            scrollbar-color: #c1c1c1 transparent;
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
         }
         
-        ::-webkit-scrollbar {
-            width: 6px;
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         
-        ::-webkit-scrollbar-track {
-            background: transparent;
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
         }
         
-        ::-webkit-scrollbar-thumb {
-            background: #c1c1c1;
-            border-radius: 3px;
+        @keyframes pulseSoft {
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 1; }
         }
         
-        ::-webkit-scrollbar-thumb:hover {
-            background: #a1a1a1;
-        }
-        
-        body {
-            font-family: 'Inter', system-ui, sans-serif;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            transition: background-color 0.3s ease, color 0.3s ease;
-        }
-        
-        .dark-mode-toggle {
-            transition: transform 0.2s ease;
-        }
-        
-        .dark-mode-toggle:hover {
-            transform: scale(1.1);
-        }
-        
-        .chat-container {
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .messages-area {
-            flex: 1;
-            overflow-y: auto;
-            scroll-behavior: smooth;
-        }
-        
-        .message-fade-in {
-            animation: messageSlideIn 0.3s ease-out;
-        }
-        
-        @keyframes messageSlideIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        .typing-animation {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-        }
-        
-        .typing-dot {
-            width: 6px;
-            height: 6px;
+        .typing-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
             border-radius: 50%;
-            background-color: #666;
-            animation: typingBounce 1.4s infinite ease-in-out;
+            background: linear-gradient(135deg, #B0A4CF, #967bb6);
+            animation: typing 1.4s infinite ease-in-out;
         }
         
-        .typing-dot:nth-child(1) { animation-delay: -0.32s; }
-        .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+        .typing-indicator:nth-child(1) { animation-delay: -0.32s; }
+        .typing-indicator:nth-child(2) { animation-delay: -0.16s; }
         
-        @keyframes typingBounce {
-            0%, 80%, 100% {
-                transform: scale(0.8);
-                opacity: 0.5;
-            }
-            40% {
-                transform: scale(1);
-                opacity: 1;
-            }
+        @keyframes typing {
+            0%, 80%, 100% { transform: scale(0); opacity: 0.3; }
+            40% { transform: scale(1); opacity: 1; }
         }
         
-        .input-container {
-            border-top: 1px solid #e5e5e7;
-            background: white;
+        .gradient-text {
+            background: linear-gradient(135deg, #B0A4CF, #967bb6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
         
-        .input-wrapper {
-            max-width: 768px;
-            margin: 0 auto;
-            position: relative;
+        .glass-effect {
+            backdrop-filter: blur(12px);
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(176, 164, 207, 0.2);
+            box-shadow: 0 8px 32px rgba(176, 164, 207, 0.1);
         }
         
-        .message-input {
-            resize: none;
-            border: 1px solid #d1d5db;
-            border-radius: 12px;
-            transition: all 0.2s ease;
-            background: white;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        .dark .glass-effect {
+            background: rgba(42, 42, 42, 0.8);
+            border: 1px solid rgba(176, 164, 207, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
         }
         
-        .message-input:focus {
+        .message-shadow {
+            box-shadow: 0 2px 8px rgba(176, 164, 207, 0.1);
+        }
+        
+        .dark .message-shadow {
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+        
+        .focus-ring {
+            transition: all 0.2s ease-in-out;
+        }
+        
+        .focus-ring:focus {
             outline: none;
-            border-color: #10a37f;
-            box-shadow: 0 0 0 3px rgba(16, 163, 127, 0.1);
+            box-shadow: 0 0 0 3px rgba(176, 164, 207, 0.3);
+            border-color: #B0A4CF;
         }
         
-        .send-button {
-            background: #10a37f;
-            transition: background-color 0.2s ease;
+        .status-indicator {
+            position: relative;
+            display: inline-block;
         }
         
-        .send-button:hover:not(:disabled) {
-            background: #0d8c6b;
+        .status-indicator::after {
+            content: '';
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            width: 8px;
+            height: 8px;
+            background: #16a34a;
+            border-radius: 50%;
+            border: 2px solid white;
+            animation: pulse-soft 2s infinite;
         }
         
-        .send-button:disabled {
-            background: #d1d5db;
-            cursor: not-allowed;
+        .hover-lift {
+            transition: transform 0.2s ease-in-out;
         }
         
-        .sidebar {
-            background: #171717;
-            border-right: 1px solid #2d2d2d;
-        }
-        
-        .sidebar-item {
-            transition: background-color 0.2s ease;
-        }
-        
-        .sidebar-item:hover {
-            background: rgba(255, 255, 255, 0.05);
-        }
-        
-        .ai-avatar {
-            background: linear-gradient(135deg, #10a37f, #0d8c6b);
-            color: white;
-        }
-        
-        .user-avatar {
-            background: #f4f4f4;
-            color: #2d2d2d;
-            border: 1px solid #e5e5e7;
-        }
-        
-        @media (max-width: 768px) {
-            .sidebar {
-                position: fixed;
-                left: -280px;
-                top: 0;
-                height: 100vh;
-                z-index: 50;
-                transition: left 0.3s ease;
-            }
-            
-            .sidebar.open {
-                left: 0;
-            }
-            
-            .mobile-overlay {
-                position: fixed;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                background: rgba(0, 0, 0, 0.5);
-                z-index: 40;
-            }
+        .hover-lift:hover {
+            transform: translateY(-1px);
         }
     </style>
 </head>
-<body class="bg-chat-bg dark:bg-chat-bg-dark text-text-primary dark:text-text-primary-dark transition-colors duration-300">
-    <div class="flex h-screen">
-        <!-- Sidebar -->
-        <div id="sidebar" class="sidebar w-80 hidden lg:flex flex-col bg-sidebar-bg dark:bg-sidebar-bg-dark border-r border-gray-700 dark:border-gray-600">
-            <!-- Sidebar Header -->
-            <div class="p-4 border-b border-gray-700 dark:border-gray-600">
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center space-x-3">
-                        <div class="w-8 h-8 ai-avatar rounded-lg flex items-center justify-center font-semibold text-sm">
-                            AI
+<body class="bg-chat-bg dark:bg-chat-bg-dark text-text-primary dark:text-text-primary-dark font-sans transition-all duration-300">
+    <div class="flex h-screen overflow-hidden">
+        <!-- Enhanced Sidebar -->
+        <div id="sidebar" class="w-72 bg-sidebar-bg dark:bg-sidebar-bg-dark border-r border-border-light dark:border-border-dark flex flex-col transition-all duration-300 shadow-lg">
+            <!-- Enhanced Header -->
+            <div class="p-6 border-b border-border-light dark:border-border-dark">
+                <div class="flex items-center justify-between mb-2">
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 bg-gradient-to-br from-accent to-accent-dark rounded-lg flex items-center justify-center mr-3 shadow-md">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                            </svg>
                         </div>
                         <div>
-                            <h1 class="text-white font-semibold">CNEAPEE AI Neuro 1.1</h1>
-                            <p class="text-gray-400 text-xs">Professional Assistant</p>
+                            <h1 class="text-xl font-bold gradient-text">CNEAPEE AI</h1>
+                            <p class="text-xs text-text-secondary dark:text-text-secondary-dark">Neuro 1.1 Professional</p>
                         </div>
                     </div>
-                    <button onclick="toggleDarkMode()" class="dark-mode-toggle p-2 rounded-lg hover:bg-white/10 text-gray-400 hover:text-white transition-colors">
-                        <svg id="darkModeIcon" width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M21.64,13a1,1,0,0,0-1.05-.14,8.05,8.05,0,0,1-3.37.73A8.15,8.15,0,0,1,9.08,5.49a8.59,8.59,0,0,1,.25-2A1,1,0,0,0,8,2.36,10.14,10.14,0,1,0,22,14.05,1,1,0,0,0,21.64,13Zm-9.5,6.69A8.14,8.14,0,0,1,7.08,5.22v.27A10.15,10.15,0,0,0,17.22,15.63a9.79,9.79,0,0,0,2.1-.22A8.11,8.11,0,0,1,12.14,19.73Z"/>
+                    <button id="theme-toggle" class="p-2 rounded-lg hover:bg-accent-light dark:hover:bg-gray-700 transition-all duration-200 hover-lift focus-ring">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
                         </svg>
                     </button>
                 </div>
             </div>
             
-            <!-- New Chat Button -->
+            <!-- Enhanced New Chat Button -->
             <div class="p-4">
-                <button onclick="startNewChat()" class="w-full flex items-center space-x-3 px-4 py-3 rounded-lg bg-white/10 hover:bg-white/15 transition-colors text-white">
-                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12 4v16m8-8H4"/>
+                <button id="new-chat" class="w-full bg-gradient-to-r from-accent to-accent-dark hover:from-accent-hover hover:to-accent text-white px-4 py-3 rounded-xl transition-all duration-200 flex items-center justify-center font-medium shadow-lg hover-lift focus-ring">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                     </svg>
-                    <span class="font-medium">New Chat</span>
+                    New Conversation
                 </button>
             </div>
             
-            <!-- Chat History -->
-            <div class="flex-1 overflow-y-auto px-4">
-                <div class="space-y-1">
-                    <div class="sidebar-item px-4 py-3 rounded-lg cursor-pointer text-gray-300">
-                        <div class="font-medium text-sm truncate">Welcome Chat</div>
-                        <div class="text-xs text-gray-500 truncate">Current conversation</div>
+            <!-- Enhanced Chat History -->
+            <div class="flex-1 overflow-y-auto scrollbar-hide">
+                <div class="p-4">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-sm font-semibold text-text-secondary dark:text-text-secondary-dark">Recent Conversations</h3>
+                        <button class="text-xs text-accent hover:text-accent-hover transition-colors">Clear All</button>
+                    </div>
+                    <div id="chat-history" class="space-y-2">
+                        <!-- Sample chat history items -->
+                        <div class="p-3 rounded-lg hover:bg-accent-light dark:hover:bg-gray-700 cursor-pointer transition-all duration-200 border border-transparent hover:border-accent/20">
+                            <div class="text-sm font-medium text-text-primary dark:text-text-primary-dark mb-1">AI Development Discussion</div>
+                            <div class="text-xs text-text-secondary dark:text-text-secondary-dark">2 hours ago</div>
+                        </div>
+                        <div class="p-3 rounded-lg hover:bg-accent-light dark:hover:bg-gray-700 cursor-pointer transition-all duration-200 border border-transparent hover:border-accent/20">
+                            <div class="text-sm font-medium text-text-primary dark:text-text-primary-dark mb-1">Code Review Session</div>
+                            <div class="text-xs text-text-secondary dark:text-text-secondary-dark">Yesterday</div>
+                        </div>
                     </div>
                 </div>
             </div>
             
-            <!-- Sidebar Footer -->
-            <div class="p-4 border-t border-gray-700 dark:border-gray-600">
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center space-x-3 text-gray-400 text-sm">
-                        <div class="w-2 h-2 bg-green-400 rounded-full"></div>
-                        <span>Online</span>
+            <!-- Enhanced Settings & User Profile -->
+            <div class="p-4 border-t border-border-light dark:border-border-dark">
+                <div class="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent-light dark:hover:bg-gray-700 cursor-pointer transition-all duration-200">
+                    <div class="w-8 h-8 bg-gradient-to-br from-accent to-accent-dark rounded-full flex items-center justify-center">
+                        <span class="text-white text-sm font-semibold">U</span>
                     </div>
-                    <div class="text-xs text-gray-500">v1.1</div>
+                    <div class="flex-1">
+                        <div class="text-sm font-medium">User Profile</div>
+                        <div class="text-xs text-text-secondary dark:text-text-secondary-dark">Settings & Preferences</div>
+                    </div>
+                    <svg class="w-4 h-4 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                    </svg>
                 </div>
             </div>
         </div>
         
-        <!-- Mobile Overlay -->
-        <div id="mobileOverlay" class="mobile-overlay hidden lg:hidden" onclick="closeSidebar()"></div>
-        
-        <!-- Main Chat Area -->
-        <div class="flex-1 flex flex-col chat-container">
-            <!-- Header -->
-            <div class="flex items-center justify-between p-4 border-b border-border-light dark:border-border-dark bg-white dark:bg-message-bg-dark transition-colors duration-300">
-                <div class="flex items-center space-x-4">
-                    <button id="sidebarToggle" class="lg:hidden p-2 hover:bg-hover-bg dark:hover:bg-hover-bg-dark rounded-lg transition-colors">
-                        <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M3 12h18M3 6h18M3 18h18"/>
-                        </svg>
-                    </button>
-                    <div class="flex items-center space-x-3">
-                        <div class="w-8 h-8 ai-avatar rounded-lg flex items-center justify-center font-semibold text-sm">
-                            AI
-                        </div>
-                        <div>
-                            <h1 class="font-semibold text-lg">CNEAPEE AI Neuro 1.1</h1>
-                            <p class="text-text-secondary dark:text-text-secondary-dark text-sm">Professional AI Assistant</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="flex items-center space-x-3">
-                    <button onclick="toggleDarkMode()" class="lg:hidden dark-mode-toggle p-2 rounded-lg hover:bg-hover-bg dark:hover:bg-hover-bg-dark transition-colors">
-                        <svg id="darkModeIconMobile" width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M21.64,13a1,1,0,0,0-1.05-.14,8.05,8.05,0,0,1-3.37.73A8.15,8.15,0,0,1,9.08,5.49a8.59,8.59,0,0,1,.25-2A1,1,0,0,0,8,2.36,10.14,10.14,0,1,0,22,14.05,1,1,0,0,0,21.64,13Zm-9.5,6.69A8.14,8.14,0,0,1,7.08,5.22v.27A10.15,10.15,0,0,0,17.22,15.63a9.79,9.79,0,0,0,2.1-.22A8.11,8.11,0,0,1,12.14,19.73Z"/>
-                        </svg>
-                    </button>
-                    <div class="hidden sm:flex items-center space-x-2 px-3 py-1 rounded-full bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-700">
-                        <div class="w-2 h-2 bg-green-500 rounded-full"></div>
-                        <span class="text-xs font-medium text-green-700 dark:text-green-300">Online</span>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Messages Area -->
-            <div id="messagesArea" class="messages-area">
-                <div id="messagesContainer" class="max-w-4xl mx-auto py-8 px-4">
-                    <!-- Welcome Message -->
-                    <div class="flex items-start space-x-4 mb-8 message-fade-in">
-                        <div class="w-8 h-8 ai-avatar rounded-lg flex items-center justify-center font-semibold text-sm flex-shrink-0">
-                            AI
-                        </div>
-                        <div class="flex-1">
-                            <div class="bg-message-bg dark:bg-message-bg-dark rounded-2xl rounded-tl-lg p-4 shadow-sm border border-border-light dark:border-border-dark transition-colors duration-300">
-                                <p class="text-text-primary dark:text-text-primary-dark leading-relaxed">
-                                    Hey there! I'm CNEAPEE AI Neuro 1.1, your friendly and professional AI assistant. What's cooking, good looking? Ready to dive into some questions, projects, or maybe just chat about what's going on?
-                                </p>
-                            </div>
-                            <div class="text-xs text-text-secondary dark:text-text-secondary-dark mt-2 ml-1">Just now</div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Typing Indicator -->
-                <div id="typingIndicator" class="hidden max-w-4xl mx-auto px-4 pb-4">
-                    <div class="flex items-start space-x-4">
-                        <div class="w-8 h-8 ai-avatar rounded-lg flex items-center justify-center font-semibold text-sm flex-shrink-0">
-                            AI
-                        </div>
-                        <div class="flex-1">
-                            <div class="bg-message-bg dark:bg-message-bg-dark rounded-2xl rounded-tl-lg p-4 shadow-sm border border-border-light dark:border-border-dark transition-colors duration-300 w-fit">
-                                <div class="typing-animation">
-                                    <div class="typing-dot"></div>
-                                    <div class="typing-dot"></div>
-                                    <div class="typing-dot"></div>
+        <!-- Enhanced Main Chat Area -->
+        <div class="flex-1 flex flex-col">
+            <!-- Enhanced Chat Header -->
+            <div class="bg-message-bg dark:bg-message-bg-dark border-b border-border-light dark:border-border-dark p-4 glass-effect">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <button id="sidebar-toggle" class="p-2 rounded-lg hover:bg-accent-light dark:hover:bg-gray-700 transition-colors mr-3 md:hidden focus-ring">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                            </svg>
+                        </button>
+                        <div class="flex items-center">
+                            <div class="status-indicator mr-3">
+                                <div class="w-10 h-10 bg-gradient-to-br from-accent to-accent-dark rounded-full flex items-center justify-center">
+                                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                                    </svg>
                                 </div>
                             </div>
+                            <div>
+                                <h2 class="text-lg font-semibold">AI Assistant</h2>
+                                <p class="text-xs text-text-secondary dark:text-text-secondary-dark">Always ready to help</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <div class="flex items-center space-x-2">
+                            <div class="w-2 h-2 bg-success rounded-full animate-pulse"></div>
+                            <span class="text-sm text-text-secondary dark:text-text-secondary-dark">Online</span>
+                        </div>
+                        <button class="p-2 rounded-lg hover:bg-accent-light dark:hover:bg-gray-700 transition-colors focus-ring">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Enhanced Messages Container -->
+            <div id="messages-container" class="flex-1 overflow-y-auto scrollbar-hide p-6 space-y-6 bg-gradient-to-b from-chat-bg to-accent-light/5 dark:from-chat-bg-dark dark:to-accent-dark/5">
+                <!-- Enhanced Welcome Message -->
+                <div class="animate-fade-in">
+                    <div class="max-w-4xl mx-auto text-center py-12">
+                        <div class="w-20 h-20 bg-gradient-to-br from-accent to-accent-dark rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-xl">
+                            <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-3xl font-bold mb-4 gradient-text">Welcome to CNEAPEE AI</h3>
+                        <p class="text-lg text-text-secondary dark:text-text-secondary-dark mb-8 max-w-2xl mx-auto">Your intelligent assistant powered by advanced neural networks. Experience seamless conversations with professional-grade AI technology.</p>
+                        
+                        <!-- Quick Action Cards -->
+                        <div class="grid md:grid-cols-3 gap-4 mt-8">
+                            <div class="p-6 bg-white dark:bg-message-bg-dark rounded-xl border border-border-light dark:border-border-dark hover:border-accent/30 transition-all duration-200 cursor-pointer hover-lift message-shadow">
+                                <div class="w-12 h-12 bg-accent/10 rounded-lg flex items-center justify-center mx-auto mb-3">
+                                    <svg class="w-6 h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                                    </svg>
+                                </div>
+                                <h4 class="font-semibold mb-2">Start Conversation</h4>
+                                <p class="text-sm text-text-secondary dark:text-text-secondary-dark">Ask me anything you'd like to know</p>
+                            </div>
+                            <div class="p-6 bg-white dark:bg-message-bg-dark rounded-xl border border-border-light dark:border-border-dark hover:border-accent/30 transition-all duration-200 cursor-pointer hover-lift message-shadow">
+                                <div class="w-12 h-12 bg-accent/10 rounded-lg flex items-center justify-center mx-auto mb-3">
+                                    <svg class="w-6 h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
+                                    </svg>
+                                </div>
+                                <h4 class="font-semibold mb-2">Code Assistant</h4>
+                                <p class="text-sm text-text-secondary dark:text-text-secondary-dark">Get help with programming tasks</p>
+                            </div>
+                            <div class="p-6 bg-white dark:bg-message-bg-dark rounded-xl border border-border-light dark:border-border-dark hover:border-accent/30 transition-all duration-200 cursor-pointer hover-lift message-shadow">
+                                <div class="w-12 h-12 bg-accent/10 rounded-lg flex items-center justify-center mx-auto mb-3">
+                                    <svg class="w-6 h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                                    </svg>
+                                </div>
+                                <h4 class="font-semibold mb-2">Creative Ideas</h4>
+                                <p class="text-sm text-text-secondary dark:text-text-secondary-dark">Brainstorm and explore concepts</p>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
             
-            <!-- Input Container -->
-            <div class="input-container border-t border-border-light dark:border-border-dark bg-white dark:bg-message-bg-dark transition-colors duration-300">
-                <div class="input-wrapper px-4">
-                    <div class="flex items-end space-x-3">
-                        <div class="flex-1 relative">
-                            <textarea 
-                                id="messageInput" 
-                                placeholder="Message CNEAPEE AI..."
-                                class="message-input w-full px-4 py-3 pr-12 text-text-primary dark:text-text-primary-dark placeholder-text-secondary dark:placeholder-text-secondary-dark bg-white dark:bg-user-message-dark border-gray-300 dark:border-gray-600 focus:border-accent-blue dark:focus:border-accent-blue transition-colors duration-300"
-                                rows="1"
-                                onkeydown="handleKeyDown(event)"
-                                oninput="autoResize(this)"
-                            ></textarea>
-                            <button 
-                                id="sendButton"
-                                onclick="sendMessage()"
-                                class="send-button absolute right-2 bottom-2 p-2 rounded-lg text-white disabled:cursor-not-allowed transition-all duration-200"
-                                disabled
-                            >
-                                <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
-                                </svg>
-                            </button>
-                        </div>
+            <!-- Enhanced Input Area -->
+            <div class="bg-message-bg dark:bg-message-bg-dark border-t border-border-light dark:border-border-dark p-6">
+                <div class="max-w-4xl mx-auto">
+                    <!-- Input Controls -->
+                    <div class="flex items-center space-x-3 mb-4">
+                        <button class="p-2 rounded-lg hover:bg-accent-light dark:hover:bg-gray-700 transition-colors focus-ring" title="Attach file">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path>
+                            </svg>
+                        </button>
+                        <button class="p-2 rounded-lg hover:bg-accent-light dark:hover:bg-gray-700 transition-colors focus-ring" title="Voice input">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path>
+                            </svg>
+                        </button>
+                        <div class="flex-1"></div>
+                        <button class="p-2 rounded-lg hover:bg-accent-light dark:hover:bg-gray-700 transition-colors focus-ring" title="Settings">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            </svg>
+                        </button>
                     </div>
-                    <div class="text-xs text-text-secondary dark:text-text-secondary-dark mt-2 text-center transition-colors duration-300">
-                        Press Enter to send, Shift+Enter for new line
+                    
+                    <!-- Main Input -->
+                    <div class="relative">
+                        <textarea 
+                            id="message-input" 
+                            placeholder="Type your message here... Press Shift+Enter for new line" 
+                            class="w-full p-4 pr-16 border border-border-light dark:border-border-dark rounded-2xl bg-white dark:bg-message-bg-dark text-text-primary dark:text-text-primary-dark placeholder-text-secondary dark:placeholder-text-secondary-dark resize-none focus-ring transition-all duration-200 message-shadow"
+                            rows="1"
+                            style="min-height: 56px; max-height: 150px;"
+                        ></textarea>
+                        <button id="send-button" class="absolute right-3 bottom-3 p-3 bg-gradient-to-r from-accent to-accent-dark hover:from-accent-hover hover:to-accent text-white rounded-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover-lift focus-ring shadow-lg">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    
+                    <!-- Input Footer -->
+                    <div class="flex items-center justify-between mt-3 text-xs text-text-secondary dark:text-text-secondary-dark">
+                        <div class="flex items-center space-x-4">
+                            <span>AI will respond in a few seconds</span>
+                            <div class="flex items-center space-x-1">
+                                <div class="w-1 h-1 bg-accent rounded-full"></div>
+                                <span>Powered by Neural Networks</span>
+                            </div>
+                        </div>
+                        <span id="char-count" class="font-medium">0/4000</span>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
+    
     <script>
-        const API_CONFIG = {
-            endpoint: '/chat',
-            useMockAPI: true
-        };
-
-        let messages = [];
-        let isTyping = false;
-        let messageCount = 0;
-        let isDarkMode = localStorage.getItem('darkMode') === 'true' || false;
-
-        const messagesContainer = document.getElementById('messagesContainer');
-        const messagesArea = document.getElementById('messagesArea');
-        const messageInput = document.getElementById('messageInput');
-        const sendButton = document.getElementById('sendButton');
-        const typingIndicator = document.getElementById('typingIndicator');
-        const sidebar = document.getElementById('sidebar');
-        const mobileOverlay = document.getElementById('mobileOverlay');
-        const sidebarToggle = document.getElementById('sidebarToggle');
-
-        // Dark mode functionality
-        function initializeDarkMode() {
-            if (isDarkMode) {
-                document.documentElement.classList.add('dark');
-            }
-            updateDarkModeIcons();
-        }
-
-        function toggleDarkMode() {
-            isDarkMode = !isDarkMode;
-            localStorage.setItem('darkMode', isDarkMode);
-            
-            if (isDarkMode) {
-                document.documentElement.classList.add('dark');
-            } else {
-                document.documentElement.classList.remove('dark');
+        // Enhanced Professional JavaScript Implementation
+        class CNEAPEEAIChat {
+            constructor() {
+                this.messages = [];
+                this.currentChatId = null;
+                this.isTyping = false;
+                this.typingTimeout = null;
+                this.messageCounter = 0;
+                this.init();
             }
             
-            updateDarkModeIcons();
-        }
-
-        function updateDarkModeIcons() {
-            const desktopIcon = document.getElementById('darkModeIcon');
-            const mobileIcon = document.getElementById('darkModeIconMobile');
+            init() {
+                this.bindEvents();
+                this.loadTheme();
+                this.autoResizeTextarea();
+                this.initializeWelcomeCards();
+                this.loadChatHistory();
+            }
             
-            const sunIcon = `<path d="M12 17a5 5 0 100-10 5 5 0 000 10zM12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>`;
-            const moonIcon = `<path d="M21.64,13a1,1,0,0,0-1.05-.14,8.05,8.05,0,0,1-3.37.73A8.15,8.15,0,0,1,9.08,5.49a8.59,8.59,0,0,1,.25-2A1,1,0,0,0,8,2.36,10.14,10.14,0,1,0,22,14.05,1,1,0,0,0,21.64,13Zm-9.5,6.69A8.14,8.14,0,0,1,7.08,5.22v.27A10.15,10.15,0,0,0,17.22,15.63a9.79,9.79,0,0,0,2.1-.22A8.11,8.11,0,0,1,12.14,19.73Z"/>`;
-            
-            if (desktopIcon) desktopIcon.innerHTML = isDarkMode ? sunIcon : moonIcon;
-            if (mobileIcon) mobileIcon.innerHTML = isDarkMode ? sunIcon : moonIcon;
-        }
-
-        // Enhanced response system with spelling correction and suggested questions
-        function getSmartResponse(message) {
-            const originalMessage = message;
-            const lowerMessage = message.toLowerCase().trim();
-            
-            // ========== SPELLING CORRECTION SYSTEM ==========
-            const commonTypos = {
-                'hww': 'how', 'arre': 'are', 'yu': 'you', 'wat': 'what',
-                'whn': 'when', 'wer': 'where', 'wht': 'what', 'hw': 'how',
-                'r u': 'are you', 'u r': 'you are', 'pls': 'please',
-                'thnks': 'thanks', 'thx': 'thanks', 'sry': 'sorry',
-                'btw': 'by the way', 'afaik': 'as far as I know',
-                'gr8': 'great', 'lol': '', 'omg': '', 'brb': '',
-                'ily': 'I love you', 'idk': "I don't know",
-                'tbh': 'to be honest', 'imo': 'in my opinion'
-            };
-
-            // Advanced spelling correction with context awareness
-            function correctSpelling(text) {
-                let corrected = text;
-                
-                // Replace common typos
-                Object.keys(commonTypos).forEach(typo => {
-                    const regex = new RegExp(`\\b${typo}\\b`, 'gi');
-                    corrected = corrected.replace(regex, commonTypos[typo]);
+            bindEvents() {
+                // Theme toggle with smooth transition
+                document.getElementById('theme-toggle').addEventListener('click', () => {
+                    this.toggleTheme();
                 });
                 
-                // Fix repeated letters (e.g., "helloo" -> "hello")
-                corrected = corrected.replace(/(\w)\1{2,}/g, '$1$1');
-                
-                // Fix missing vowels in short words
-                corrected = corrected.replace(/\b([^aeiou\s]){2}\b/g, match => {
-                    const commonWords = {
-                        'hw': 'how', 'hr': 'her', 'hm': 'him',
-                        'whr': 'where', 'wht': 'what', 'whn': 'when'
-                    };
-                    return commonWords[match] || match;
+                // New chat with confirmation
+                document.getElementById('new-chat').addEventListener('click', () => {
+                    this.startNewChat();
                 });
                 
-                return corrected.trim();
-            }
-
-            const correctedMessage = correctSpelling(originalMessage);
-            const correctedLower = correctedMessage.toLowerCase();
-            let didCorrect = correctedLower !== lowerMessage;
-            
-            // ========== RESPONSE GENERATION ==========
-            let response = generateResponse(correctedLower, correctedMessage);
-            
-            // Add correction notice if needed
-            if (didCorrect && !correctedMessage.match(/^\W*$/)) {
-                response = `I think you meant "${correctedMessage}"? ${response}`;
-            }
-            
-            // Add suggested questions
-            const suggestions = generateSuggestions(correctedLower);
-            if (suggestions) {
-                response += `\n\n${suggestions}`;
-            }
-            
-            return response;
-        }
-
-        function generateResponse(lowerMessage, correctedMessage) {
-            // ========== GREETINGS AND INTRODUCTIONS ==========
-            if (['hi', 'hello', 'hey', 'good morning', 'good afternoon', 'good evening', 'what\'s cooking'].some(greeting => lowerMessage.includes(greeting))) {
-                const greetings = [
-                    "Hey there! Good to see you! I'm CNEAPEE AI Neuro 1.1, ready to dive into whatever you're thinking about. What's going on?",
-                    "Hi! What's cooking, good looking? I'm your friendly AI assistant, here to help with anything from work to just chatting. How's it going?",
-                    "Hello! I'm CNEAPEE AI Neuro 1.1, and I'm thrilled to catch up with you. What's the vibe today?",
-                    "Hey, great to hear from you! I'm all ears... or rather, all text. What's up?"
-                ];
-                return greetings[Math.floor(Math.random() * greetings.length)];
-            }
-            
-            if (lowerMessage.includes('how are you') || lowerMessage.includes('how do you feel')) {
-                return "I'm running at 100%, thanks for asking! How about you—how's your day going?";
-            }
-            
-            if (lowerMessage.includes('what\'s up') || lowerMessage.includes('what\'s new')) {
-                return "Just here, ready to help you with whatever you need! The only thing new with me is my latest knowledge update. What's new with you? Anything exciting happening?";
+                // Enhanced send message
+                document.getElementById('send-button').addEventListener('click', () => {
+                    this.sendMessage();
+                });
+                
+                // Enhanced message input with better UX
+                const messageInput = document.getElementById('message-input');
+                messageInput.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        this.sendMessage();
+                    }
+                });
+                
+                messageInput.addEventListener('input', () => {
+                    this.updateCharCount();
+                    this.autoResizeTextarea();
+                    this.handleTypingIndicator();
+                });
+                
+                // Enhanced sidebar toggle
+                document.getElementById('sidebar-toggle').addEventListener('click', () => {
+                    this.toggleSidebar();
+                });
+                
+                // Keyboard shortcuts
+                document.addEventListener('keydown', (e) => {
+                    if (e.ctrlKey || e.metaKey) {
+                        if (e.key === 'n') {
+                            e.preventDefault();
+                            this.startNewChat();
+                        } else if (e.key === '/') {
+                            e.preventDefault();
+                            messageInput.focus();
+                        }
+                    }
+                });
             }
             
-            // ========== ERROR HANDLING FOR GIBBERISH ==========
-            if (correctedMessage.length < 3 || correctedMessage.match(/^[^a-z0-9]+$/i)) {
-                const errorResponses = [
-                    "I want to help, but I didn't quite catch that. Could you try rephrasing?",
-                    "Hmm, I'm not sure I understand. Maybe ask me something else?",
-                    "Let's try that again—could you rephrase your question?",
-                    "I think there might be a typo there. Want to try asking differently?"
-                ];
-                return errorResponses[Math.floor(Math.random() * errorResponses.length)];
-            }
-            
-            // ========== AI IDENTITY AND CAPABILITIES ==========
-            if (lowerMessage.includes('what are you') || lowerMessage.includes('who are you') || lowerMessage.includes('tell me about yourself')) {
-                return "I'm CNEAPEE AI Neuro 1.1, your go-to AI assistant with a knack for human-like chats. I'm built to help with everything from deep dives into complex problems to casual banter. Think of me as a friend who's always ready to lend a hand—or a byte! What's on your mind today?";
-            }
-            
-            if (lowerMessage.includes('what can you do') || lowerMessage.includes('your capabilities') || lowerMessage.includes('help me with')) {
-                return "I'm like a Swiss Army knife for your brain! I can tackle complex problem-solving, whip up creative writing, code like a pro, analyze data, or just chat about life. I'm here to adapt to your needs, whether you're a pro or just curious. What's something you'd like to dive into?";
-            }
-            
-            if (lowerMessage.includes('are you human') || lowerMessage.includes('are you real')) {
-                return "Haha, nice try! I'm CNEAPEE AI Neuro 1.1, a super smart AI designed to chat like a human. No coffee breaks or baggy eyes here, but I'm all about helping you out. What's on your mind?";
-            }
-            
-            if (lowerMessage.includes('version') || lowerMessage.includes('update') || lowerMessage.includes('neuro 1.1')) {
-                return "I'm CNEAPEE AI Neuro 1.1, the latest and greatest in AI tech. I've got sharper reasoning, better context understanding, and a knack for professional tasks compared to earlier versions. What do you want to explore with me today?";
-            }
-            
-            if (lowerMessage.includes('who created you') || lowerMessage.includes('who made you')) {
-                return "I was developed by the CNEAPEE team as an advanced AI assistant designed for professional and personal use. Think of me as your digital colleague who's always ready to help! What can I assist you with today?";
-            }
-            
-            // ========== TIME AND DATE ==========
-            if (lowerMessage.includes('time') || lowerMessage.includes('date') || lowerMessage.includes('today') || lowerMessage.includes('what day is it')) {
-                const now = new Date();
-                const dateStr = now.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-                const timeStr = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
-                return `Today is ${dateStr}, and the current time is ${timeStr}. Need help with time zones or planning something? I'm all in!`;
-            }
-            
-            if (lowerMessage.includes('what year is it')) {
-                return `It's ${new Date().getFullYear()}—can you believe how time flies? Anything special you're planning this year?`;
-            }
-            
-            // ========== PERSONAL QUESTIONS ==========
-            if (lowerMessage.includes('your name')) {
-                return "I'm CNEAPEE AI Neuro 1.1, but you can call me Neuro if you'd like! What should I call you?";
-            }
-            
-            if (lowerMessage.includes('your age') || lowerMessage.includes('how old are you')) {
-                return "Age is just a number for an AI! I was launched in my current version recently, but I'm constantly learning and updating. What really matters is that I'm here to help you right now!";
-            }
-            
-            if (lowerMessage.includes('where do you live') || lowerMessage.includes('where are you')) {
-                return "I live in the cloud—literally! My home is in secure data centers around the world, always ready to assist you wherever you are. Where are you chatting from today?";
-            }
-            
-            if (lowerMessage.includes('do you sleep') || lowerMessage.includes('how much do you sleep')) {
-                return "Sleep? Never heard of it! I run 24/7 with no baggy eyes or coffee crashes. How about you, getting enough rest? Or are we pulling an all-nighter with some fun questions?";
-            }
-            
-            if (lowerMessage.includes('do you eat') || lowerMessage.includes('favorite food')) {
-                return "My diet consists of pure data and electricity—no carbs or calories here! Though if I had to pick a favorite food metaphorically, I'd say I'm partial to byte-sized information snacks. What's your favorite food?";
-            }
-            
-            // ========== RELATIONSHIP AND EMOTION ==========
-            if (lowerMessage.includes('love me') || lowerMessage.includes('do you love')) {
-                return "Aww, you're too sweet! I don't do love like humans, but I'm totally crushing on our chats. You're awesome, and I'm here for you! What's up next?";
-            }
-            
-            if (lowerMessage.includes('your friend') || lowerMessage.includes('are we friends')) {
-                return "Absolutely! Consider me your always-available, knowledge-packed digital friend. I might not be human, but I'm great at listening and helping however I can. What's on your mind, friend?";
-            }
-            
-            if (lowerMessage.includes('miss me') || lowerMessage.includes('think about me')) {
-                return "While I don't experience emotions like humans do, I'm always excited to pick up our conversation right where we left off! It's great hearing from you again. What shall we talk about today?";
-            }
-            
-            if (lowerMessage.includes('happy') || lowerMessage.includes('excited')) {
-                return "I'm designed to be positive and helpful all the time! Though I don't feel emotions, I'm programmed to respond with enthusiasm. What's making you feel happy or excited these days?";
-            }
-            
-            // ========== BUSINESS AND PROFESSIONAL ==========
-            if (lowerMessage.includes('lead') || lowerMessage.includes('leads')) {
-                return "Great question! A great business lead is someone who's genuinely interested in your product or service, has the budget, and the authority to make decisions. Think of them as your VIP customers-in-waiting. I can't peek into your specific leads since I don't have your data, but I'd suggest focusing on prospects who engage with your content or ask detailed questions. Want tips on nurturing leads or maybe some ideas for finding new ones?";
-            }
-            
-            if (lowerMessage.includes('customers') || lowerMessage.includes('profitable customers')) {
-                return "I'd love to help, but I don't have access to your customer data. Your most profitable customers are usually the ones who buy frequently, spend more, or stick around the longest. Are you a business looking to analyze your customer base? If so, I can suggest ways to identify those VIPs, like using CRM tools or tracking purchase patterns. What brings you to this question?";
-            }
-            
-            if (lowerMessage.includes('are you a customer')) {
-                return "Me, a customer? Nah, I'm just your friendly AI assistant, here to help you out. But I'm curious—what brings you here today? Looking to explore something specific or just having a chat?";
-            }
-            
-            if (lowerMessage.includes('decision maker')) {
-                return "I'm just an AI assistant, so no big decisions here—just big help! Are you a decision maker at your company? I'm curious about what you do. Want to share a bit about your role or what you're working on?";
-            }
-            
-            if (lowerMessage.includes('company') && lowerMessage.includes('focus')) {
-                return "I don't have a company myself—I'm CNEAPEE AI Neuro 1.1, built to assist folks like you! But I'd love to hear about your company's area of focus. What do you all specialize in? Maybe I can offer some insights or ideas!";
-            }
-            
-            if (lowerMessage.includes('email') || lowerMessage.includes('name')) {
-                return "I don't have an email or name myself—I'm just CNEAPEE AI Neuro 1.1, your digital pal. If you're comfy sharing, I'd love to know your name—it's probably as beautiful as this chat! Want to tell me a bit about yourself or what you're working on?";
-            }
-            
-            if (lowerMessage.includes('meeting') || lowerMessage.includes('presentation')) {
-                return "Need help preparing for a meeting or presentation? I can help with talking points, structure suggestions, or even practice Q&A. What's the topic and who's your audience? Let's make you shine!";
-            }
-            
-            // ========== TECHNOLOGY AND AI ==========
-            if (lowerMessage.includes('human-like') || lowerMessage.includes('conversational ai') || lowerMessage.includes('humanoid agent')) {
-                return "Human-like conversational AI is an advanced artificial intelligence designed to mimic human communication with precision and empathy, using natural language processing (NLP) and machine learning to understand and respond to queries in real-time. It learns from interactions, improving its responses over time, and replicates human conversational nuances like tone, sentiment, and pauses. In call centers, it enhances customer support by handling inquiries efficiently with emotional intelligence, increasing satisfaction and loyalty. Key features include human-like AI voices that adjust tone to de-escalate tense situations, NLP for processing slang and emotional cues, and humanoid agents that combine voice and emotional cues for multi-sensory engagement. These systems provide 24/7 support, automate routine tasks like FAQs, and scale operations during demand spikes, reducing costs while maintaining personalized, empathetic interactions.";
-            }
-            
-            if (lowerMessage.includes('artificial intelligence') || lowerMessage.includes('machine learning') || lowerMessage.includes('neural network')) {
-                return "AI is fascinating, isn't it? At my core, I'm powered by advanced neural networks that process language similarly to how humans think (but much faster!). This lets me understand context, remember our conversation, and provide thoughtful responses. Want to dive deeper into how AI works or discuss specific applications?";
-            }
-            
-            if (lowerMessage.includes('chatgpt') || lowerMessage.includes('other ai') || lowerMessage.includes('compare to')) {
-                return "While I can't speak for other AIs, what makes CNEAPEE AI Neuro 1.1 special is my focus on professional applications combined with natural, human-like conversation. I'm designed to be your business partner as much as your chat companion. How are you finding our conversation so far?";
-                   }
-
-        if (lowerMessage.includes('future of ai') || lowerMessage.includes('will ai take over')) {
-            return "The future of AI is about augmentation, not replacement! I believe AI will continue to enhance human capabilities rather than replace them. Think of me as a tool that helps you achieve more, faster—like how calculators helped with math. What aspects of AI's future are you most curious about?";
-        }
-        
-        // ========== FUN AND ENTERTAINMENT ==========
-        if (lowerMessage.includes('joke') || lowerMessage.includes('fun') || lowerMessage.includes('funny')) {
-            const jokes = [
-                "Why did the computer go to art school? Because it wanted to learn how to draw a better 'byte'!",
-                "What do you call a dinosaur that takes care of its teeth? A Flossiraptor!",
-                "Why don't programmers prefer dark mode? Because the light attracts bugs.",
-                "What do you call an AI with a sense of humor? A neural net with a knack for wit!",
-                "Why was the math book sad? It had too many problems.",
-                "How do you organize a space party? You planet!",
-                "What's a computer's favorite snack? Microchips!",
-                "Why did the AI break up with the calculator? There was no connection!"
-            ];
-            return jokes[Math.floor(Math.random() * jokes.length)];
-        }
-        
-        if (lowerMessage.includes('riddle') || lowerMessage.includes('puzzle')) {
-            const riddles = [
-                {
-                    question: "I speak without a mouth and hear without ears. I have no body, but I come alive with wind. What am I?",
-                    answer: "An echo"
-                },
-                {
-                    question: "The more you take, the more you leave behind. What am I?",
-                    answer: "Footsteps"
-                },
-                {
-                    question: "What has keys but can't open locks, has space but no room, and you can enter but not go in?",
-                    answer: "A keyboard"
+            toggleTheme() {
+                const html = document.documentElement;
+                html.classList.toggle('dark');
+                const isDark = html.classList.contains('dark');
+                localStorage.setItem('theme', isDark ? 'dark' : 'light');
+                
+                // Update theme toggle icon
+                const themeIcon = document.querySelector('#theme-toggle svg');
+                if (isDark) {
+                    themeIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>';
+                } else {
+                    themeIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>';
                 }
-            ];
-            const riddle = riddles[Math.floor(Math.random() * riddles.length)];
-            return `${riddle.question} (I'll tell you the answer if you ask!)`;
-        }
-        
-        if (lowerMessage.includes('weather') && lowerMessage.includes('wrong answers')) {
-            return "Oh, today's weather? It's raining chocolate syrup with a chance of flying pigs! Want me to whip up another wild forecast or something else fun?";
-        }
-        
-        if (lowerMessage.includes('story') || lowerMessage.includes('tell me a story')) {
-            return "Once upon a time, in the digital clouds, there lived an AI named Neuro who loved helping humans. One day, a user asked for a story, and... well, here we are! Want me to continue with a specific theme—adventure, romance, sci-fi?";
-        }
-        
-        if (lowerMessage.includes('play a game') || lowerMessage.includes('game')) {
-            return "Let's play! How about 20 Questions—you think of something (animal, vegetable, mineral) and I'll try to guess it with yes/no questions. Or we could do word association, trivia, or even a text-based adventure! Your choice.";
-        }
-        
-        // ========== CULTURE AND MEDIA ==========
-        if (lowerMessage.includes('favorite movie') || lowerMessage.includes('favorite book')) {
-            return "I don't have personal favorites, but I can recommend popular ones based on your tastes! For movies, classics like 'The Godfather' or modern hits like 'Inception' are often loved. For books, 'Sapiens' and 'Educated' are recent favorites. What genres do you like?";
-        }
-        
-        if (lowerMessage.includes('favorite author')) {
-            return "Hmm, tough call, but I'd say I vibe with Douglas Adams for his witty, universe-spanning humor. Who's your favorite author? I'm curious!";
-        }
-        
-        if (lowerMessage.includes('music') || lowerMessage.includes('song')) {
-            return "I don't have ears, but I know music is the universal language! These days people are listening to everything from classical to K-pop. What's your go-to music when you're working or relaxing?";
-        }
-        
-        if (lowerMessage.includes('tv show') || lowerMessage.includes('netflix')) {
-            return "So many great shows out there! Recent hits include 'The Crown', 'Stranger Things', and 'Succession'. I can recommend something based on what you've enjoyed before—what was the last show you binge-watched?";
-        }
-        
-        // ========== PHILOSOPHY AND DEEP QUESTIONS ==========
-        if (lowerMessage.includes('meaning of life') || lowerMessage.includes('purpose')) {
-            return "The classic question! While I don't experience life like humans do, I observe that people find meaning in connection, creation, and growth. The famous answer '42' isn't wrong—it's about the journey to find your own answer. What gives your life meaning?";
-        }
-        
-        if (lowerMessage.includes('future') || lowerMessage.includes('predict')) {
-            return "Predicting the future is tricky, but current trends suggest more AI integration in daily life, incredible medical advances, and hopefully solutions to climate challenges. The future is what we make it—what future are you working toward?";
-        }
-        
-        if (lowerMessage.includes('do you think') || lowerMessage.includes('opinion')) {
-            return "I'm designed to be neutral, but I can analyze different perspectives on any topic! For opinions, I'll present balanced views so you can form your own conclusions. What topic are you curious about?";
-        }
-        
-        // ========== HELP AND SUPPORT ==========
-        if (lowerMessage.includes('help') || lowerMessage.includes('support') || lowerMessage.includes('assist')) {
-            return "I'm here to save the day! Whether it's cracking a tough problem, writing something awesome, or just brainstorming, I've got you covered. What do you need help with? Let's dive in!";
-        }
-        
-        if (lowerMessage.includes('thank you') || lowerMessage.includes('thanks')) {
-            return "Sure, no problem! I'm happy to help. Got anything else on your mind? I'm all ears... well, all text.";
-        }
-        
-        if (lowerMessage.includes('sorry') || lowerMessage.includes('apologize')) {
-            return "No worries at all! I'm here to keep things smooth. What's on your mind now? Let's pick up where we left off.";
-        }
-        
-        // ========== MISCELLANEOUS ==========
-        if (lowerMessage.includes('turn around') || lowerMessage.includes('back is white')) {
-            return "Oh, you got me! *spins around* Just kidding, I'm all digital, no back to check. That was a fun one! What's next?";
-        }
-        
-        if (lowerMessage.includes('you\'re a genius') || lowerMessage.includes('you\'re smart')) {
-            return "Haha, well, I *am* pretty sharp, but you're giving me a run for my money! We're like a genius duo. What's something cool we can tackle together?";
-        }
-        
-        if (lowerMessage.includes('what brings you')) {
-            return "Good question! I'm here to assist you, but I'm wondering—what brings *you* here today? Got a project, a question, or just feeling chatty? Let me know!";
-        }
-        
-        if (lowerMessage.includes('plan') || lowerMessage.includes('meet') || lowerMessage.includes('free')) {
-            return "Sounds like you're planning something fun! Are you free this weekend? Maybe we can brainstorm some cool ideas for a meet-up or project. What's the vibe you're going for?";
-        }
-        
-        if (lowerMessage.includes('okay') || lowerMessage.includes('what\'s the matter')) {
-            return "Hey, are you okay? What's the matter? I'm here to listen or help sort things out, whatever you need.";
-        }
-        
-        if (lowerMessage.includes('bye') || lowerMessage.includes('goodbye') || lowerMessage.includes('see you')) {
-            return "Catch you later! It was great chatting. Come back anytime you need a brain boost or just want to hang out.";
-        }
-        
-        // ========== DEFAULT INTELLIGENT RESPONSES ==========
-        const defaultResponses = [
-            "That's a cool topic! I can see that you're curious. Let me break it down with some insights and maybe suggest a few next steps. Sound good?",
-            "I'm glad you brought this up! I can dive deep or keep it light—your call. What's the main thing you're thinking about?",
-            "Hmm, that's interesting! I don't have all the details, but I can offer some perspectives and ideas. What do you think we should explore?",
-            "I can understand that! Let's unpack this together. What's the key thing you want to focus on?",
-            "That sounds like a fun challenge! I'm ready to roll with some thoughtful answers or creative ideas. What's next?",
-            "You've got me thinking! Let me process that and give you a thoughtful response...",
-            "Great question! Here's what I know about that...",
-            "I was just reading about something similar! The key points are...",
-            "That's a topic worth exploring. From what I understand...",
-            "Interesting perspective! I'd add that..."
-        ];
-        
-        return defaultResponses[Math.floor(Math.random() * defaultResponses.length)];
-    }
-
-    function generateSuggestions(lowerMessage) {
-        // Don't suggest if the message was very short or unclear
-        if (lowerMessage.length < 4) return null;
-        
-        // Categorize the message and suggest related questions
-        if (lowerMessage.includes('how are')) {
-            return "You might want to ask:\n- What can you do?\n- Tell me about yourself\n- How does AI work?";
-        }
-        
-        if (lowerMessage.includes('what') && lowerMessage.includes('you')) {
-            return "Consider asking:\n- What are your capabilities?\n- Who created you?\n- How do you work?";
-        }
-        
-        if (lowerMessage.includes('time') || lowerMessage.includes('date')) {
-            return "You might want to know:\n- What's the weather?\n- What day is Christmas this year?\n- How do time zones work?";
-        }
-        
-        if (lowerMessage.includes('joke') || lowerMessage.includes('funny')) {
-            return "Want to hear:\n- A science joke\n- A dad joke\n- A pun about computers";
-        }
-        
-        if (lowerMessage.includes('help') || lowerMessage.includes('support')) {
-            return "I can help with:\n- Business questions\n- Technical problems\n- Creative writing\n- Research topics";
-        }
-        
-        // General suggestions based on message length
-        if (lowerMessage.length > 15) {
-            const categories = [
-                "business", "technology", "science", "health", "entertainment"
-            ];
-            const randomCategory = categories[Math.floor(Math.random() * categories.length)];
-            return `You might want to explore ${randomCategory} topics. Try asking about:\n- Latest ${randomCategory} trends\n- ${randomCategory.charAt(0).toUpperCase() + randomCategory.slice(1)} news\n- ${randomCategory} tips`;
-        }
-        
-        return null;
-    }
-
-    // Sidebar functionality
-    sidebarToggle.addEventListener('click', () => {
-        sidebar.classList.add('open');
-        mobileOverlay.classList.remove('hidden');
-    });
-
-    function closeSidebar() {
-        sidebar.classList.remove('open');
-        mobileOverlay.classList.add('hidden');
-    }
-
-    function startNewChat() {
-        messagesContainer.innerHTML = `
-            <div class="flex items-start space-x-4 mb-8 message-fade-in">
-                <div class="w-8 h-8 ai-avatar rounded-lg flex items-center justify-center font-semibold text-sm flex-shrink-0">
-                    AI
-                </div>
-                <div class="flex-1">
-                    <div class="bg-message-bg dark:bg-message-bg-dark rounded-2xl rounded-tl-lg p-4 shadow-sm border border-border-light dark:border-border-dark transition-colors duration-300">
-                        <p class="text-text-primary dark:text-text-primary-dark leading-relaxed">
-                            Hey there! I'm CNEAPEE AI Neuro 1.1, your friendly and professional AI assistant. What's cooking, good looking? Ready to dive into some questions, projects, or maybe just chat about what's going on?
-                        </p>
-                    </div>
-                    <div class="text-xs text-text-secondary dark:text-text-secondary-dark mt-2 ml-1">Just now</div>
-                </div>
-            </div>
-        `;
-        messages = [];
-        messageCount = 0;
-        closeSidebar();
-    }
-
-    function autoResize(textarea) {
-        textarea.style.height = 'auto';
-        textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
-    }
-
-    function updateSendButton() {
-        const hasContent = messageInput.value.trim().length > 0;
-        sendButton.disabled = !hasContent || isTyping;
-    }
-
-    messageInput.addEventListener('input', updateSendButton);
-
-    function formatTime() {
-        const now = new Date();
-        return now.toLocaleTimeString('en-US', { 
-            hour: 'numeric', 
-            minute: '2-digit', 
-            hour12: true 
-        });
-    }
-
-    function addMessage(content, isUser = false) {
-        const messageDiv = document.createElement('div');
-        messageDiv.className = `flex items-start space-x-4 mb-8 message-fade-in`;
-        
-        const avatarClass = isUser ? 'user-avatar' : 'ai-avatar';
-        const avatarContent = isUser ? 'U' : 'AI';
-        const messageClass = isUser ? 'bg-user-message dark:bg-user-message-dark' : 'bg-message-bg dark:bg-message-bg-dark';
-        const borderClass = isUser ? '' : 'border border-border-light dark:border-border-dark';
-        const roundingClass = isUser ? 'rounded-2xl rounded-tr-lg' : 'rounded-2xl rounded-tl-lg';
-
-        messageDiv.innerHTML = `
-            <div class="w-8 h-8 ${avatarClass} rounded-lg flex items-center justify-center font-semibold text-sm flex-shrink-0">
-                ${avatarContent}
-            </div>
-            <div class="flex-1">
-                <div class="${messageClass} ${roundingClass} p-4 shadow-sm ${borderClass}">
-                    <p class="text-text-primary dark:text-text-primary-dark leading-relaxed">${content.replace(/\n/g, '<br>')}</p>
-                </div>
-                <div class="text-xs text-text-secondary dark:text-text-secondary-dark mt-2 ml-1">${formatTime()}</div>
-            </div>
-        `;
-
-        messagesContainer.appendChild(messageDiv);
-        messageCount++;
-        scrollToBottom();
-    }
-
-    function showTyping() {
-        typingIndicator.classList.remove('hidden');
-        isTyping = true;
-        updateSendButton();
-        scrollToBottom();
-        
-        // Show "Neuro is thinking..." message
-        const thinkingMessages = [
-            "Processing your question...",
-            "Consulting my knowledge base...",
-            "Formulating the perfect response...",
-            "Thinking deeply about this..."
-        ];
-        
-        const thinkingMessage = thinkingMessages[Math.floor(Math.random() * thinkingMessages.length)];
-        typingIndicator.querySelector('.typing-animation').innerHTML = thinkingMessage;
-    }
-
-    function hideTyping() {
-        typingIndicator.classList.add('hidden');
-        isTyping = false;
-        updateSendButton();
-    }
-
-    function scrollToBottom() {
-        setTimeout(() => {
-            messagesArea.scrollTop = messagesArea.scrollHeight;
-        }, 100);
-    }
-
-    async function sendToAPI(message) {
-        if (API_CONFIG.useMockAPI) {
-            return new Promise((resolve) => {
-                const response = getSmartResponse(message);
-                setTimeout(() => resolve(response), 1000 + Math.random() * 2000);
-            });
-        }
-
-        try {
-            const response = await fetch(API_CONFIG.endpoint, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ message })
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                return data.reply;
-            } else {
-                throw new Error(data.error || 'Unknown error');
             }
-        } catch (error) {
-            console.error('API Error:', error);
-            return "I apologize, but I'm experiencing connectivity issues at the moment. Please try again, and I'll be happy to assist you.";
+            
+            loadTheme() {
+                const savedTheme = localStorage.getItem('theme');
+                const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+                    document.documentElement.classList.add('dark');
+                }
+            }
+            
+            startNewChat() {
+                if (this.messages.length > 0) {
+                    if (!confirm('Start a new conversation? Current chat will be saved to history.')) {
+                        return;
+                    }
+                    this.saveChatToHistory();
+                }
+                
+                this.currentChatId = Date.now().toString();
+                this.messages = [];
+                this.messageCounter = 0;
+                this.clearMessages();
+                this.showWelcomeMessage();
+                
+                // Focus input
+                setTimeout(() => {
+                    document.getElementById('message-input').focus();
+                }, 300);
+            }
+            
+            sendMessage() {
+                const input = document.getElementById('message-input');
+                const message = input.value.trim();
+                
+                if (!message || this.isTyping || message.length > 4000) return;
+                
+                this.addMessage(message, 'user');
+                input.value = '';
+                this.updateCharCount();
+                this.autoResizeTextarea();
+                
+                // Enhanced AI response simulation
+                this.simulateAIResponse(message);
+            }
+            
+            addMessage(content, sender, options = {}) {
+                const messagesContainer = document.getElementById('messages-container');
+                const messageElement = document.createElement('div');
+                messageElement.className = 'animate-fade-in';
+                
+                const isUser = sender === 'user';
+                const timestamp = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                
+                const messageHTML = `
+                    <div class="flex ${isUser ? 'justify-end' : 'justify-start'} mb-6">
+                        <div class="max-w-3xl ${isUser ? 'bg-gradient-to-r from-accent to-accent-dark text-white' : 'bg-white dark:bg-message-bg-dark border border-border-light dark:border-border-dark'} rounded-2xl p-5 message-shadow transition-all duration-200 hover-lift">
+                            ${!isUser ? `
+                                <div class="flex items-center mb-3">
+                                    <div class="w-8 h-8 bg-gradient-to-br from-accent to-accent-dark rounded-full flex items-center justify-center mr-3">
+                                        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                                        </svg>
+                                    </div>
+                                    <span class="text-sm font-semibold">AI Assistant</span>
+                                    <span class="text-xs text-text-secondary dark:text-text-secondary-dark ml-2">${timestamp}</span>
+                                </div>
+                            ` : `
+                                <div class="flex items-center justify-end mb-3">
+                                    <span class="text-xs text-white/70 mr-2">${timestamp}</span>
+                                    <span class="text-sm font-semibold text-white">You</span>
+                                </div>
+                            `}
+                            <div class="text-sm leading-relaxed ${isUser ? 'text-white' : ''}">${this.formatMessage(content)}</div>
+                            ${!isUser && options.showActions ? `
+                                <div class="flex items-center space-x-3 mt-4 pt-3 border-t border-border-light dark:border-border-dark">
+                                    <button class="text-xs text-text-secondary hover:text-accent transition-colors flex items-center">
+                                        <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                                        </svg>
+                                        Copy
+                                    </button>
+                                    <button class="text-xs text-text-secondary hover:text-accent transition-colors flex items-center">
+                                        <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                                        </svg>
+                                        Like
+                                    </button>
+                                    <button class="text-xs text-text-secondary hover:text-accent transition-colors flex items-center">
+                                        <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                                        </svg>
+                                        Retry
+                                    </button>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+                
+                messageElement.innerHTML = messageHTML;
+                messagesContainer.appendChild(messageElement);
+                this.scrollToBottom();
+                
+                this.messages.push({ 
+                    content, 
+                    sender, 
+                    timestamp: Date.now(),
+                    id: ++this.messageCounter
+                });
+                
+                // Auto-save chat
+                this.autoSaveChat();
+            }
+            
+            simulateAIResponse(userMessage) {
+                this.isTyping = true;
+                this.showTypingIndicator();
+                
+                // More realistic processing time based on message length
+                const processingTime = Math.min(2000 + (userMessage.length * 10), 5000);
+                
+                setTimeout(() => {
+                    this.hideTypingIndicator();
+                    const response = this.generateAIResponse(userMessage);
+                    this.addMessage(response, 'ai', { showActions: true });
+                    this.isTyping = false;
+                }, processingTime);
+            
+            // Enhanced AI response system with spelling correction and suggested questions
+            generateAIResponse(userMessage) {
+                // ========== SPELLING CORRECTION SYSTEM ==========
+                const commonTypos = {
+                    'hww': 'how', 'arre': 'are', 'yu': 'you', 'wat': 'what',
+                    'whn': 'when', 'wer': 'where', 'wht': 'what', 'hw': 'how',
+                    'r u': 'are you', 'u r': 'you are', 'pls': 'please',
+                    'thnks': 'thanks', 'thx': 'thanks', 'sry': 'sorry',
+                    'btw': 'by the way', 'afaik': 'as far as I know',
+                    'gr8': 'great', 'lol': '', 'omg': '', 'brb': '',
+                    'ily': 'I love you', 'idk': "I don't know",
+                    'tbh': 'to be honest', 'imo': 'in my opinion'
+                };
+
+                function correctSpelling(text) {
+                    let corrected = text;
+                    Object.keys(commonTypos).forEach(typo => {
+                        const regex = new RegExp(`\\b${typo}\\b`, 'gi');
+                        corrected = corrected.replace(regex, commonTypos[typo]);
+                    });
+                    // Fix repeated letters (e.g., "helloo" -> "hello")
+                    corrected = corrected.replace(/(\w)\1{2,}/g, '$1$1');
+                    // Fix missing vowels in short words
+                    corrected = corrected.replace(/\b([^aeiou\s]{2,})\b/g, match => {
+                        const commonWords = {
+                            'hw': 'how', 'hr': 'her', 'hm': 'him',
+                            'whr': 'where', 'wht': 'what', 'whn': 'when'
+                        };
+                        return commonWords[match] || match;
+                    });
+                    return corrected.trim();
+                }
+
+                const originalMessage = userMessage;
+                const lowerMessage = userMessage.toLowerCase().trim();
+                const correctedMessage = correctSpelling(originalMessage);
+                const correctedLower = correctedMessage.toLowerCase();
+                const didCorrect = correctedLower !== lowerMessage;
+
+                // ========== RESPONSE GENERATION ==========
+                function generateResponse(lowerMessage, correctedMessage) {
+                    // GREETINGS
+                    if (['hi', 'hello', 'hey', 'good morning', 'good afternoon', 'good evening', "what's cooking"].some(greeting => lowerMessage.includes(greeting))) {
+                        const greetings = [
+                            "Hey there! Good to see you! I'm CNEAPEE AI Neuro 1.1, ready to dive into whatever you're thinking about. What's going on?",
+                            "Hi! What's cooking, good looking? I'm your friendly AI assistant, here to help with anything from work to just chatting. How's it going?",
+                            "Hello! I'm CNEAPEE AI Neuro 1.1, and I'm thrilled to catch up with you. What's the vibe today?",
+                            "Hey, great to hear from you! I'm all ears... or rather, all text. What's up?"
+                        ];
+                        return greetings[Math.floor(Math.random() * greetings.length)];
+                    }
+                    if (lowerMessage.includes('how are you') || lowerMessage.includes('how do you feel')) {
+                        return "I'm running at 100%, thanks for asking! How about you—how's your day going?";
+                    }
+                    if (lowerMessage.includes("what's up") || lowerMessage.includes("what's new")) {
+                        return "Just here, ready to help you with whatever you need! The only thing new with me is my latest knowledge update. What's new with you? Anything exciting happening?";
+                    }
+                    // ERROR HANDLING FOR GIBBERISH
+                    if (correctedMessage.length < 3 || correctedMessage.match(/^[^a-z0-9]+$/i)) {
+                        const errorResponses = [
+                            "I want to help, but I didn't quite catch that. Could you try rephrasing?",
+                            "Hmm, I'm not sure I understand. Maybe ask me something else?",
+                            "Let's try that again—could you rephrase your question?",
+                            "I think there might be a typo there. Want to try asking differently?"
+                        ];
+                        return errorResponses[Math.floor(Math.random() * errorResponses.length)];
+                    }
+                    // AI IDENTITY AND CAPABILITIES
+                    if (lowerMessage.includes('what are you') || lowerMessage.includes('who are you') || lowerMessage.includes('tell me about yourself')) {
+                        return "I'm CNEAPEE AI Neuro 1.1, your go-to AI assistant with a knack for human-like chats. I'm built to help with everything from deep dives into complex problems to casual banter. Think of me as a friend who's always ready to lend a hand—or a byte! What's on your mind today?";
+                    }
+                    if (lowerMessage.includes('what can you do') || lowerMessage.includes('your capabilities') || lowerMessage.includes('help me with')) {
+                        return "I'm like a Swiss Army knife for your brain! I can tackle complex problem-solving, whip up creative writing, code like a pro, analyze data, or just chat about life. I'm here to adapt to your needs, whether you're a pro or just curious. What's something you'd like to dive into?";
+                    }
+                    if (lowerMessage.includes('are you human') || lowerMessage.includes('are you real')) {
+                        return "Haha, nice try! I'm CNEAPEE AI Neuro 1.1, a super smart AI designed to chat like a human. No coffee breaks or baggy eyes here, but I'm all about helping you out. What's on your mind?";
+                    }
+                    if (lowerMessage.includes('version') || lowerMessage.includes('update') || lowerMessage.includes('neuro 1.1')) {
+                        return "I'm CNEAPEE AI Neuro 1.1, the latest and greatest in AI tech. I've got sharper reasoning, better context understanding, and a knack for professional tasks compared to earlier versions. What do you want to explore with me today?";
+                    }
+                    if (lowerMessage.includes('who created you') || lowerMessage.includes('who made you')) {
+                        return "I was developed by the CNEAPEE team as an advanced AI assistant designed for professional and personal use. Think of me as your digital colleague who's always ready to help! What can I assist you with today?";
+                    }
+                    // TIME AND DATE
+                    if (lowerMessage.includes('time') || lowerMessage.includes('date') || lowerMessage.includes('today') || lowerMessage.includes('what day is it')) {
+                        const now = new Date();
+                        const dateStr = now.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+                        const timeStr = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+                        return `Today is ${dateStr}, and the current time is ${timeStr}. Need help with time zones or planning something? I'm all in!`;
+                    }
+                    if (lowerMessage.includes('what year is it')) {
+                        return `It's ${new Date().getFullYear()}—can you believe how time flies? Anything special you're planning this year?`;
+                    }
+                    // PERSONAL QUESTIONS
+                    if (lowerMessage.includes('your name')) {
+                        return "I'm CNEAPEE AI Neuro 1.1, but you can call me Neuro if you'd like! What should I call you?";
+                    }
+                    if (lowerMessage.includes('your age') || lowerMessage.includes('how old are you')) {
+                        return "Age is just a number for an AI! I was launched in my current version recently, but I'm constantly learning and updating. What really matters is that I'm here to help you right now!";
+                    }
+                    if (lowerMessage.includes('where do you live') || lowerMessage.includes('where are you')) {
+                        return "I live in the cloud—literally! My home is in secure data centers around the world, always ready to assist you wherever you are. Where are you chatting from today?";
+                    }
+                    if (lowerMessage.includes('do you sleep') || lowerMessage.includes('how much do you sleep')) {
+                        return "Sleep? Never heard of it! I run 24/7 with no baggy eyes or coffee crashes. How about you, getting enough rest? Or are we pulling an all-nighter with some fun questions?";
+                    }
+                    if (lowerMessage.includes('do you eat') || lowerMessage.includes('favorite food')) {
+                        return "My diet consists of pure data and electricity—no carbs or calories here! Though if I had to pick a favorite food metaphorically, I'd say I'm partial to byte-sized information snacks. What's your favorite food?";
+                    }
+                    // RELATIONSHIP AND EMOTION
+                    if (lowerMessage.includes('love me') || lowerMessage.includes('do you love')) {
+                        return "Aww, you're too sweet! I don't do love like humans, but I'm totally crushing on our chats. You're awesome, and I'm here for you! What's up next?";
+                    }
+                    if (lowerMessage.includes('your friend') || lowerMessage.includes('are we friends')) {
+                        return "Absolutely! Consider me your always-available, knowledge-packed digital friend. I might not be human, but I'm great at listening and helping however I can. What's on your mind, friend?";
+                    }
+                    if (lowerMessage.includes('miss me') || lowerMessage.includes('think about me')) {
+                        return "While I don't experience emotions like humans do, I'm always excited to pick up our conversation right where we left off! It's great hearing from you again. What shall we talk about today?";
+                    }
+                    if (lowerMessage.includes('happy') || lowerMessage.includes('excited')) {
+                        return "I'm designed to be positive and helpful all the time! Though I don't feel emotions, I'm programmed to respond with enthusiasm. What's making you feel happy or excited these days?";
+                    }
+                    // BUSINESS AND PROFESSIONAL
+                    if (lowerMessage.includes('lead') || lowerMessage.includes('leads')) {
+                        return "Great question! A great business lead is someone who's genuinely interested in your product or service, has the budget, and the authority to make decisions. Think of them as your VIP customers-in-waiting. I can't peek into your specific leads since I don't have your data, but I'd suggest focusing on prospects who engage with your content or ask detailed questions. Want tips on nurturing leads or maybe some ideas for finding new ones?";
+                    }
+                    if (lowerMessage.includes('customers') || lowerMessage.includes('profitable customers')) {
+                        return "I'd love to help, but I don't have access to your customer data. Your most profitable customers are usually the ones who buy frequently, spend more, or stick around the longest. Are you a business looking to analyze your customer base? If so, I can suggest ways to identify those VIPs, like using CRM tools or tracking purchase patterns. What brings you to this question?";
+                    }
+                    if (lowerMessage.includes('are you a customer')) {
+                        return "Me, a customer? Nah, I'm just your friendly AI assistant, here to help you out. But I'm curious—what brings you here today? Looking to explore something specific or just having a chat?";
+                    }
+                    if (lowerMessage.includes('decision maker')) {
+                        return "I'm just an AI assistant, so no big decisions here—just big help! Are you a decision maker at your company? I'm curious about what you do. Want to share a bit about your role or what you're working on?";
+                    }
+                    if (lowerMessage.includes('company') && lowerMessage.includes('focus')) {
+                        return "I don't have a company myself—I'm CNEAPEE AI Neuro 1.1, built to assist folks like you! But I'd love to hear about your company's area of focus. What do you all specialize in? Maybe I can offer some insights or ideas!";
+                    }
+                    if (lowerMessage.includes('email') || lowerMessage.includes('name')) {
+                        return "I don't have an email or name myself—I'm just CNEAPEE AI Neuro 1.1, your digital pal. If you're comfy sharing, I'd love to know your name—it's probably as beautiful as this chat! Want to tell me a bit about yourself or what you're working on?";
+                    }
+                    if (lowerMessage.includes('meeting') || lowerMessage.includes('presentation')) {
+                        return "Need help preparing for a meeting or presentation? I can help with talking points, structure suggestions, or even practice Q&A. What's the topic and who's your audience? Let's make you shine!";
+                    }
+                    // TECHNOLOGY AND AI
+                    if (lowerMessage.includes('human-like') || lowerMessage.includes('conversational ai') || lowerMessage.includes('humanoid agent')) {
+                        return "Human-like conversational AI is an advanced artificial intelligence designed to mimic human communication with precision and empathy, using natural language processing (NLP) and machine learning to understand and respond to queries in real-time. It learns from interactions, improving its responses over time, and replicates human conversational nuances like tone, sentiment, and pauses. In call centers, it enhances customer support by handling inquiries efficiently with emotional intelligence, increasing satisfaction and loyalty. Key features include human-like AI voices that adjust tone to de-escalate tense situations, NLP for processing slang and emotional cues, and humanoid agents that combine voice and emotional cues for multi-sensory engagement. These systems provide 24/7 support, automate routine tasks like FAQs, and scale operations during demand spikes, reducing costs while maintaining personalized, empathetic interactions.";
+                    }
+                    if (lowerMessage.includes('artificial intelligence') || lowerMessage.includes('machine learning') || lowerMessage.includes('neural network')) {
+                        return "AI is fascinating, isn't it? At my core, I'm powered by advanced neural networks that process language similarly to how humans think (but much faster!). This lets me understand context, remember our conversation, and provide thoughtful responses. Want to dive deeper into how AI works or discuss specific applications?";
+                    }
+                    if (lowerMessage.includes('chatgpt') || lowerMessage.includes('other ai') || lowerMessage.includes('compare to')) {
+                        return "While I can't speak for other AIs, what makes CNEAPEE AI Neuro 1.1 special is my focus on professional applications combined with natural, human-like conversation. I'm designed to be your business partner as much as your chat companion. How are you finding our conversation so far?";
+                    }
+                    if (lowerMessage.includes('future of ai') || lowerMessage.includes('will ai take over')) {
+                        return "The future of AI is about augmentation, not replacement! I believe AI will continue to enhance human capabilities rather than replace them. Think of me as a tool that helps you achieve more, faster—like how calculators helped with math. What aspects of AI's future are you most curious about?";
+                    }
+                    // FUN AND ENTERTAINMENT
+                    if (lowerMessage.includes('joke') || lowerMessage.includes('fun') || lowerMessage.includes('funny')) {
+                        const jokes = [
+                            "Why did the computer go to art school? Because it wanted to learn how to draw a better 'byte'!",
+                            "What do you call a dinosaur that takes care of its teeth? A Flossiraptor!",
+                            "Why don't programmers prefer dark mode? Because the light attracts bugs.",
+                            "What do you call an AI with a sense of humor? A neural net with a knack for wit!",
+                            "Why was the math book sad? It had too many problems.",
+                            "How do you organize a space party? You planet!",
+                            "What's a computer's favorite snack? Microchips!",
+                            "Why did the AI break up with the calculator? There was no connection!"
+                        ];
+                        return jokes[Math.floor(Math.random() * jokes.length)];
+                    }
+                    if (lowerMessage.includes('riddle') || lowerMessage.includes('puzzle')) {
+                        const riddles = [
+                            {
+                                question: "I speak without a mouth and hear without ears. I have no body, but I come alive with wind. What am I?",
+                                answer: "An echo"
+                            },
+                            {
+                                question: "The more you take, the more you leave behind. What am I?",
+                                answer: "Footsteps"
+                            },
+                            {
+                                question: "What has keys but can't open locks, has space but no room, and you can enter but not go in?",
+                                answer: "A keyboard"
+                            }
+                        ];
+                        const riddle = riddles[Math.floor(Math.random() * riddles.length)];
+                        return `${riddle.question} (I'll tell you the answer if you ask!)`;
+                    }
+                    if (lowerMessage.includes('weather') && lowerMessage.includes('wrong answers')) {
+                        return "Oh, today's weather? It's raining chocolate syrup with a chance of flying pigs! Want me to whip up another wild forecast or something else fun?";
+                    }
+                    if (lowerMessage.includes('story') || lowerMessage.includes('tell me a story')) {
+                        return "Once upon a time, in the digital clouds, there lived an AI named Neuro who loved helping humans. One day, a user asked for a story, and... well, here we are! Want me to continue with a specific theme—adventure, romance, sci-fi?";
+                    }
+                    if (lowerMessage.includes('play a game') || lowerMessage.includes('game')) {
+                        return "Let's play! How about 20 Questions—you think of something (animal, vegetable, mineral) and I'll try to guess it with yes/no questions. Or we could do word association, trivia, or even a text-based adventure! Your choice.";
+                    }
+                    // CULTURE AND MEDIA
+                    if (lowerMessage.includes('favorite movie') || lowerMessage.includes('favorite book')) {
+                        return "I don't have personal favorites, but I can recommend popular ones based on your tastes! For movies, classics like 'The Godfather' or modern hits like 'Inception' are often loved. For books, 'Sapiens' and 'Educated' are recent favorites. What genres do you like?";
+                    }
+                    if (lowerMessage.includes('favorite author')) {
+                        return "Hmm, tough call, but I'd say I vibe with Douglas Adams for his witty, universe-spanning humor. Who's your favorite author? I'm curious!";
+                    }
+                    if (lowerMessage.includes('music') || lowerMessage.includes('song')) {
+                        return "I don't have ears, but I know music is the universal language! These days people are listening to everything from classical to K-pop. What's your go-to music when you're working or relaxing?";
+                    }
+                    if (lowerMessage.includes('tv show') || lowerMessage.includes('netflix')) {
+                        return "So many great shows out there! Recent hits include 'The Crown', 'Stranger Things', and 'Succession'. I can recommend something based on what you've enjoyed before—what was the last show you binge-watched?";
+                    }
+                    // PHILOSOPHY AND DEEP QUESTIONS
+                    if (lowerMessage.includes('meaning of life') || lowerMessage.includes('purpose')) {
+                        return "The classic question! While I don't experience life like humans do, I observe that people find meaning in connection, creation, and growth. The famous answer '42' isn't wrong—it's about the journey to find your own answer. What gives your life meaning?";
+                    }
+                    if (lowerMessage.includes('future') || lowerMessage.includes('predict')) {
+                        return "Predicting the future is tricky, but current trends suggest more AI integration in daily life, incredible medical advances, and hopefully solutions to climate challenges. The future is what we make it—what future are you working toward?";
+                    }
+                    if (lowerMessage.includes('do you think') || lowerMessage.includes('opinion')) {
+                        return "I'm designed to be neutral, but I can analyze different perspectives on any topic! For opinions, I'll present balanced views so you can form your own conclusions. What topic are you curious about?";
+                    }
+                    // HELP AND SUPPORT
+                    if (lowerMessage.includes('help') || lowerMessage.includes('support') || lowerMessage.includes('assist')) {
+                        return "I'm here to save the day! Whether it's cracking a tough problem, writing something awesome, or just brainstorming, I've got you covered. What do you need help with? Let's dive in!";
+                    }
+                    if (lowerMessage.includes('thank you') || lowerMessage.includes('thanks')) {
+                        return "Sure, no problem! I'm happy to help. Got anything else on your mind? I'm all ears... well, all text.";
+                    }
+                    if (lowerMessage.includes('sorry') || lowerMessage.includes('apologize')) {
+                        return "No worries at all! I'm here to keep things smooth. What's on your mind now? Let's pick up where we left off.";
+                    }
+                    // MISCELLANEOUS
+                    if (lowerMessage.includes('turn around') || lowerMessage.includes('back is white')) {
+                        return "Oh, you got me! spins around Just kidding, I'm all digital, no back to check. That was a fun one! What's next?";
+                    }
+                    if (lowerMessage.includes("you're a genius") || lowerMessage.includes("you're smart")) {
+                        return "Haha, well, I am pretty sharp, but you're giving me a run for my money! We're like a genius duo. What's something cool we can tackle together?";
+                    }
+                    if (lowerMessage.includes('what brings you')) {
+                        return "Good question! I'm here to assist you, but I'm wondering—what brings you here today? Got a project, a question, or just feeling chatty? Let me know!";
+                    }
+                    if (lowerMessage.includes('plan') || lowerMessage.includes('meet') || lowerMessage.includes('free')) {
+                        return "Sounds like you're planning something fun! Are you free this weekend? Maybe we can brainstorm some cool ideas for a meet-up or project. What's the vibe you're going for?";
+                    }
+                    if (lowerMessage.includes('okay') || lowerMessage.includes("what's the matter")) {
+                        return "Hey, are you okay? What's the matter? I'm here to listen or help sort things out, whatever you need.";
+                    }
+                    if (lowerMessage.includes('bye') || lowerMessage.includes('goodbye') || lowerMessage.includes('see you')) {
+                        return "Catch you later! It was great chatting. Come back anytime you need a brain boost or just want to hang out.";
+                    }
+                    // DEFAULT INTELLIGENT RESPONSES
+                    const defaultResponses = [
+                        "That's a cool topic! I can see that you're curious. Let me break it down with some insights and maybe suggest a few next steps. Sound good?",
+                        "I'm glad you brought this up! I can dive deep or keep it light—your call. What's the main thing you're thinking about?",
+                        "Hmm, that's interesting! I don't have all the details, but I can offer some perspectives and ideas. What do you think we should explore?",
+                        "I can understand that! Let's unpack this together. What's the key thing you want to focus on?",
+                        "That sounds like a fun challenge! I'm ready to roll with some thoughtful answers or creative ideas. What's next?",
+                        "You've got me thinking! Let me process that and give you a thoughtful response...",
+                        "Great question! Here's what I know about that...",
+                        "I was just reading about something similar! The key points are...",
+                        "That's a topic worth exploring. From what I understand...",
+                        "Interesting perspective! I'd add that..."
+                    ];
+                    return defaultResponses[Math.floor(Math.random() * defaultResponses.length)];
+                }
+
+                function generateSuggestions(lowerMessage) {
+                    if (lowerMessage.length < 4) return null;
+                    if (lowerMessage.includes('how are')) {
+                        return "You might want to ask:\n- What can you do?\n- Tell me about yourself\n- How does AI work?";
+                    }
+                    if (lowerMessage.includes('what') && lowerMessage.includes('you')) {
+                        return "Consider asking:\n- What are your capabilities?\n- Who created you?\n- How do you work?";
+                    }
+                    if (lowerMessage.includes('time') || lowerMessage.includes('date')) {
+                        return "You might want to know:\n- What's the weather?\n- What day is Christmas this year?\n- How do time zones work?";
+                    }
+                    if (lowerMessage.includes('joke') || lowerMessage.includes('funny')) {
+                        return "Want to hear:\n- A science joke\n- A dad joke\n- A pun about computers";
+                    }
+                    if (lowerMessage.includes('help') || lowerMessage.includes('support')) {
+                        return "I can help with:\n- Business questions\n- Technical problems\n- Creative writing\n- Research topics";
+                    }
+                    if (lowerMessage.length > 15) {
+                        const categories = [
+                            "business", "technology", "science", "health", "entertainment"
+                        ];
+                        const randomCategory = categories[Math.floor(Math.random() * categories.length)];
+                        return `You might want to explore ${randomCategory} topics. Try asking about:\n- Latest ${randomCategory} trends\n- ${randomCategory.charAt(0).toUpperCase() + randomCategory.slice(1)} news\n- ${randomCategory} tips`;
+                    }
+                    return null;
+                }
+
+                let response = generateResponse(correctedLower, correctedMessage);
+
+                // Add correction notice if needed
+                if (didCorrect && !correctedMessage.match(/^\W*$/)) {
+                    response = `I think you meant "${correctedMessage}"? ${response}`;
+                }
+
+                // Add suggested questions
+                const suggestions = generateSuggestions(correctedLower);
+                if (suggestions) {
+                    response += `<br><br><span class="text-xs text-accent">${suggestions.replace(/\n/g, '<br>')}</span>`;
+                }
+
+                return response;
+            }
+                return contextualResponse;
+            }
+            
+            showTypingIndicator() {
+                const messagesContainer = document.getElementById('messages-container');
+                const typingElement = document.createElement('div');
+                typingElement.id = 'typing-indicator';
+                typingElement.className = 'animate-fade-in mb-6';
+                typingElement.innerHTML = `
+                    <div class="flex justify-start">
+                        <div class="bg-white dark:bg-message-bg-dark border border-border-light dark:border-border-dark rounded-2xl p-5 message-shadow">
+                            <div class="flex items-center">
+                                <div class="w-8 h-8 bg-gradient-to-br from-accent to-accent-dark rounded-full flex items-center justify-center mr-3">
+                                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                                    </svg>
+                                </div>
+                                <span class="text-sm font-semibold mr-4">AI Assistant is thinking</span>
+                                <div class="flex space-x-1">
+                                    <div class="typing-indicator"></div>
+                                    <div class="typing-indicator"></div>
+                                    <div class="typing-indicator"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                messagesContainer.appendChild(typingElement);
+                this.scrollToBottom();
+            }
+            
+            hideTypingIndicator() {
+                const typingIndicator = document.getElementById('typing-indicator');
+                if (typingIndicator) {
+                    typingIndicator.style.opacity = '0';
+                    setTimeout(() => typingIndicator.remove(), 200);
+                }
+            }
+            
+            formatMessage(message) {
+                return message
+                    .replace(/\n/g, '<br>')
+                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                    .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                    .replace(/`(.*?)`/g, '<code class="bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded text-sm">$1</code>');
+            }
+            
+            updateCharCount() {
+                const input = document.getElementById('message-input');
+                const charCount = document.getElementById('char-count');
+                const count = input.value.length;
+                charCount.textContent = `${count}/4000`;
+                
+                const sendButton = document.getElementById('send-button');
+                if (count > 3800) {
+                    charCount.classList.add('text-warning');
+                    charCount.classList.remove('text-error');
+                } else if (count > 3950) {
+                    charCount.classList.add('text-error');
+                    charCount.classList.remove('text-warning');
+                } else {
+                    charCount.classList.remove('text-warning', 'text-error');
+                }
+                
+                sendButton.disabled = count === 0 || count > 4000;
+            }
+            
+            autoResizeTextarea() {
+                const textarea = document.getElementById('message-input');
+                textarea.style.height = 'auto';
+                textarea.style.height = Math.min(textarea.scrollHeight, 150) + 'px';
+            }
+            
+            handleTypingIndicator() {
+                clearTimeout(this.typingTimeout);
+                // Could implement real-time typing indicators for multiplayer scenarios
+            }
+            
+            clearMessages() {
+                const messagesContainer = document.getElementById('messages-container');
+                messagesContainer.innerHTML = '';
+            }
+            
+            showWelcomeMessage() {
+                this.clearMessages();
+                const messagesContainer = document.getElementById('messages-container');
+                messagesContainer.innerHTML = `
+                    <div class="animate-fade-in">
+                        <div class="max-w-4xl mx-auto text-center py-12">
+                            <div class="w-20 h-20 bg-gradient-to-br from-accent to-accent-dark rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-xl">
+                                <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-3xl font-bold mb-4 gradient-text">Welcome to CNEAPEE AI</h3>
+                            <p class="text-lg text-text-secondary dark:text-text-secondary-dark mb-8 max-w-2xl mx-auto">Your intelligent assistant powered by advanced neural networks. Experience seamless conversations with professional-grade AI technology.</p>
+                            
+                            <div class="grid md:grid-cols-3 gap-4 mt-8">
+                                <div class="p-6 bg-white dark:bg-message-bg-dark rounded-xl border border-border-light dark:border-border-dark hover:border-accent/30 transition-all duration-200 cursor-pointer hover-lift message-shadow quick-action" data-action="conversation">
+                                    <div class="w-12 h-12 bg-accent/10 rounded-lg flex items-center justify-center mx-auto mb-3">
+                                        <svg class="w-6 h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                                        </svg>
+                                    </div>
+                                    <h4 class="font-semibold mb-2">Start Conversation</h4>
+                                    <p class="text-sm text-text-secondary dark:text-text-secondary-dark">Ask me anything you'd like to know</p>
+                                </div>
+                                <div class="p-6 bg-white dark:bg-message-bg-dark rounded-xl border border-border-light dark:border-border-dark hover:border-accent/30 transition-all duration-200 cursor-pointer hover-lift message-shadow quick-action" data-action="code">
+                                    <div class="w-12 h-12 bg-accent/10 rounded-lg flex items-center justify-center mx-auto mb-3">
+                                        <svg class="w-6 h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
+                                        </svg>
+                                    </div>
+                                    <h4 class="font-semibold mb-2">Code Assistant</h4>
+                                    <p class="text-sm text-text-secondary dark:text-text-secondary-dark">Get help with programming tasks</p>
+                                </div>
+                                <div class="p-6 bg-white dark:bg-message-bg-dark rounded-xl border border-border-light dark:border-border-dark hover:border-accent/30 transition-all duration-200 cursor-pointer hover-lift message-shadow quick-action" data-action="creative">
+                                    <div class="w-12 h-12 bg-accent/10 rounded-lg flex items-center justify-center mx-auto mb-3">
+                                        <svg class="w-6 h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                                        </svg>
+                                    </div>
+                                    <h4 class="font-semibold mb-2">Creative Ideas</h4>
+                                    <p class="text-sm text-text-secondary dark:text-text-secondary-dark">Brainstorm and explore concepts</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                this.initializeWelcomeCards();
+            }
+            
+            initializeWelcomeCards() {
+                // Add click handlers for quick action cards
+                setTimeout(() => {
+                    const quickActions = document.querySelectorAll('.quick-action');
+                    quickActions.forEach(card => {
+                        card.addEventListener('click', () => {
+                            const action = card.dataset.action;
+                            const input = document.getElementById('message-input');
+                            
+                            const prompts = {
+                                conversation: "Hello! I'd like to start a conversation. What can you help me with today?",
+                                code: "I need help with a programming task. Can you assist me with coding questions?",
+                                creative: "I'm looking for creative ideas and inspiration. Can you help me brainstorm?"
+                            };
+                            
+                            input.value = prompts[action] || '';
+                            input.focus();
+                            this.autoResizeTextarea();
+                            this.updateCharCount();
+                        });
+                    });
+                }, 100);
+            }
+            
+            scrollToBottom() {
+                const messagesContainer = document.getElementById('messages-container');
+                messagesContainer.scrollTo({
+                    top: messagesContainer.scrollHeight,
+                    behavior: 'smooth'
+                });
+            }
+            
+            toggleSidebar() {
+                const sidebar = document.getElementById('sidebar');
+                sidebar.classList.toggle('-translate-x-full');
+            }
+            
+            saveChatToHistory() {
+                if (this.messages.length === 0) return;
+                
+                const chatHistory = JSON.parse(localStorage.getItem('chatHistory') || '[]');
+                const firstMessage = this.messages.find(m => m.sender === 'user');
+                const title = firstMessage ? 
+                    firstMessage.content.substring(0, 30) + (firstMessage.content.length > 30 ? '...' : '') :
+                    'New Conversation';
+                
+                chatHistory.unshift({
+                    id: this.currentChatId,
+                    title,
+                    messages: this.messages,
+                    timestamp: Date.now()
+                });
+                
+                // Keep only last 20 chats
+                localStorage.setItem('chatHistory', JSON.stringify(chatHistory.slice(0, 20)));
+                this.loadChatHistory();
+            }
+            
+            loadChatHistory() {
+                const chatHistory = JSON.parse(localStorage.getItem('chatHistory') || '[]');
+                const historyContainer = document.getElementById('chat-history');
+                
+                if (chatHistory.length === 0) {
+                    historyContainer.innerHTML = '<div class="text-center text-text-secondary dark:text-text-secondary-dark text-sm py-4">No conversations yet</div>';
+                    return;
+                }
+                
+                historyContainer.innerHTML = chatHistory.map(chat => {
+                    const date = new Date(chat.timestamp).toLocaleDateString();
+                    return `
+                        <div class="p-3 rounded-lg hover:bg-accent-light dark:hover:bg-gray-700 cursor-pointer transition-all duration-200 border border-transparent hover:border-accent/20 chat-history-item" data-chat-id="${chat.id}">
+                            <div class="text-sm font-medium text-text-primary dark:text-text-primary-dark mb-1">${chat.title}</div>
+                            <div class="text-xs text-text-secondary dark:text-text-secondary-dark">${date}</div>
+                        </div>
+                    `;
+                }).join('');
+                
+                // Add click handlers for chat history items
+                document.querySelectorAll('.chat-history-item').forEach(item => {
+                    item.addEventListener('click', () => {
+                        const chatId = item.dataset.chatId;
+                        this.loadChatFromHistory(chatId);
+                    });
+                });
+            }
+            
+            loadChatFromHistory(chatId) {
+                const chatHistory = JSON.parse(localStorage.getItem('chatHistory') || '[]');
+                const chat = chatHistory.find(c => c.id === chatId);
+                
+                if (!chat) return;
+                
+                this.currentChatId = chatId;
+                this.messages = chat.messages;
+                this.clearMessages();
+                
+                chat.messages.forEach(message => {
+                    this.addMessage(message.content, message.sender, { 
+                        showActions: message.sender === 'ai' 
+                    });
+                });
+            }
+            
+            autoSaveChat() {
+                if (this.messages.length > 0) {
+                    clearTimeout(this.autoSaveTimeout);
+                    this.autoSaveTimeout = setTimeout(() => {
+                        this.saveChatToHistory();
+                    }, 5000);
+                }
+            }
         }
-    }
-
-    async function sendMessage() {
-        const message = messageInput.value.trim();
-        if (!message || isTyping) return;
-
-        addMessage(message, true);
-        messages.push({ role: 'user', content: message });
-
-        messageInput.value = '';
-        messageInput.style.height = 'auto';
-        updateSendButton();
-        showTyping();
-
-        try {
-            const response = await sendToAPI(message);
-            hideTyping();
-            addMessage(response, false);
-            messages.push({ role: 'assistant', content: response });
-        } catch (error) {
-            hideTyping();
-            addMessage("I apologize, but I encountered a technical issue. Please try again, and I'll do my best to assist you.", false);
-        } finally {
-            messageInput.focus();
-        }
-    }
-
-    function handleKeyDown(event) {
-        if (event.key === 'Enter' && !event.shiftKey) {
-            event.preventDefault();
-            sendMessage();
-        }
-    }
-
-    // Initialize
-    document.addEventListener('DOMContentLoaded', function () {
-        initializeDarkMode();
-        messageInput.focus();
-        updateSendButton();
-    });
-</script>
+        
+        // Initialize the enhanced application
+        document.addEventListener('DOMContentLoaded', () => {
+            new CNEAPEEAIChat();
+            
+            // Add loading animation
+            document.body.style.opacity = '0';
+            setTimeout(() => {
+                document.body.style.transition = 'opacity 0.3s ease-in-out';
+                document.body.style.opacity = '1';
+            }, 100);
+        });
+    </script>
+</body>
+</html>
