@@ -11,7 +11,7 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
-    
+
     * {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     }
@@ -25,11 +25,10 @@
     }
 
     body {
-  background-color: rgb(0, 0, 0);
-  background-attachment: fixed;
-  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
-}
-
+      background-color: rgb(0, 0, 0);
+      background-attachment: fixed;
+      font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    }
 
     .glass-morphism {
       background: var(--glass-bg);
@@ -39,268 +38,320 @@
       box-shadow: 0 8px 32px 0 rgb(102, 101, 101);
     }
 
+    /* --- Additional Responsive Styles --- */
+    /* Custom breakpoint for very small devices, if needed (can be configured in tailwind.config.js) */
+    @media (max-width: 480px) {
+      .hero-heading-main {
+        font-size: 1.8rem !important;
+        /* Smaller for tiny screens */
+      }
+
+      .hero-slogan {
+        font-size: 0.875rem !important;
+        /* Smaller slogan for tiny screens */
+      }
+
+      .glass-morphism.header-nav {
+        padding: 0.75rem 1rem;
+        /* Adjust header padding for smaller screens */
+      }
+    }
   </style>
 </head>
 
 <body class="text-white min-h-screen overflow-x-hidden antialiased">
 
-  <!-- Enterprise Header -->
-  <header class="fixed top-6 left-0 right-0 z-50 px-6">
-    <nav class="glass-morphism rounded-2xl px-6 py-4 mx-auto max-w-7xl">
+  <header class="fixed top-6 left-0 right-0 z-50 px-4 sm:px-6">
+    <nav class="glass-morphism header-nav rounded-2xl px-4 sm:px-6 py-3 sm:py-4 mx-auto max-w-7xl">
       <div class="flex items-center justify-between">
-        <!-- Logo Section -->
-        <div class="flex items-center space-x-4">
-          <img src="assets/cneapee-ai-logo.png" alt="CNEAPEE Logo"
-            class="w-12 h-12 object-contain rounded-xl premium-shadow" />
+        <div class="flex items-center space-x-2 sm:space-x-4"> <img src="assets/cneapee-ai-logo.png" alt="CNEAPEE Logo"
+            class="w-10 h-10 sm:w-12 sm:h-12 object-contain rounded-xl premium-shadow" />
           <div>
-            <h1 class="text-xl font-bold text-white">CNEAPEE AI</h1>
+            <h1 class="text-lg sm:text-xl font-bold text-white">CNEAPEE AI</h1>
           </div>
         </div>
 
-        <!-- Navigation Actions -->
-        <div class="flex items-center space-x-4">
-      
-          
-          <a href="subscriptionplans.html">
-  <div class="glass-morphism px-4 py-2 rounded-xl text-sm font-semibold hover:bg-white/10 transition-all duration-300 flex items-center space-x-2" id="neural-status">
-    <i class="fas fa-brain mr-1"></i>
-    Neuro 1.1 XEN
-  </div>
-</a>
+        <button id="mobile-menu-button"
+          class="md:hidden text-white focus:outline-none p-2 rounded-md hover:bg-white/10 transition-colors">
+          <i class="fas fa-bars text-xl"></i>
+        </button>
 
+        <div class="hidden md:flex items-center space-x-3 sm:space-x-4" id="desktop-nav"> <a
+            href="subscriptionplans.html">
+            <div
+              class="glass-morphism px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-semibold hover:bg-white/10 transition-all duration-300 flex items-center space-x-1 sm:space-x-2"
+              id="neural-status"> <i class="fas fa-brain mr-0.5 sm:mr-1"></i>
+              <span class="hidden sm:inline">Neuro 1.1 XEN</span> <span class="inline sm:hidden">Neuro</span>
+            </div>
+          </a>
           <a href="profile.html">
-            <button class="glass-morphism px-4 py-2 rounded-xl text-sm font-semibold hover:bg-white/10 transition-all duration-300 flex items-center space-x-2">
+            <button
+              class="glass-morphism px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-semibold hover:bg-white/10 transition-all duration-300 flex items-center space-x-1 sm:space-x-2">
               <i class="fas fa-user-circle"></i>
               <span class="hidden sm:inline">Sign Up</span>
-            </button>
+              <span class="inline sm:hidden">Account</span> </button>
           </a>
         </div>
+      </div>
+
+      <div id="mobile-menu" class="hidden md:hidden mt-4 space-y-2">
+        <a href="subscriptionplans.html"
+          class="block glass-morphism px-4 py-2 rounded-xl text-sm font-semibold hover:bg-white/10 transition-all duration-300 flex items-center space-x-2">
+          <i class="fas fa-brain mr-1"></i>
+          Neuro 1.1 XEN
+        </a>
+        <a href="profile.html"
+          class="block glass-morphism px-4 py-2 rounded-xl text-sm font-semibold hover:bg-white/10 transition-all duration-300 flex items-center space-x-2">
+          <i class="fas fa-user-circle"></i>
+          Sign Up
+        </a>
       </div>
     </nav>
   </header>
 
-<!-- Hero Section -->
-<main class="pt-40 pb-2/20">
-  <div class="container mx-auto px-6 text-center">
-    <!-- Main Heading -->
-    <div class="mb-20">
-      <h1 class="text-2xl md:text-2xl font-extrabold text-white mb-6 tracking-tight">
-        <span class="bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent">
-          <!-- Optional Gradient Text Goes Here -->
+  <main class="pt-32 sm:pt-40 pb-10 sm:pb-20">
+    <div class="container mx-auto px-4 sm:px-6 text-center">
+      <div class="mb-10 sm:mb-20">
+        <h1 class="text-xl md:text-2xl font-extrabold text-white mb-4 tracking-tight hero-heading">
+          <span class="bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent">
+          </span>
+        </h1>
+        <p
+          class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white mb-6 sm:mb-10 tracking-tight hero-heading-main">
+          CNEAPEE AI Neuro 1.1 XEN
+        </p>
+
+        <div
+          class="flex flex-wrap items-center justify-center gap-4 sm:gap-6 text-sm sm:text-lg text-gray-300 mb-8 sm:mb-10">
+          <span class="flex items-center text-xs sm:text-base"> <i
+              class="fas fa-shield-alt mr-2 sm:mr-3 text-green-400 text-base sm:text-xl"></i> 256-bit Encryption
+          </span>
+          <span class="flex items-center text-xs sm:text-base"> <i
+              class="fas fa-cloud mr-2 sm:mr-3 text-blue-400 text-base sm:text-xl"></i> Cloud-based AI Health & Learning
+            Platform
+          </span>
+          <span class="flex items-center text-xs sm:text-base"> <i
+              class="fas fa-chart-line mr-2 sm:mr-3 text-purple-400 text-base sm:text-xl"></i> AI With Personalised
+            Insights
+          </span>
+        </div>
+
+        <span class="flex items-center justify-center text-white text-xs sm:text-sm md:text-base hero-slogan"> <i
+            class="fas fa-bolt mr-2 sm:mr-3 text-yellow-400 text-base sm:text-xl"></i> CNEAPEE AI — Made in India, Built
+          for the World. Driving Aatma Nirbhar Bharat through Intelligent Innovation.
         </span>
-      </h1>
-      <p class="text-2xl md:text-4xl font-extrabold text-white mb-10 tracking-tight">
-        CNEAPEE AI Neuro 1.1 XEN
-      </p>
-
-      <!-- Features -->
-      <div class="flex flex-wrap items-center justify-center gap-6 text-lg text-gray-300 mb-10">
-        <span class="flex items-center">
-          <i class="fas fa-shield-alt mr-3 text-green-400 text-xl"></i>
-          256-bit Encryption
-        </span>
-        <span class="flex items-center">
-          <i class="fas fa-cloud mr-3 text-blue-400 text-xl"></i>
-          Cloud-based AI Health & Learning Platform
-        </span>
-        <span class="flex items-center">
-          <i class="fas fa-chart-line mr-3 text-purple-400 text-xl"></i>
-          AI With Personalised Insights
-        </span>
       </div>
-
-      <!-- Slogan -->
-      <span class="flex items-center justify-center text-white text-sm md:text-base">
-        <i class="fas fa-bolt mr-3 text-yellow-400 text-xl"></i>
-        CNEAPEE AI — Made in India, Built for the World. Driving Aatma Nirbhar Bharat through Intelligent Innovation.
-      </span>
     </div>
-  </div>
-</main>
-
-<a href="newChat.html" class="group block mx-auto my-20 max-w-screen-lg px-4">
-  <div class="bg-[#191919] border border-[#2f2f2f] rounded-full py-3 px-6 flex items-center justify-between
-              transition-all duration-300 ease-in-out
-              group-hover:bg-[#2a2a2a] group-hover:border-[#555555] group-hover:shadow-xl group-hover:-translate-y-1">
-    <div class="flex items-center">
-      <div class="w-10 h-10 rounded-md flex items-center justify-center mr-3" style="background-color: #2a2a38;">
-        <i class="fas fa-brain text-base text-[#7e85eb] group-hover:text-[#9ea6ff] transition-colors duration-300"></i>
-      </div>
-      <span class="text-base md:text-lg font-semibold text-white mr-2">Try Neuro AI 1.1</span>
-      <span class="text-sm md:text-base text-gray-200 mr-3 group-hover:text-gray-100 transition-colors duration-300">Our Latest AI Breakthrough</span>
-    </div>
-    <div class="flex items-center">
-      <span class="px-3 py-1 text-blue-300 rounded-full text-xs font-medium mr-2
-                   group-hover:text-blue-200 group-hover:bg-blue-500/10 transition-colors duration-300">AI-Powered</span>
-      <span class="px-3 py-1 text-emerald-300 rounded-full text-xs font-medium mr-3
-                   group-hover:text-emerald-200 group-hover:bg-emerald-500/10 transition-colors duration-300">Next-Gen Model</span>
-      <i class="fas fa-arrow-right text-base text-gray-400 group-hover:text-white group-hover:translate-x-0.5 transition-all duration-300"></i>
-    </div>
-  </div>
-</a>
-
-
-
-   <div class="container mx-auto px-6">
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-    <a href="updates.html" class="group block p-6 rounded-xl border border-gray-700 hover:border-blue-500 transition-colors duration-200">
-      <div class="flex items-center mb-4">
-        <div class="feature-icon w-12 h-12 rounded-xl flex items-center justify-center mr-4 bg-blue-600/20 text-blue-400">
-          <i class="fas fa-sync-alt text-xl"></i>
-        </div>
-        <div>
-          <h3 class="text-xl font-bold text-white mb-0.5">More About Us!</h3>
-          <p class="text-xs text-gray-400">Our Story & Vision</p>
-        </div>
-      </div>
-      <div class="flex items-center justify-between">
-        <div class="flex space-x-2">
-          <span class="px-2 py-0.5 bg-blue-500/10 text-blue-300 rounded-md text-xs font-medium">Live Impact</span>
-          <span class="px-2 py-0.5 bg-green-500/10 text-green-300 rounded-md text-xs font-medium">Secure Future</span>
-        </div>
-        <i class="fas fa-arrow-right text-gray-500 group-hover:text-white transition-colors"></i>
-      </div>
-    </a>
-
-    <a href="studyhub.html" class="group block p-6 rounded-xl border border-gray-700 hover:border-purple-500 transition-colors duration-200">
-      <div class="flex items-center mb-4">
-        <div class="feature-icon w-12 h-12 rounded-xl flex items-center justify-center mr-4 bg-purple-600/20 text-purple-400">
-          <i class="fas fa-graduation-cap text-xl"></i>
-        </div>
-        <div>
-          <h3 class="text-xl font-bold text-white mb-0.5">Learning Hub</h3>
-          <p class="text-xs text-gray-400">AI-Powered Education</p>
-        </div>
-      </div>
-      <div class="flex items-center justify-between">
-        <div class="flex space-x-2">
-          <span class="px-2 py-0.5 bg-purple-500/10 text-purple-300 rounded-md text-xs font-medium">Intelligent AI</span>
-          <span class="px-2 py-0.5 bg-pink-500/10 text-pink-300 rounded-md text-xs font-medium">Truly Adaptive</span>
-        </div>
-        <i class="fas fa-arrow-right text-gray-500 group-hover:text-white transition-colors"></i>
-      </div>
-    </a>
-
-    <a href="health.html" class="group block p-6 rounded-xl border border-gray-700 hover:border-emerald-500 transition-colors duration-200">
-      <div class="flex items-center mb-4">
-        <div class="feature-icon w-12 h-12 rounded-xl flex items-center justify-center mr-4 bg-emerald-600/20 text-emerald-400">
-          <i class="fas fa-heartbeat text-xl"></i>
-        </div>
-        <div>
-          <h3 class="text-xl font-bold text-white mb-0.5">Health Analytics</h3>
-          <p class="text-xs text-gray-400">Smarter Wellness</p>
-        </div>
-      </div>
-      <div class="flex items-center justify-between">
-        <div class="flex space-x-2">
-          <span class="px-2 py-0.5 bg-green-500/10 text-green-300 rounded-md text-xs font-medium">Predictive Health</span>
-          <span class="px-2 py-0.5 bg-emerald-500/10 text-emerald-300 rounded-md text-xs font-medium">HIPAA Compliant</span>
-        </div>
-        <i class="fas fa-arrow-right text-gray-500 group-hover:text-white transition-colors"></i>
-      </div>
-    </a>
-
-    <a href="news.html" class="group block p-6 rounded-xl border border-gray-700 hover:border-amber-500 transition-colors duration-200">
-      <div class="flex items-center mb-4">
-        <div class="feature-icon w-12 h-12 rounded-xl flex items-center justify-center mr-4 bg-amber-600/20 text-amber-400">
-          <i class="fas fa-newspaper text-xl"></i>
-        </div>
-        <div>
-          <h3 class="text-xl font-bold text-white mb-0.5">Intelligence Feed</h3>
-          <p class="text-xs text-gray-400">Unbiased Market Insights</p>
-        </div>
-      </div>
-      <div class="flex items-center justify-between">
-        <div class="flex space-x-2">
-          <span class="px-2 py-0.5 bg-amber-500/10 text-amber-300 rounded-md text-xs font-medium">Real-time Data</span>
-          <span class="px-2 py-0.5 bg-orange-500/10 text-orange-300 rounded-md text-xs font-medium">Dedicated Newsroom</span>
-        </div>
-        <i class="fas fa-arrow-right text-gray-500 group-hover:text-white transition-colors"></i>
-      </div>
-    </a>
-  </div>
-</div>
-
-<div class="container mx-auto px-6 py-12 max-w-4xl">
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 text-center">
-    <div>
-      <div class="text-3xl md:text-4xl font-extrabold text-white mb-0.5">99.9%</div>
-      <div class="text-xs text-gray-400 font-light">Uptime SLA</div>
-    </div>
-
-    <div>
-      <div class="text-3xl md:text-4xl font-extrabold text-white mb-0.5">&lt; 50ms</div>
-      <div class="text-xs text-gray-400 font-light">Response Time</div>
-    </div>
-
-    <div>
-      <div class="text-3xl md:text-4xl font-extrabold text-white mb-0.5">256-bit</div>
-      <div class="text-xs text-gray-400 font-light">Encryption</div>
-    </div>
-
-    <div>
-      <div class="text-3xl md:text-4xl font-extrabold text-white mb-0.5">24/7</div>
-      <div class="text-xs text-gray-400 font-light">Enterprise Support</div>
-    </div>
-  </div>
-</div>
   </main>
 
-  <!-- Enterprise Footer -->
-  
+  <a href="newChat.html" class="group block mx-auto my-10 sm:my-20 max-w-screen-lg px-4">
+    <div
+      class="bg-[#191919] border border-[#2f2f2f] rounded-full py-2 sm:py-3 px-4 sm:px-6 flex items-center justify-between
+                    transition-all duration-300 ease-in-out
+                    group-hover:bg-[#2a2a2a] group-hover:border-[#555555] group-hover:shadow-xl group-hover:-translate-y-1">
+      <div class="flex items-center">
+        <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-md flex items-center justify-center mr-2 sm:mr-3"
+          style="background-color: #2a2a38;"> <i
+            class="fas fa-brain text-sm sm:text-base text-[#7e85eb] group-hover:text-[#9ea6ff] transition-colors duration-300"></i>
+        </div>
+        <span class="text-sm md:text-lg font-semibold text-white mr-1 sm:mr-2">Try Neuro AI 1.1</span>
+      </div>
+      <div class="flex items-center">
+        
+        <span
+          class="px-2 py-0.5 sm:px-3 sm:py-1 text-emerald-300 rounded-full text-xs font-medium mr-2 sm:mr-3
+                             group-hover:text-emerald-200 group-hover:bg-emerald-500/10 transition-colors duration-300">Next-Gen
+          Model</span> <i
+          class="fas fa-arrow-right text-sm sm:text-base text-gray-400 group-hover:text-white group-hover:translate-x-0.5 transition-all duration-300"></i>
+      </div>
+    </div>
+  </a>
 
-  
+  <div class="container mx-auto px-4 sm:px-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6"> <a href="updates.html"
+        class="group block p-4 sm:p-6 rounded-xl border border-gray-700 hover:border-blue-500 transition-colors duration-200 enterprise-card">
+        <div class="flex items-center mb-3 sm:mb-4">
+          <div
+            class="feature-icon w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center mr-3 sm:mr-4 bg-blue-600/20 text-blue-400">
+            <i class="fas fa-sync-alt text-lg sm:text-xl"></i> </div>
+          <div>
+            <h3 class="text-lg sm:text-xl font-bold text-white mb-0.5">More About Us!</h3>
+            <p class="text-xs text-gray-400">Our Story & Vision</p>
+          </div>
+        </div>
+        <div class="flex items-center justify-between">
+          <div class="flex space-x-1.5 sm:space-x-2"> <span
+              class="px-1.5 py-0.5 sm:px-2 sm:py-0.5 bg-blue-500/10 text-blue-300 rounded-md text-xs font-medium">Live
+              Impact</span> <span
+              class="px-1.5 py-0.5 sm:px-2 sm:py-0.5 bg-green-500/10 text-green-300 rounded-md text-xs font-medium">Secure
+              Future</span> </div>
+          <i class="fas fa-arrow-right text-sm sm:text-base text-gray-500 group-hover:text-white transition-colors"></i>
+        </div>
+      </a>
+
+      <a href="studyhub.html"
+        class="group block p-4 sm:p-6 rounded-xl border border-gray-700 hover:border-purple-500 transition-colors duration-200 enterprise-card">
+        <div class="flex items-center mb-3 sm:mb-4">
+          <div
+            class="feature-icon w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center mr-3 sm:mr-4 bg-purple-600/20 text-purple-400">
+            <i class="fas fa-graduation-cap text-lg sm:text-xl"></i>
+          </div>
+          <div>
+            <h3 class="text-lg sm:text-xl font-bold text-white mb-0.5">Learning Hub</h3>
+            <p class="text-xs text-gray-400">AI-Powered Education</p>
+          </div>
+        </div>
+        <div class="flex items-center justify-between">
+          <div class="flex space-x-1.5 sm:space-x-2">
+            <span
+              class="px-1.5 py-0.5 sm:px-2 sm:py-0.5 bg-purple-500/10 text-purple-300 rounded-md text-xs font-medium">Intelligent
+              AI</span>
+            <span
+              class="px-1.5 py-0.5 sm:px-2 sm:py-0.5 bg-pink-500/10 text-pink-300 rounded-md text-xs font-medium">Truly
+              Adaptive</span>
+          </div>
+          <i class="fas fa-arrow-right text-sm sm:text-base text-gray-500 group-hover:text-white transition-colors"></i>
+        </div>
+      </a>
+
+      <a href="health.html"
+        class="group block p-4 sm:p-6 rounded-xl border border-gray-700 hover:border-emerald-500 transition-colors duration-200 enterprise-card">
+        <div class="flex items-center mb-3 sm:mb-4">
+          <div
+            class="feature-icon w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center mr-3 sm:mr-4 bg-emerald-600/20 text-emerald-400">
+            <i class="fas fa-heartbeat text-lg sm:text-xl"></i>
+          </div>
+          <div>
+            <h3 class="text-lg sm:text-xl font-bold text-white mb-0.5">Health Analytics</h3>
+            <p class="text-xs text-gray-400">Smarter Wellness</p>
+          </div>
+        </div>
+        <div class="flex items-center justify-between">
+          <div class="flex space-x-1.5 sm:space-x-2">
+            <span
+              class="px-1.5 py-0.5 sm:px-2 sm:py-0.5 bg-green-500/10 text-green-300 rounded-md text-xs font-medium">Predictive
+              Health</span>
+            <span
+              class="px-1.5 py-0.5 sm:px-2 sm:py-0.5 bg-emerald-500/10 text-emerald-300 rounded-md text-xs font-medium">HIPAA
+              Compliant</span>
+          </div>
+          <i class="fas fa-arrow-right text-sm sm:text-base text-gray-500 group-hover:text-white transition-colors"></i>
+        </div>
+      </a>
+
+      <a href="news.html"
+        class="group block p-4 sm:p-6 rounded-xl border border-gray-700 hover:border-amber-500 transition-colors duration-200 enterprise-card">
+        <div class="flex items-center mb-3 sm:mb-4">
+          <div
+            class="feature-icon w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center mr-3 sm:mr-4 bg-amber-600/20 text-amber-400">
+            <i class="fas fa-newspaper text-lg sm:text-xl"></i>
+          </div>
+          <div>
+            <h3 class="text-lg sm:text-xl font-bold text-white mb-0.5">Intelligence Feed</h3>
+            <p class="text-xs text-gray-400">Unbiased Market Insights</p>
+          </div>
+        </div>
+        <div class="flex items-center justify-between">
+          <div class="flex space-x-1.5 sm:space-x-2">
+            <span
+              class="px-1.5 py-0.5 sm:px-2 sm:py-0.5 bg-amber-500/10 text-amber-300 rounded-md text-xs font-medium">Real-time
+              Data</span>
+            <span
+              class="px-1.5 py-0.5 sm:px-2 sm:py-0.5 bg-orange-500/10 text-orange-300 rounded-md text-xs font-medium">Dedicated
+              Newsroom</span>
+          </div>
+          <i class="fas fa-arrow-right text-sm sm:text-base text-gray-500 group-hover:text-white transition-colors"></i>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <div class="container mx-auto px-4 sm:px-6 py-8 sm:py-12 max-w-4xl">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 text-center">
+      <div>
+        <div class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white mb-0.5">99.9%</div>
+        <div class="text-xs sm:text-sm text-gray-400 font-light">Uptime SLA</div>
+      </div>
+
+      <div>
+        <div class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white mb-0.5">&lt; 50ms</div>
+        <div class="text-xs sm:text-sm text-gray-400 font-light">Response Time</div>
+      </div>
+
+      <div class="col-span-2 md:col-span-1">
+        <div class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white mb-0.5">256-bit</div>
+        <div class="text-xs sm:text-sm text-gray-400 font-light">Encryption</div>
+      </div>
+
+      <div class="col-span-2 md:col-span-1">
+        <div class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white mb-0.5">24/7</div>
+        <div class="text-xs sm:text-sm text-gray-400 font-light">Enterprise Support</div>
+      </div>
+    </div>
+  </div>
+  </main>
+
+  <footer>
+  </footer>
+
+
   <script>
-    // Particle system
+    // Particle system (not directly responsive, but good to keep)
     function createParticles() {
-      const particlesContainer = document.getElementById('particles');
-      const particleCount = 50;
+      // Placeholder for particles container if you add one later
+      // const particlesContainer = document.getElementById('particles');
+      // const particleCount = 50;
 
-      for (let i = 0; i < particleCount; i++) {
-        const particle = document.createElement('div');
-        particle.className = 'particle';
-        particle.style.left = Math.random() * 100 + '%';
-        particle.style.animationDelay = Math.random() * 8 + 's';
-        particle.style.animationDuration = (Math.random() * 10 + 8) + 's';
-        particlesContainer.appendChild(particle);
-      }
+      // for (let i = 0; i < particleCount; i++) {
+      //   const particle = document.createElement('div');
+      //   particle.className = 'particle';
+      //   particle.style.left = Math.random() * 100 + '%';
+      //   particle.style.animationDelay = Math.random() * 8 + 's';
+      //   particle.style.animationDuration = (Math.random() * 10 + 8) + 's';
+      //   particlesContainer.appendChild(particle);
+      // }
     }
 
-    // Modal functionality
-    const newWorkspaceBtn = document.getElementById('new-workspace-btn');
-    const workspaceModal = document.getElementById('workspace-modal');
-    const closeModal = document.getElementById('close-modal');
+    // Modal functionality (removed for brevity, as it wasn't in the provided HTML body)
+    // const newWorkspaceBtn = document.getElementById('new-workspace-btn');
+    // const workspaceModal = document.getElementById('workspace-modal');
+    // const closeModal = document.getElementById('close-modal');
 
-    newWorkspaceBtn.addEventListener('click', () => {
-      workspaceModal.classList.remove('hidden');
-    });
+    // newWorkspaceBtn.addEventListener('click', () => {
+    //   workspaceModal.classList.remove('hidden');
+    // });
 
-    closeModal.addEventListener('click', () => {
-      workspaceModal.classList.add('hidden');
-    });
+    // closeModal.addEventListener('click', () => {
+    //   workspaceModal.classList.add('hidden');
+    // });
 
-    workspaceModal.addEventListener('click', (e) => {
-      if (e.target === workspaceModal) {
-        workspaceModal.classList.add('hidden');
-      }
-    });
+    // workspaceModal.addEventListener('click', (e) => {
+    //   if (e.target === workspaceModal) {
+    //     workspaceModal.classList.add('hidden');
+    //   }
+    // });
 
     // Neural status functionality
     const neuralStatus = document.getElementById('neural-status');
-    neuralStatus.addEventListener('click', () => {
-      // Add any neural status functionality here
-      console.log('Neural status clicked');
-    });
+    if (neuralStatus) { // Check if element exists before adding listener
+      neuralStatus.addEventListener('click', () => {
+        console.log('Neural status clicked');
+      });
+    }
 
-    // Enhanced search functionality
-    const enterpriseSearch = document.getElementById('enterprise-search');
-    enterpriseSearch.addEventListener('focus', () => {
-      enterpriseSearch.parentElement.parentElement.style.transform = 'scale(1.02)';
-    });
 
-    enterpriseSearch.addEventListener('blur', () => {
-      enterpriseSearch.parentElement.parentElement.style.transform = 'scale(1)';
-    });
+    // Enhanced search functionality (removed as search bar was not in HTML)
+    // const enterpriseSearch = document.getElementById('enterprise-search');
+    // if (enterpriseSearch) {
+    //   enterpriseSearch.addEventListener('focus', () => {
+    //     enterpriseSearch.parentElement.parentElement.style.transform = 'scale(1.02)';
+    //   });
+
+    //   enterpriseSearch.addEventListener('blur', () => {
+    //     enterpriseSearch.parentElement.parentElement.style.transform = 'scale(1)';
+    //   });
+    // }
+
 
     // Initialize particles
     createParticles();
@@ -315,60 +366,64 @@
       });
     });
 
-    // Advanced typing animation for search placeholder
-    const searchPlaceholders = [
-      "Analyze quarterly performance metrics...",
-      "Generate comprehensive market report...",
-      "Review code security vulnerabilities...",
-      "Optimize team collaboration workflows...",
-      "Create executive summary presentation...",
-      "Forecast budget allocation trends..."
-    ];
+    // Advanced typing animation for search placeholder (removed as search bar was not in HTML)
+    // const searchPlaceholders = [
+    //   "Analyze quarterly performance metrics...",
+    //   "Generate comprehensive market report...",
+    //   "Review code security vulnerabilities...",
+    //   "Optimize team collaboration workflows...",
+    //   "Create executive summary presentation...",
+    //   "Forecast budget allocation trends..."
+    // ];
 
-    let currentPlaceholder = 0;
-    let currentChar = 0;
-    let isDeleting = false;
+    // let currentPlaceholder = 0;
+    // let currentChar = 0;
+    // let isDeleting = false;
 
-    function typeWriter() {
-      const current = searchPlaceholders[currentPlaceholder];
-      
-      if (isDeleting) {
-        enterpriseSearch.placeholder = current.substring(0, currentChar - 1);
-        currentChar--;
-      } else {
-        enterpriseSearch.placeholder = current.substring(0, currentChar + 1);
-        currentChar++;
-      }
+    // function typeWriter() {
+    //   if (!enterpriseSearch) return; // Exit if search bar not present
+    //   const current = searchPlaceholders[currentPlaceholder];
 
-      let typeSpeed = isDeleting ? 50 : 100;
+    //   if (isDeleting) {
+    //     enterpriseSearch.placeholder = current.substring(0, currentChar - 1);
+    //     currentChar--;
+    //   } else {
+    //     enterpriseSearch.placeholder = current.substring(0, currentChar + 1);
+    //     currentChar++;
+    //   }
 
-      if (!isDeleting && currentChar === current.length) {
-        typeSpeed = 2000;
-        isDeleting = true;
-      } else if (isDeleting && currentChar === 0) {
-        isDeleting = false;
-        currentPlaceholder = (currentPlaceholder + 1) % searchPlaceholders.length;
-        typeSpeed = 500;
-      }
+    //   let typeSpeed = isDeleting ? 50 : 100;
 
-      setTimeout(typeWriter, typeSpeed);
-    }
+    //   if (!isDeleting && currentChar === current.length) {
+    //     typeSpeed = 2000;
+    //     isDeleting = true;
+    //   } else if (isDeleting && currentChar === 0) {
+    //     isDeleting = false;
+    //     currentPlaceholder = (currentPlaceholder + 1) % searchPlaceholders.length;
+    //     typeSpeed = 500;
+    //   }
 
-    // Start typing animation after page load
-    setTimeout(typeWriter, 2000);
+    //   setTimeout(typeWriter, typeSpeed);
+    // }
+
+    // // Start typing animation after page load
+    // if (enterpriseSearch) {
+    //   setTimeout(typeWriter, 2000);
+    // }
+
 
     // Enterprise card hover effects
     document.querySelectorAll('.enterprise-card').forEach(card => {
-      card.addEventListener('mouseenter', function() {
+      card.addEventListener('mouseenter', function () {
         this.style.background = 'linear-gradient(145deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.06) 100%)';
       });
-      
-      card.addEventListener('mouseleave', function() {
+
+      card.addEventListener('mouseleave', function () {
         this.style.background = 'linear-gradient(145deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 100%)';
       });
     });
 
-    // Enterprise security indicator
+    // Enterprise security indicator (status-indicator class not found in provided HTML, keeping for reference)
     function updateSecurityStatus() {
       const statusElements = document.querySelectorAll('.status-indicator');
       statusElements.forEach(element => {
@@ -382,7 +437,7 @@
     // Real-time enterprise metrics simulation
     function updateEnterpriseMetrics() {
       // Simulate real-time uptime updates
-      const uptimeElements = document.querySelectorAll('.text-3xl');
+      const uptimeElements = document.querySelectorAll('.text-3xl'); // Targeting the number elements
       if (uptimeElements.length > 0) {
         // Add subtle animation to metrics
         uptimeElements.forEach((element, index) => {
@@ -396,19 +451,19 @@
       }
     }
 
-    // Professional keyboard shortcuts
-    document.addEventListener('keydown', function(e) {
-      // Ctrl/Cmd + K for search focus
-      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-        e.preventDefault();
-        enterpriseSearch.focus();
-        enterpriseSearch.select();
-      }
-      
-      // Escape to close modal
-      if (e.key === 'Escape' && !workspaceModal.classList.contains('hidden')) {
-        workspaceModal.classList.add('hidden');
-      }
+    // Professional keyboard shortcuts (removed modal related shortcuts as modal was not in HTML)
+    document.addEventListener('keydown', function (e) {
+      // Ctrl/Cmd + K for search focus (if you re-add search bar)
+      // if ((e.ctrlKey || e.metaKey) && e.key === 'k' && enterpriseSearch) {
+      //   e.preventDefault();
+      //   enterpriseSearch.focus();
+      //   enterpriseSearch.select();
+      // }
+
+      // Escape to close modal (if you re-add modal)
+      // if (e.key === 'Escape' && workspaceModal && !workspaceModal.classList.contains('hidden')) {
+      //   workspaceModal.classList.add('hidden');
+      // }
     });
 
     // Enterprise performance monitoring
@@ -417,14 +472,14 @@
       window.addEventListener('load', () => {
         const loadTime = performance.now();
         console.log(`Enterprise platform loaded in ${Math.round(loadTime)}ms`);
-        
+
         // Show performance indicator
         if (loadTime < 1000) {
           const perfIndicator = document.createElement('div');
           perfIndicator.className = 'fixed bottom-4 right-4 glass-morphism px-4 py-2 rounded-lg text-sm text-green-300 z-50';
           perfIndicator.innerHTML = `<i class="fas fa-tachometer-alt mr-2"></i>Optimal Performance`;
           document.body.appendChild(perfIndicator);
-          
+
           setTimeout(() => {
             perfIndicator.style.opacity = '0';
             setTimeout(() => perfIndicator.remove(), 300);
@@ -439,7 +494,7 @@
     monitorPerformance();
 
     // Professional error handling
-    window.addEventListener('error', function(e) {
+    window.addEventListener('error', function (e) {
       console.error('Enterprise platform error:', e.error);
       // Could integrate with enterprise monitoring systems here
     });
@@ -453,13 +508,13 @@
       }
 
       // Focus management for enterprise users
-      document.addEventListener('keydown', function(e) {
+      document.addEventListener('keydown', function (e) {
         if (e.key === 'Tab') {
           document.body.classList.add('keyboard-navigation');
         }
       });
 
-      document.addEventListener('mousedown', function() {
+      document.addEventListener('mousedown', function () {
         document.body.classList.remove('keyboard-navigation');
       });
     }
@@ -474,10 +529,18 @@
     }
 
     initializeDataViz();
+
+    // --- Mobile Menu Toggle ---
+    const mobileMenuButton = document.getElementById('mobile-menu-button');
+    const mobileMenu = document.getElementById('mobile-menu');
+
+    mobileMenuButton.addEventListener('click', () => {
+      mobileMenu.classList.toggle('hidden');
+    });
   </script>
 
-  <!-- Additional Enterprise Styles -->
   <style>
+    /* Your existing styles */
     .high-contrast {
       filter: contrast(1.2) brightness(1.1);
     }
@@ -489,18 +552,36 @@
 
     /* Enterprise loading animations */
     @keyframes enterpriseLoad {
-      0% { opacity: 0; transform: translateY(20px); }
-      100% { opacity: 1; transform: translateY(0); }
+      0% {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     .enterprise-card {
       animation: enterpriseLoad 0.6s ease-out forwards;
     }
 
-    .enterprise-card:nth-child(1) { animation-delay: 0.1s; }
-    .enterprise-card:nth-child(2) { animation-delay: 0.2s; }
-    .enterprise-card:nth-child(3) { animation-delay: 0.3s; }
-    .enterprise-card:nth-child(4) { animation-delay: 0.4s; }
+    .enterprise-card:nth-child(1) {
+      animation-delay: 0.1s;
+    }
+
+    .enterprise-card:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    .enterprise-card:nth-child(3) {
+      animation-delay: 0.3s;
+    }
+
+    .enterprise-card:nth-child(4) {
+      animation-delay: 0.4s;
+    }
 
     /* Professional scrollbar */
     ::-webkit-scrollbar {
@@ -522,19 +603,21 @@
 
     /* Enterprise mobile optimizations */
     @media (max-width: 768px) {
+
+      /* These were already good, just keeping them explicitly */
       .enterprise-search {
         padding: 1rem;
       }
-      
+
       .feature-icon {
         width: 3rem;
         height: 3rem;
       }
-      
+
       .enterprise-card {
         padding: 1.5rem;
       }
-      
+
       .notification-bar {
         font-size: 0.75rem;
         padding: 0.5rem 0;
@@ -543,16 +626,19 @@
 
     /* Print styles for enterprise reports */
     @media print {
+
       .glass-morphism,
       .enterprise-card {
         background: white !important;
         color: black !important;
         border: 1px solid #ccc !important;
       }
-      
+
       .particles,
       .premium-button,
-      nav {
+      nav,
+      #mobile-menu-button {
+        /* Hide hamburger on print */
         display: none !important;
       }
     }
