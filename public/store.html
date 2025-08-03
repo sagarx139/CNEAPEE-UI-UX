@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google-adsense-account" content="ca-pub-5733699332666340">
+    <title>CNEAPEE Store - New Product Launch</title>
+    <link rel="icon" type="image/png" href="assets/cneapeelogo-removebg-preview.png">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        // Apple-inspired Black & White Palette
+                        'apple-bg-light': '#F5F5F7', // Very light gray (almost white) for backgrounds
+                        'apple-bg-dark': '#1D1D1F', // Very dark gray for backgrounds
+                        'apple-ui-light': '#FFFFFF', // Pure white for UI elements
+                        'apple-ui-dark': '#000000', // Pure black for UI elements
+                        'apple-text-dark': '#1D1D1F', // Darkest text on light backgrounds
+                        'apple-text-light': '#F5F5F7', // Lightest text on dark backgrounds
+                        'apple-text-muted-light': '#86868B', // Gray for secondary text (light mode)
+                        'apple-text-muted-dark': '#A1A1A6', // Gray for secondary text (dark mode)
+                        'apple-border-light': '#D2D2D7', // Subtle light border
+                        'apple-border-dark': '#424245', // Subtle dark border
+                        'apple-accent-blue': '#0071E3', // Apple's signature blue for CTAs
+                        'apple-accent-blue-hover': '#0077FF', // Slightly lighter blue on hover
+                    },
+                    fontFamily: {
+                        // SF Pro Display for true Apple feel
+                        'sf': ['-apple-system', 'BlinkMacSystemFont', 'SF Pro Display', 'system-ui', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        // Minimalist, subtle shadows
+                        'apple-light': '0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.02)',
+                        'apple-dark': '0 1px 3px rgba(255, 255, 255, 0.03), 0 1px 2px rgba(255, 255, 255, 0.01)',
+                        'apple-modal-light': '0 20px 40px rgba(0, 0, 0, 0.2)',
+                        'apple-modal-dark': '0 20px 40px rgba(0, 0, 0, 0.6)',
+                    },
+                    keyframes: {
+                        'fade-in-up': {
+                            '0%': {
+                                opacity: '0',
+                                transform: 'translateY(20px)'
+                            },
+                            '100%': {
+                                opacity: '1',
+                                transform: 'translateY(0)'
+                            },
+                        },
+                        'fade-in': {
+                            '0%': {
+                                opacity: '0'
+                            },
+                            '100%': {
+                                opacity: '1'
+                            },
+                        },
+                        'slide-in-left': {
+                            '0%': {
+                                opacity: '0',
+                                transform: 'translateX(-50px)'
+                            },
+                            '100%': {
+                                opacity: '1',
+                                transform: 'translateX(0)'
+                            },
+                        },
+                        'slide-in-right': {
+                            '0%': {
+                                opacity: '0',
+                                transform: 'translateX(50px)'
+                            },
+                            '100%': {
+                                opacity: '1',
+                                transform: 'translateX(0)'
+                            },
+                        },
+                    },
+                    animation: {
+                        'fade-in-up': 'fade-in-up 0.8s ease-out forwards',
+                        'fade-in': 'fade-in 0.6s ease-out forwards',
+                        'slide-in-left': 'slide-in-left 0.8s ease-out forwards',
+                        'slide-in-right': 'slide-in-right 0.8s ease-out forwards',
+                    },
+                }
+            }
+        }
+    </script>
+
+    <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5733699332666340"
+        crossorigin="anonymous"></script>
+
+    <style>
+        /* CSS Variables for theme colors */
+        :root {
+            /* Light Mode */
+            --color-bg: #F5F5F7;
+            --color-ui-bg: #FFFFFF;
+            --color-text-primary: #1D1D1F;
+            --color-text-secondary: #86868B;
+            --color-border: #D2D2D7;
+            --color-accent: #0071E3;
+            --color-accent-hover: #0077FF;
+            --shadow-ui: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.02);
+            --shadow-modal: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .dark {
+            /* Dark Mode */
+            --color-bg: #1D1D1F;
+            --color-ui-bg: #000000;
+            --color-text-primary: #F5F5F7;
+            --color-text-secondary: #A1A1A6;
+            --color-border: #424245;
+            --color-accent: #0071E3;
+            --color-accent-hover: #0077FF;
+            --shadow-ui: 0 1px 3px rgba(255, 255, 255, 0.03), 0 1px 2px rgba(255, 255, 255, 0.01);
+            --shadow-modal: 0 20px 40px rgba(0, 0, 0, 0.6);
+        }
+
+        /* Base styles */
+        body {
+            font-family: var(--font-sf, 'sf', sans-serif);
+            background-color: var(--color-bg);
+            color: var(--color-text-primary);
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            transition: background-color 0.4s ease, color 0.4s ease;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Navbar */
+        .navbar {
+            background-color: var(--color-ui-bg);
+            border-bottom: 1px solid var(--color-border);
+            box-shadow: var(--shadow-ui);
+            position: sticky; /* Make it sticky */
+            top: 0;
+            z-index: 50;
+            padding: 1rem 1.5rem;
+            transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .navbar-link {
+            color: var(--color-text-primary);
+            font-weight: 500;
+            padding: 0.5rem 0.8rem;
+            border-radius: 0.4rem;
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+
+        .navbar-link:hover {
+            background-color: rgba(var(--color-text-primary-rgb, 0, 0, 0), 0.08); /* Subtle hover */
+        }
+
+        /* Universal CTA Button */
+        .cta-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem 1.5rem;
+            border-radius: 9999px; /* Pill shape */
+            background-color: var(--color-accent);
+            color: #FFFFFF;
+            font-weight: 500;
+            font-size: 1rem;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+            text-decoration: none;
+        }
+
+        .cta-button:hover {
+            background-color: var(--color-accent-hover);
+            transform: translateY(-1px);
+        }
+
+        /* Heading Styles */
+        .hero-heading {
+            font-size: 4rem; /* Larger hero heading */
+            font-weight: 700;
+            line-height: 1.1;
+            letter-spacing: -0.02em;
+            color: var(--color-text-primary);
+            margin-bottom: 1rem;
+        }
+
+        .hero-subheading {
+            font-size: 1.8rem;
+            font-weight: 400;
+            color: var(--color-text-secondary);
+            margin-bottom: 2rem;
+        }
+
+        .section-heading {
+            font-size: 2.5rem;
+            font-weight: 600;
+            line-height: 1.2;
+            letter-spacing: -0.01em;
+            color: var(--color-text-primary);
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-title {
+            font-size: 2rem;
+            font-weight: 600;
+            color: var(--color-text-primary);
+            margin-bottom: 0.75rem;
+        }
+
+        .feature-description {
+            font-size: 1.1rem;
+            color: var(--color-text-secondary);
+        }
+
+        /* Product Card */
+        .product-card {
+            background-color: var(--color-ui-bg);
+            border-radius: 0.8rem;
+            box-shadow: var(--shadow-ui);
+            overflow: hidden;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            cursor: pointer;
+            border: 1px solid var(--color-border);
+        }
+
+        .product-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-modal); /* Slightly more pronounced shadow on hover */
+        }
+
+        .product-card-image {
+            width: 100%;
+            height: auto;
+            display: block;
+            object-fit: cover;
+            aspect-ratio: 16 / 10; /* Common aspect ratio for product images */
+        }
+
+        .product-card-info {
+            padding: 1rem 1.25rem;
+            text-align: center;
+        }
+
+        .product-card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--color-text-primary);
+            margin-bottom: 0.4rem;
+        }
+
+        .product-card-price {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: var(--color-text-secondary);
+        }
+
+        /* Modal */
+        .modal-overlay {
+            background-color: rgba(0, 0, 0, 0.4);
+            /* Darker overlay */
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-content {
+            background-color: var(--color-ui-bg);
+            border-radius: 1rem;
+            box-shadow: var(--shadow-modal);
+            padding: 2rem;
+            width: 90%;
+            max-width: 700px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            transform: scale(0.95);
+            opacity: 0;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        .modal-close-button {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 2rem;
+            color: var(--color-text-secondary);
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .modal-close-button:hover {
+            color: var(--color-text-primary);
+        }
+
+        /* Footer */
+        .footer {
+            background-color: var(--color-ui-bg);
+            border-top: 1px solid var(--color-border);
+            color: var(--color-text-secondary);
+            padding: 2rem 1.5rem;
+            font-size: 0.9rem;
+            text-align: center;
+            transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+            margin-top: auto;
+        }
+
+        /* Utility for animation on scroll */
+        .animate-on-scroll {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .animate-on-scroll.in-view {
+            visibility: visible;
+            animation-fill-mode: forwards;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .navbar-logo-text {
+                font-size: 1.5rem;
+            }
+            .hero-heading {
+                font-size: 2.5rem;
+            }
+            .hero-subheading {
+                font-size: 1.2rem;
+            }
+            .section-heading {
+                font-size: 2rem;
+            }
+            .feature-title {
+                font-size: 1.5rem;
+            }
+            .feature-description {
+                font-size: 1rem;
+            }
+            .cta-button {
+                padding: 0.6rem 1.2rem;
+                font-size: 0.9rem;
+            }
+            .product-grid {
+                grid-template-columns: 1fr; /* Stack products on mobile */
+            }
+            .feature-section {
+                flex-direction: column;
+            }
+            .feature-content, .feature-image {
+                width: 100%;
+                text-align: center;
+            }
+            .feature-image img {
+                max-width: 80%;
+                margin: 0 auto;
+            }
+        }
+    </style>
+</head>
+
+<body class="font-sf">
+
+    <nav class="navbar">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <a href="#" class="text-2xl font-bold navbar-logo-text" aria-label="CNEAPEE Home">CNEAPEE</a>
+            <div class="hidden md:flex space-x-6">
+                <a href="#hero" class="navbar-link">Overview</a>
+                <a href="#features" class="navbar-link">Features</a>
+                <a href="#products" class="navbar-link">Products</a>
+                <a href="#" class="navbar-link">Support</a>
+            </div>
+            <button id="theme-toggle" class="p-2 rounded-full transition-colors duration-200" aria-label="Toggle theme">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" id="theme-icon">
+                    </svg>
+            </button>
+        </div>
+    </nav>
+
+    <main class="flex-grow">
+        <section id="hero" class="relative bg-apple-bg-light dark:bg-apple-ui-dark text-center py-20 md:py-32 overflow-hidden">
+            <div class="max-w-4xl mx-auto px-4 relative z-10 animate-fade-in-up">
+                <h1 class="hero-heading">Introducing the CNEAPEE Neural Core.</h1>
+                <p class="hero-subheading">Experience intelligence beyond imagination. Powerful. Intuitive. Seamless.</p>
+                <a href="#products" class="cta-button">Learn more</a>
+            </div>
+            <div class="absolute inset-0 z-0">
+                <img src="https://via.placeholder.com/1500x800/D0D0D0/888888?text=Product+Hero" alt="Product Hero Image"
+                    class="w-full h-full object-cover opacity-80 dark:opacity-60 transition-opacity duration-500">
+            </div>
+        </section>
+
+        <section id="features" class="py-20 md:py-28 bg-apple-ui-light dark:bg-apple-ui-dark">
+            <div class="max-w-7xl mx-auto px-6 space-y-20 md:space-y-32">
+                <h2 class="section-heading text-center animate-on-scroll" data-animation="fade-in-up">Unleash the Power.</h2>
+
+                <div class="flex flex-col md:flex-row items-center gap-10 md:gap-20 feature-section animate-on-scroll" data-animation="fade-in">
+                    <div class="md:w-1/2 feature-content order-2 md:order-1 text-center md:text-left animate-on-scroll" data-animation="slide-in-left">
+                        <h3 class="feature-title">Lightning-Fast Performance.</h3>
+                        <p class="feature-description">Our custom-designed Neural Engine delivers unparalleled speed and efficiency for all your tasks, from complex computations to real-time AI processing.</p>
+                    </div>
+                    <div class="md:w-1/2 feature-image order-1 md:order-2 animate-on-scroll" data-animation="slide-in-right">
+                        <img src="https://via.placeholder.com/800x600/E5E5E5/777777?text=Feature+1+Image" alt="Fast Performance" class="w-full h-auto rounded-lg shadow-apple-light dark:shadow-apple-dark">
+                    </div>
+                </div>
+
+                <div class="flex flex-col md:flex-row items-center gap-10 md:gap-20 feature-section animate-on-scroll" data-animation="fade-in">
+                    <div class="md:w-1/2 feature-image order-1 text-center animate-on-scroll" data-animation="slide-in-left">
+                        <img src="https://via.placeholder.com/800x600/E5E5E5/777777?text=Feature+2+Image" alt="Intuitive Interface" class="w-full h-auto rounded-lg shadow-apple-light dark:shadow-apple-dark">
+                    </div>
+                    <div class="md:w-1/2 feature-content order-2 text-center md:text-left animate-on-scroll" data-animation="slide-in-right">
+                        <h3 class="feature-title">Intuitive. Seamless. Yours.</h3>
+                        <p class="feature-description">A redesigned interface puts everything you need right at your fingertips, making complex operations simple and delightful to use.</p>
+                    </div>
+                </div>
+
+                <div class="flex flex-col md:flex-row items-center gap-10 md:gap-20 feature-section animate-on-scroll" data-animation="fade-in">
+                    <div class="md:w-1/2 feature-content order-2 md:order-1 text-center md:text-left animate-on-scroll" data-animation="slide-in-left">
+                        <h3 class="feature-title">Privacy. Always.</h3>
+                        <p class="feature-description">Built with privacy at its core. Your data remains yours, secured by industry-leading encryption and robust protection measures.</p>
+                    </div>
+                    <div class="md:w-1/2 feature-image order-1 md:order-2 animate-on-scroll" data-animation="slide-in-right">
+                        <img src="https://via.placeholder.com/800x600/E5E5E5/777777?text=Feature+3+Image" alt="Privacy First" class="w-full h-auto rounded-lg shadow-apple-light dark:shadow-apple-dark">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="products" class="py-20 md:py-28 bg-apple-bg-light dark:bg-apple-bg-dark">
+            <div class="max-w-7xl mx-auto px-6">
+                <h2 class="section-heading text-center mb-16 animate-on-scroll" data-animation="fade-in-up">Discover the Range.</h2>
+                <div class="grid product-grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 animate-on-scroll" data-animation="fade-in">
+                    <div class="product-card" data-product-id="product-alpha">
+                        <img src="https://via.placeholder.com/600x400/D0D0D0/888888?text=Product+Alpha" alt="Product Alpha" class="product-card-image">
+                        <div class="product-card-info">
+                            <h3 class="product-card-title">CNEAPEE Alpha</h3>
+                            <p class="product-card-price">Starting from $999</p>
+                            <button class="cta-button mt-4 text-sm" data-action="view-details">View Details</button>
+                        </div>
+                    </div>
+                    <div class="product-card" data-product-id="product-beta">
+                        <img src="https://via.placeholder.com/600x400/D0D0D0/888888?text=Product+Beta" alt="Product Beta" class="product-card-image">
+                        <div class="product-card-info">
+                            <h3 class="product-card-title">CNEAPEE Beta</h3>
+                            <p class="product-card-price">Starting from $1499</p>
+                            <button class="cta-button mt-4 text-sm" data-action="view-details">View Details</button>
+                        </div>
+                    </div>
+                    <div class="product-card" data-product-id="product-gamma">
+                        <img src="https://via.placeholder.com/600x400/D0D0D0/888888?text=Product+Gamma" alt="Product Gamma" class="product-card-image">
+                        <div class="product-card-info">
+                            <h3 class="product-card-title">CNEAPEE Gamma</h3>
+                            <p class="product-card-price">Starting from $1999</p>
+                            <button class="cta-button mt-4 text-sm" data-action="view-details">View Details</button>
+                        </div>
+                    </div>
+
+                    <div class="product-card" data-product-id="product-headphones">
+                        <img src="https://via.placeholder.com/600x400/D0D0D0/888888?text=CNEAPEE+Headphones" alt="CNEAPEE Headphones" class="product-card-image">
+                        <div class="product-card-info">
+                            <h3 class="product-card-title">CNEAPEE Pulse Headphones</h3>
+                            <p class="product-card-price">Starting from ₹4999</p>
+                            <button class="cta-button mt-4 text-sm" data-action="view-details">View Details</button>
+                        </div>
+                    </div>
+
+                    <div class="product-card" data-product-id="product-soundbar">
+                        <img src="https://via.placeholder.com/600x400/D0D0D0/888888?text=CNEAPEE+Soundbar" alt="CNEAPEE Soundbar" class="product-card-image">
+                        <div class="product-card-info">
+                            <h3 class="product-card-title">CNEAPEE Aura Soundbar</h3>
+                            <p class="product-card-price">Starting from ₹7999</p>
+                            <button class="cta-button mt-4 text-sm" data-action="view-details">View Details</button>
+                        </div>
+                    </div>
+
+                    <div class="product-card" data-product-id="product-earphones">
+                        <img src="https://via.placeholder.com/600x400/D0D0D0/888888?text=CNEAPEE+Earphones" alt="CNEAPEE Earphones" class="product-card-image">
+                        <div class="product-card-info">
+                            <h3 class="product-card-title">CNEAPEE Link Earphones</h3>
+                            <p class="product-card-price">Starting from ₹17999</p>
+                            <button class="cta-button mt-4 text-sm" data-action="view-details">View Details</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2025 CNEAPEE. All rights reserved.</p>
+        <div class="mt-2 space-x-4">
+            <a href="#" class="text-apple-text-muted-light dark:text-apple-text-muted-dark hover:text-apple-text-dark dark:hover:text-apple-text-light transition-colors">Privacy Policy</a>
+            <a href="#" class="text-apple-text-muted-light dark:text-apple-text-muted-dark hover:text-apple-text-dark dark:hover:text-apple-text-light transition-colors">Terms of Use</a>
+            <a href="#" class="text-apple-text-muted-light dark:text-apple-text-muted-dark hover:text-apple-text-dark dark:hover:text-apple-text-light transition-colors">Sales & Refunds</a>
+        </div>
+    </footer>
+
+    <div id="product-modal-overlay" class="modal-overlay hidden">
+        <div class="modal-content">
+            <button class="modal-close-button">&times;</button>
+            <div id="modal-product-details">
+                <img src="https://via.placeholder.com/800x600/E5E5E5/777777?text=Product+Details" alt="Product Details" class="w-full h-auto rounded-lg mb-6">
+                <h3 class="text-3xl font-bold mb-2 text-apple-text-dark dark:text-apple-text-light" id="modal-product-title">Product Title</h3>
+                <p class="text-xl font-medium mb-4 text-apple-text-muted-light dark:text-apple-text-muted-dark" id="modal-product-price">Price</p>
+                <p class="text-apple-text-dark dark:text-apple-text-light mb-6">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                <p class="text-apple-text-dark dark:text-apple-text-light mb-6">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                <button class="cta-button w-full">Add to Cart</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- Theme Toggle Logic ---
+            const themeToggle = document.getElementById('theme-toggle');
+            const themeIcon = document.getElementById('theme-icon');
+
+            function applyTheme(isDark) {
+                document.documentElement.classList.toggle('dark', isDark);
+                localStorage.setItem('theme', isDark ? 'dark' : 'light');
+                updateThemeIcon(isDark);
+            }
+
+            function updateThemeIcon(isDark) {
+                const sunIcon = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>`;
+                const moonIcon = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>`;
+                themeIcon.innerHTML = isDark ? sunIcon : moonIcon;
+            }
+
+            const savedTheme = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            applyTheme(savedTheme === 'dark' || (!savedTheme && prefersDark));
+
+            themeToggle.addEventListener('click', () => {
+                applyTheme(!document.documentElement.classList.contains('dark'));
+            });
+
+            // --- Scroll Animation Logic (Intersection Observer) ---
+            const animateElements = document.querySelectorAll('.animate-on-scroll');
+            const observerOptions = {
+                root: null, // viewport
+                rootMargin: '0px',
+                threshold: 0.1 // 10% of element visible
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const animationType = entry.target.dataset.animation;
+                        if (animationType) {
+                            entry.target.style.animationName = animationType;
+                            entry.target.style.animationDuration = getComputedStyle(entry.target).animationDuration || '0.8s';
+                            entry.target.style.animationTimingFunction = getComputedStyle(entry.target).animationTimingFunction || 'ease-out';
+                            entry.target.classList.add('in-view');
+                            observer.unobserve(entry.target); // Unobserve once animated
+                        }
+                    }
+                });
+            }, observerOptions);
+
+            animateElements.forEach(el => observer.observe(el));
+
+            // --- Product Modal Logic ---
+            const productCards = document.querySelectorAll('.product-card');
+            const modalOverlay = document.getElementById('product-modal-overlay');
+            const modalCloseButton = modalOverlay.querySelector('.modal-close-button');
+            const modalProductTitle = document.getElementById('modal-product-title');
+            const modalProductPrice = document.getElementById('modal-product-price');
+            const modalProductImage = modalOverlay.querySelector('.modal-content img');
+
+            const productData = { // Example product data
+                'product-alpha': {
+                    title: 'CNEAPEE Alpha',
+                    price: 'Starting from $999',
+                    image: 'https://via.placeholder.com/800x600/E5E5E5/777777?text=Alpha+Details',
+                    description: 'The CNEAPEE Alpha is your entry into next-gen intelligence. Compact, powerful, and ready for anything.',
+                },
+                'product-beta': {
+                    title: 'CNEAPEE Beta',
+                    price: 'Starting from $1499',
+                    image: 'https://via.placeholder.com/800x600/E5E5E5/777777?text=Beta+Details',
+                    description: 'Elevate your experience with CNEAPEE Beta. Enhanced performance, refined design, and extended capabilities.',
+                },
+                'product-gamma': {
+                    title: 'CNEAPEE Gamma',
+                    price: 'Starting from $1999',
+                    image: 'https://via.placeholder.com/800x600/E5E5E5/777777?text=Gamma+Details',
+                    description: 'The ultimate CNEAPEE experience. Gamma pushes boundaries with unparalleled processing power and features.',
+                },
+                'product-headphones': {
+                    title: 'CNEAPEE Pulse Headphones',
+                    price: 'Starting from ₹4999',
+                    image: 'https://via.placeholder.com/800x600/E5E5E5/777777?text=Pulse+Headphones+Details',
+                    description: 'Immerse yourself in pure sound with CNEAPEE Pulse Headphones. Featuring advanced noise cancellation and spatial audio.',
+                },
+                'product-soundbar': {
+                    title: 'CNEAPEE Aura Soundbar',
+                    price: 'Starting from ₹7999',
+                    image: 'https://via.placeholder.com/800x600/E5E5E5/777777?text=Aura+Soundbar+Details',
+                    description: 'Transform your living room into a cinematic experience with the CNEAPEE Aura Soundbar. Powerful bass and crystal-clear highs.',
+                },
+                'product-earphones': {
+                    title: 'CNEAPEE Link Earphones',
+                    price: 'Starting from ₹17999',
+                    image: 'https://via.placeholder.com/800x600/E5E5E5/777777?text=Link+Earphones+Details',
+                    description: 'Ultra-compact and incredibly clear. CNEAPEE Link Earphones deliver premium sound on the go, with all-day comfort.',
+                }
+            };
+
+            productCards.forEach(card => {
+                card.addEventListener('click', (e) => {
+                    if (e.target.dataset.action === 'view-details' || !e.target.closest('button')) { // Open modal on card click or View Details button
+                        const productId = card.dataset.productId;
+                        const product = productData[productId];
+
+                        if (product) {
+                            modalProductTitle.textContent = product.title;
+                            modalProductPrice.textContent = product.price;
+                            modalProductImage.src = product.image;
+                            modalProductImage.alt = product.title;
+                            // Update description in modal if you add a specific div for it
+                            modalOverlay.classList.add('active');
+                            document.body.style.overflow = 'hidden'; // Prevent scrolling body
+                        }
+                    }
+                });
+            });
+
+            modalCloseButton.addEventListener('click', () => {
+                modalOverlay.classList.remove('active');
+                document.body.style.overflow = ''; // Restore body scroll
+            });
+
+            modalOverlay.addEventListener('click', (e) => {
+                if (e.target === modalOverlay) { // Close if clicked on overlay itself
+                    modalOverlay.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
