@@ -3,278 +3,452 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CNEAPEE AI - Professional Subscription Plans</title>
-    <link rel="icon" type="image/png" href="assets/cneapeelogo-removebg-preview.png">
+    <title>Convo+ | Premium Subscription Plans</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
-        /* Black and White Minimalist Base Styles */
+        /* --- Professional Black & White Theme --- */
+        :root {
+            --background-color: #0d0d0d;
+            --card-background-color: #171717;
+            --border-color: #2e2e2e;
+            --text-primary: #f5f5f5;
+            --text-secondary: #a3a3a3;
+            --accent-color: #ffffff;
+            --shadow-color-light: rgba(255, 255, 255, 0.05);
+        }
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
-            background: #f8f9fa; /* Very light gray background */
-            color: #212529; /* Dark text for contrast */
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-primary);
             line-height: 1.6;
             overflow-x: hidden;
-            display: flex; /* Use flex to center the pricing section */
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh; /* Full viewport height */
-            padding: 24px 0; /* Add some vertical padding for standalone view */
+            padding: 64px 24px;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
 
-        /* Reusable Card Style for Minimalism */
-        .minimal-card {
-            background: #ffffff; /* White background for cards */
-            border: 1px solid #e0e0e0; /* Subtle light gray border */
-            border-radius: 12px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 2px 8px rgba(0, 0, 0, 0.03); /* Very subtle shadow */
-            transition: all 0.3s ease; /* Smooth hover transition */
-            position: relative; /* For popular badge */
+        /* --- Pricing Card Base Style --- */
+        .pricing-card {
+            background: var(--card-background-color);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
         }
-        .minimal-card:hover {
-            transform: translateY(-4px); /* Gentle lift on hover */
-            border-color: #c0c0c0; /* Slightly darker border on hover */
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* More noticeable shadow on hover */
+        .pricing-card:hover {
+            transform: translateY(-8px);
+            border-color: #4d4d4d;
+            box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.3);
+        }
+        .card-content {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .card-features {
+            flex-grow: 1;
         }
 
-        /* Button Style */
-        .minimal-btn {
+        /* --- Buttons --- */
+        .plan-btn {
             width: 100%;
             padding: 14px 24px;
-            border: none;
+            border: 2px solid transparent;
             border-radius: 8px;
             font-size: 1rem;
-            font-weight: 600;
+            font-weight: 700;
             cursor: pointer;
             transition: all 0.3s ease;
             text-transform: uppercase;
-            letter-spacing: 0.025em;
+            letter-spacing: 0.05em;
         }
-        .minimal-btn.primary {
-            background: #212529; /* Dark button background */
-            color: #ffffff; /* White text */
+        .plan-btn.primary {
+            background-color: var(--accent-color);
+            color: #0d0d0d;
         }
-        .minimal-btn.primary:hover {
-            background: #000000; /* Pure black on hover */
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        .plan-btn.primary:hover {
+            background-color: transparent;
+            border-color: var(--accent-color);
+            color: var(--accent-color);
         }
-        .minimal-btn.secondary {
-            background: transparent;
-            border: 1px solid #c0c0c0; /* Light gray border */
-            color: #212529; /* Dark text */
+        .plan-btn.secondary {
+            background-color: transparent;
+            border-color: var(--accent-color);
+            color: var(--accent-color);
         }
-        .minimal-btn.secondary:hover {
-            background: #eeeeee; /* Very light gray background on hover */
-            border-color: #a0a0a0; /* Darker border on hover */
+        .plan-btn.secondary:hover {
+            background: var(--accent-color);
+            color: #0d0d0d;
+        }
+        .plan-btn.tertiary {
+            background: #2e2e2e;
+            color: var(--text-primary);
+        }
+        .plan-btn.tertiary:hover {
+            background: #444444;
         }
 
-        /* Pricing Card Specifics */
-        .plan-name-minimal {
-            font-size: 1.35rem;
-            font-weight: 700;
-            color: #212529; /* Dark plan name */
+        /* --- Pricing Specifics --- */
+        .plan-name {
+            font-size: 1.5rem;
+            font-weight: 800;
         }
-        .plan-description-minimal {
-            font-size: 0.85rem;
-            color: #888888;
-        }
-        .price-minimal {
-            font-size: 3.5rem; /* Price font size */
+        .plan-price {
+            font-size: 4rem;
             font-weight: 900;
-            color: #212529;
+            letter-spacing: -3px;
         }
-        .currency-minimal, .period-minimal {
-            color: #6c757d; /* Muted price details */
+        .plan-currency, .plan-period {
+            font-weight: 600;
+            color: var(--text-secondary);
         }
-        .plan-feature-text-minimal {
-            color: #495057; /* Darker text for features */
-        }
-        .feature-icon-minimal {
-            width: 20px;
-            height: 20px;
+        .feature-icon {
+            width: 22px;
+            height: 22px;
             border-radius: 50%;
-            background: #343a40; /* Dark circle for icon */
-            color: white; /* White checkmark */
+            background: var(--border-color);
+            color: var(--text-primary);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.75rem;
+            font-size: 0.8rem;
             font-weight: bold;
             flex-shrink: 0;
         }
-        .feature-icon-minimal.unavailable {
-            background: #e0e0e0; /* Light gray for unavailable icon */
-            color: #a0a0a0; /* Muted gray for cross */
-            opacity: 1;
+        .feature-icon.unavailable {
+            background: #2e2e2e;
+            color: #555555;
         }
-        .pricing-card.popular-minimal {
-            border-color: #212529; /* Darker border for popular card */
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08); /* Clearer shadow for popular */
-            transform: scale(1.03); /* Reduced scale */
-            background: #f0f0f0; /* Slightly darker background for popular */
+
+        /* --- Special Cards --- */
+        .pricing-card.popular {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 25px var(--shadow-color-light);
         }
-        .popular-badge-minimal {
-            background: #212529; /* Dark badge background */
-            color: white;
+        .popular-badge {
+            background: var(--accent-color);
+            color: #0d0d0d;
             font-weight: 700;
-            padding: 6px 16px; /* Reduced padding */
+            padding: 6px 16px;
             border-radius: 20px;
             font-size: 0.875rem;
             text-transform: uppercase;
-            letter-spacing: 0.025em;
             position: absolute;
-            top: -12px;
+            top: -16px;
             left: 50%;
             transform: translateX(-50%);
         }
 
-        /* Animation Overrides - Simplified */
-        @keyframes slideUpMinimal {
-            from { opacity: 0; transform: translateY(15px); }
+        /* --- Pricing Toggle --- */
+        .toggle-wrapper {
+            background: #1f1f1f;
+            border: 1px solid var(--border-color);
+            border-radius: 9999px;
+            position: relative;
+            display: inline-flex;
+            padding: 4px;
+        }
+        .toggle-btn {
+            padding: 8px 16px;
+            border-radius: 9999px;
+            font-weight: 600;
+            cursor: pointer;
+            z-index: 10;
+            transition: color 0.3s ease;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+        .toggle-btn.active {
+            color: #0d0d0d;
+        }
+        .toggle-bg {
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            width: calc(25% - 4.5px); /* Adjusted for 4 options */
+            height: calc(100% - 8px);
+            background: var(--accent-color);
+            border-radius: 9999px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        /* --- Animation --- */
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
-
         .animated-element {
-            animation: slideUpMinimal 0.5s ease-out forwards;
+            animation: slideUp 0.6s ease-out forwards;
             opacity: 0;
-            transform: translateY(15px);
         }
 
-        /* Responsive Design Adjustments */
-        @media (max-width: 768px) {
-            body { padding: 24px 16px; }
-            .pricing-grid { grid-template-columns: 1fr; gap: 24px; }
-            .pricing-card.popular-minimal { transform: none; } /* Remove scale on mobile */
-            .price-minimal { font-size: 3rem; }
+        /* --- Special Features --- */
+        .special-feature {
+            background: var(--background-color);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: 600;
+            text-align: center;
+        }
+        .price-note {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            min-height: 40px;
+            margin-top: -1rem;
+            margin-bottom: 1rem;
         }
     </style>
 </head>
 <body>
     <section class="pricing" id="pricing">
-        <div class="container mx-auto px-6">
-            <h2 class="text-3xl font-extrabold mb-4 text-center">Choose Your Plan</h2>
-            <p class="text-lg text-gray-600 max-w-xl mx-auto mb-16 text-center">
-                Flexible pricing options designed to grow with your needs. From individual use to enterprise solutions.
-            </p>
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16">
+                <h1 class="text-5xl lg:text-6xl font-black mb-4">Choose Your Edge</h1>
+                <p class="text-xl text-gray-400 max-w-3xl mx-auto">
+                    Flexible plans designed for every ambition. From foundational tools to enterprise-grade power, unlock your potential with CNEAPEE+.
+                </p>
+            </div>
             
-            <div class="pricing-grid grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-                <div class="minimal-card p-8 pb-10 animated-element">
-                    <div class="plan-header text-center mb-8">
-                        <h3 class="plan-name-minimal mb-2">Basic</h3>
-                        <p class="plan-description-minimal">Perfect for individuals getting started</p>
-                        <div class="plan-price flex items-baseline justify-center gap-1 mt-4">
-                            <span class="currency-minimal">$</span>
-                            <span class="price-minimal">0</span>
-                            <span class="period-minimal">/month</span>
+            <div class="flex justify-center items-center gap-2 mb-16 flex-wrap">
+                <div class="toggle-wrapper">
+                    <div class="toggle-bg" id="toggleBg"></div>
+                    <div class="toggle-btn active" data-period="monthly" data-index="0">Monthly</div>
+                    <div class="toggle-btn" data-period="3-month" data-index="1">3 Months <span class="bg-gray-700 text-green-300 text-xs font-bold px-2 py-1 rounded-full">10% Off</span></div>
+                    <div class="toggle-btn" data-period="6-month" data-index="2">6 Months <span class="bg-gray-700 text-green-300 text-xs font-bold px-2 py-1 rounded-full">15% Off</span></div>
+                    <div class="toggle-btn" data-period="12-month" data-index="3">12 Months <span class="bg-gray-700 text-green-300 text-xs font-bold px-2 py-1 rounded-full">25% Off</span></div>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto items-stretch">
+                
+                <!-- Plan 1: Free -->
+                <div class="pricing-card p-8 animated-element" style="animation-delay: 0.1s;">
+                    <div class="card-content">
+                        <h3 class="plan-name mb-2">Free</h3>
+                        <p class="text-gray-400 mb-6">For individuals getting started</p>
+                        <div class="flex items-baseline gap-1">
+                            <span class="plan-currency text-2xl">₹</span>
+                            <span class="plan-price" data-monthly="0">0</span>
                         </div>
+                        <p class="plan-period mb-8">/month</p>
+                        <div class="price-note"></div>
+                        <ul class="space-y-4 mb-8 text-gray-300 card-features">
+                            <li class="flex items-center gap-3"><span class="feature-icon">✓</span>Standard Model Access</li>
+                            <li class="flex items-center gap-3"><span class="feature-icon">✓</span>50 Queries per Day</li>
+                            <li class="flex items-center gap-3"><span class="feature-icon">✓</span>Community Support</li>
+                        </ul>
+                        <button class="plan-btn tertiary mt-auto">Get Started Free</button>
                     </div>
-                    
-                    <ul class="plan-features list-none my-8">
-                        <li class="flex items-center gap-3 py-2 text-sm plan-feature-text-minimal"><span class="feature-icon-minimal">✓</span>Basic Neuro 1.1 Model Access</li>
-                        <li class="flex items-center gap-3 py-2 text-sm plan-feature-text-minimal"><span class="feature-icon-minimal">✓</span>50 Queries per Day</li>
-                        <li class="flex items-center gap-3 py-2 text-sm plan-feature-text-minimal"><span class="feature-icon-minimal">✓</span>Standard Response Time</li>
-                        <li class="flex items-center gap-3 py-2 text-sm plan-feature-text-minimal"><span class="feature-icon-minimal">✓</span>Community Support</li>
-                        <li class="flex items-center gap-3 py-2 text-sm plan-feature-text-minimal"><span class="feature-icon-minimal">✓</span>Basic Study Hub</li>
-                        <li class="flex items-center gap-3 py-2 text-sm plan-feature-text-minimal opacity-60"><span class="feature-icon-minimal unavailable">✗</span>Ad-Free Experience</li>
-                        <li class="flex items-center gap-3 py-2 text-sm plan-feature-text-minimal opacity-60"><span class="feature-icon-minimal unavailable">✗</span>Personalized Insights</li>
-                        <li class="flex items-center gap-3 py-2 text-sm plan-feature-text-minimal opacity-60"><span class="feature-icon-minimal unavailable">✗</span>Priority Support</li>
-                    </ul>
-                    
-                    <button class="minimal-btn secondary">Get Started Free</button>
                 </div>
 
-                <div class="minimal-card p-8 pb-10 popular-minimal animated-element">
-                    <div class="popular-badge-minimal">Most Popular</div>
-                    <div class="plan-header text-center mb-8">
-                        <h3 class="plan-name-minimal mb-2">Elite</h3>
-                        <p class="plan-description-minimal">Ideal for professionals and power users</p>
-                        <div class="plan-price flex items-baseline justify-center gap-1 mt-4">
-                            <span class="currency-minimal">$</span>
-                            <span class="price-minimal">9.99</span>
-                            <span class="period-minimal">/month</span>
+                <!-- Plan 2: Plus -->
+                <div class="pricing-card p-8 animated-element popular" style="animation-delay: 0.2s;">
+                    <div class="card-content">
+                        <div class="popular-badge">Most Popular</div>
+                        <h3 class="plan-name mb-2">Plus</h3>
+                        <p class="text-gray-400 mb-6">Perfect for students & enthusiasts</p>
+                        <div class="flex items-baseline gap-1">
+                            <span class="plan-currency text-2xl">₹</span>
+                            <span class="plan-price" data-monthly="249">249</span>
                         </div>
+                        <p class="plan-period mb-8">/month</p>
+                         <div class="price-note"></div>
+                        <ul class="space-y-4 mb-8 text-gray-300 card-features">
+                            <li class="flex items-center gap-3"><span class="feature-icon">✓</span>Enhanced Model Access</li>
+                            <li class="flex items-center gap-3"><span class="feature-icon">✓</span>500 Queries per Day</li>
+                            <li class="flex items-center gap-3"><span class="feature-icon">✓</span>Ad-Free Experience</li>
+                            <li class="flex items-center gap-3 opacity-50"><span class="feature-icon unavailable">✗</span>Priority Support</li>
+                        </ul>
+                        <button class="plan-btn primary mt-auto">Choose Plus</button>
                     </div>
-                    
-                    <ul class="plan-features list-none my-8">
-                        <li class="flex items-center gap-3 py-2 text-sm plan-feature-text-minimal"><span class="feature-icon-minimal">✓</span>Enhanced Neuro 1.1 Model</li>
-                        <li class="flex items-center gap-3 py-2 text-sm plan-feature-text-minimal"><span class="feature-icon-minimal">✓</span>Unlimited Daily Queries</li>
-                        <li class="flex items-center gap-3 py-2 text-sm plan-feature-text-minimal"><span class="feature-icon-minimal">✓</span>Fast Response Time</li>
-                        <li class="flex items-center gap-3 py-2 text-sm plan-feature-text-minimal"><span class="feature-icon-minimal">✓</span>Priority Support</li>
-                        <li class="flex items-center gap-3 py-2 text-sm plan-feature-text-minimal"><span class="feature-icon-minimal">✓</span>Full Study Hub Access</li>
-                        <li class="flex items-center gap-3 py-2 text-sm plan-feature-text-minimal"><span class="feature-icon-minimal">✓</span>Ad-Free Experience</li>
-                        <li class="flex items-center gap-3 py-2 text-sm plan-feature-text-minimal"><span class="feature-icon-minimal">✓</span>Personalized Health Insights</li>
-                        <li class="flex items-center gap-3 py-2 text-sm plan-feature-text-minimal"><span class="feature-icon-minimal">✓</span>Custom Language Settings</li>
-                    </ul>
-                    
-                    <button class="minimal-btn primary">Upgrade to Elite</button>
+                </div>
+                
+                <!-- Plan 3: Neo -->
+                <div class="pricing-card p-8 animated-element" style="animation-delay: 0.3s;">
+                    <div class="card-content">
+                        <h3 class="plan-name mb-2">Neo</h3>
+                        <p class="text-gray-400 mb-6">For professionals and power users</p>
+                        <div class="flex items-baseline gap-1">
+                            <span class="plan-currency text-2xl">₹</span>
+                            <span class="plan-price" data-monthly="499">499</span>
+                        </div>
+                        <p class="plan-period mb-8">/month</p>
+                        <div class="price-note"></div>
+                        <ul class="space-y-4 mb-8 text-gray-300 card-features">
+                            <li class="flex items-center gap-3"><span class="feature-icon">✓</span>Advanced Model Access</li>
+                            <li class="flex items-center gap-3"><span class="feature-icon">✓</span>Unlimited Queries</li>
+                            <li class="flex items-center gap-3"><span class="feature-icon">✓</span>Fast Response Time</li>
+                            <li class="flex items-center gap-3"><span class="feature-icon">✓</span>Priority Support</li>
+                        </ul>
+                        <button class="plan-btn secondary mt-auto">Upgrade to Neo</button>
+                    </div>
                 </div>
 
-                <div class="minimal-card p-8 pb-10 animated-element">
-                    <div class="plan-header text-center mb-8">
-                        <h3 class="plan-name-minimal mb-2">Xen</h3>
-                        <p class="plan-description-minimal">Enterprise-grade solution with premium features</p>
-                        <div class="plan-price flex items-baseline justify-center gap-1 mt-4">
-                            <span class="currency-minimal">$</span>
-                            <span class="price-minimal">49.99</span>
-                            <span class="period-minimal">/month</span>
+                <!-- Plan 4: Health+ -->
+                <div class="pricing-card p-8 animated-element" style="animation-delay: 0.4s;">
+                    <div class="card-content">
+                        <h3 class="plan-name mb-2">Health+</h3>
+                        <p class="text-gray-400 mb-6">For personalized wellness tracking</p>
+                        <div class="flex items-baseline gap-1">
+                            <span class="plan-currency text-2xl">₹</span>
+                            <span class="plan-price" data-monthly="699" data-first-month="7999">699</span>
                         </div>
+                        <p class="plan-period mb-8">/month</p>
+                        <div class="price-note">First month at ₹7999, then ₹699/mo.</div>
+                        <ul class="space-y-4 mb-8 text-gray-300 card-features">
+                            <li class="flex items-center gap-3"><span class="feature-icon">✓</span>Everything in Neo</li>
+                            <li class="flex items-center gap-3"><span class="feature-icon">✓</span>Personalised Health Analytics</li>
+                            <li class="special-feature mt-2">✨ Includes a FREE Fitness Watch!</li>
+                        </ul>
+                        <button class="plan-btn secondary mt-auto">Go Health+</button>
                     </div>
-                    
-                    <ul class="plan-features list-none my-8">
-                        <li class="flex items-center gap-3 py-2 text-sm plan-feature-text-minimal"><span class="feature-icon-minimal">✓</span>Premium Neuro 1.1 Model</li>
-                        <li class="flex items-center gap-3 py-2 text-sm plan-feature-text-minimal"><span class="feature-icon-minimal">✓</span>Unlimited Everything</li>
-                        <li class="flex items-center gap-3 py-2 text-sm plan-feature-text-minimal"><span class="feature-icon-minimal">✓</span>Instant Response Time</li>
-                        <li class="flex items-center gap-3 py-2 text-sm plan-feature-text-minimal"><span class="feature-icon-minimal">✓</span>VIP Support & Consultation</li>
-                        <li class="flex items-center gap-3 py-2 text-sm plan-feature-text-minimal"><span class="feature-icon-minimal">✓</span>Premium Study Resources</li>
-                        <li class="flex items-center gap-3 py-2 text-sm plan-feature-text-minimal"><span class="feature-icon-minimal">✓</span>Advanced AI Insights</li>
-                        <li class="flex items-center gap-3 py-2 text-sm plan-feature-text-minimal"><span class="feature-icon-minimal">✓</span>API Access</li>
-                        <li class="flex items-center gap-3 py-2 text-sm plan-feature-text-minimal"><span class="feature-icon-minimal">✓</span>Custom Model Training</li>
-                    </ul>
-                    
-                    <button class="minimal-btn primary">Go Premium</button>
+                </div>
+
+                <!-- Plan 5: Learning+ -->
+                <div class="pricing-card p-8 animated-element" style="animation-delay: 0.5s;">
+                    <div class="card-content">
+                        <h3 class="plan-name mb-2">Learning+</h3>
+                        <p class="text-gray-400 mb-6">For dedicated students & learners</p>
+                        <div class="flex items-baseline gap-1">
+                            <span class="plan-currency text-2xl">₹</span>
+                            <span class="plan-price" data-monthly="899" data-first-month="3499">899</span>
+                        </div>
+                        <p class="plan-period mb-8">/month</p>
+                        <div class="price-note">First month at ₹3499, then ₹899/mo.</div>
+                        <ul class="space-y-4 mb-8 text-gray-300 card-features">
+                            <li class="flex items-center gap-3"><span class="feature-icon">✓</span>Everything in Neo</li>
+                            <li class="flex items-center gap-3"><span class="feature-icon">✓</span>Pro Learning Hub Access</li>
+                            <li class="flex items-center gap-3"><span class="feature-icon">✓</span>Study Materials, Notes & Batch Access</li>
+                        </ul>
+                        <button class="plan-btn secondary mt-auto">Go Learning+</button>
+                    </div>
+                </div>
+
+                <!-- Plan 6: Enterprise -->
+                <div class="pricing-card p-8 animated-element popular" style="animation-delay: 0.6s;">
+                    <div class="card-content">
+                        <div class="popular-badge">Enterprise</div>
+                        <h3 class="plan-name mb-2">Enterprise</h3>
+                        <p class="text-gray-400 mb-6">The ultimate solution for business</p>
+                        <div class="flex items-baseline gap-1">
+                            <span class="plan-currency text-2xl">₹</span>
+                            <span class="plan-price" data-monthly="9999">9999</span>
+                        </div>
+                        <p class="plan-period mb-8">/month</p>
+                        <div class="price-note"></div>
+                        <ul class="space-y-4 mb-8 text-gray-300 card-features">
+                            <li class="flex items-center gap-3"><span class="feature-icon">✓</span>Custom Model Training</li>
+                            <li class="flex items-center gap-3"><span class="feature-icon">✓</span>VIP Support & Consultation</li>
+                            <li class="flex items-center gap-3"><span class="feature-icon">✓</span>Team Management Tools</li>
+                            <li class="flex items-center gap-3"><span class="feature-icon">✓</span>API Access</li>
+                        </ul>
+                        <button class="plan-btn primary mt-auto">Contact Sales</button>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
+    <footer class="text-center mt-20 text-gray-600">
+        <p>Powered by CNEAPEE</p>
+    </footer>
+
     <script>
-        // --- Intersection Observer for animations ---
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
+        const toggleButtons = document.querySelectorAll('.toggle-btn');
+        const toggleBg = document.getElementById('toggleBg');
+        const pricingCards = document.querySelectorAll('.pricing-card');
+
+        const periods = {
+            'monthly': { months: 1, discount: 0, suffix: '/month' },
+            '3-month': { months: 3, discount: 0.10, suffix: '/3 months' },
+            '6-month': { months: 6, discount: 0.15, suffix: '/6 months' },
+            '12-month': { months: 12, discount: 0.25, suffix: '/year' }
         };
 
+        function updatePrices(activePeriod) {
+            const periodInfo = periods[activePeriod];
+            
+            pricingCards.forEach(card => {
+                const priceEl = card.querySelector('.plan-price');
+                const periodEl = card.querySelector('.plan-period');
+                const noteEl = card.querySelector('.price-note');
+                const monthlyPrice = parseFloat(priceEl.getAttribute('data-monthly'));
+                const firstMonthPrice = parseFloat(priceEl.getAttribute('data-first-month'));
+
+                if (isNaN(monthlyPrice)) return;
+
+                if (activePeriod === 'monthly') {
+                    priceEl.textContent = monthlyPrice;
+                    periodEl.textContent = periodInfo.suffix;
+                    if (firstMonthPrice) {
+                        noteEl.textContent = `First month at ₹${firstMonthPrice}, then ₹${monthlyPrice}/mo.`;
+                    } else {
+                        noteEl.textContent = '';
+                    }
+                } else {
+                    const total = monthlyPrice * periodInfo.months;
+                    const discountedTotal = Math.round(total * (1 - periodInfo.discount));
+                    priceEl.textContent = discountedTotal;
+                    periodEl.textContent = periodInfo.suffix;
+
+                    if (firstMonthPrice) {
+                        const subsequentMonths = periodInfo.months - 1;
+                        const subsequentTotal = subsequentMonths * monthlyPrice;
+                        const totalWithFirst = firstMonthPrice + subsequentTotal;
+                        const discountedTotalWithFirst = Math.round(totalWithFirst * (1 - periodInfo.discount));
+                         priceEl.textContent = discountedTotalWithFirst;
+                        noteEl.textContent = `Billed every ${periodInfo.months} months. Includes first month charge.`;
+                    } else {
+                         if (monthlyPrice > 0) {
+                            noteEl.textContent = `Billed as one payment of ₹${discountedTotal}.`;
+                         } else {
+                            noteEl.textContent = '';
+                         }
+                    }
+                }
+            });
+        }
+
+        toggleButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const activePeriod = button.getAttribute('data-period');
+                const activeIndex = button.getAttribute('data-index');
+
+                toggleButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+
+                toggleBg.style.transform = `translateX(${activeIndex * 100}%)`;
+                updatePrices(activePeriod);
+            });
+        });
+        
+        // Initial Price Set
+        updatePrices('monthly');
+
+        // --- Animation Observer ---
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     entry.target.classList.add('animation-visible');
-                } else {
-                    // Optional: Remove class if you want animation to repeat on scroll out/in
-                    // entry.target.classList.remove('animation-visible');
                 }
             });
-        }, observerOptions);
+        }, { threshold: 0.1 });
 
-        // Apply initial hidden state and observe elements
         document.querySelectorAll('.animated-element').forEach(el => {
-            el.classList.add('animated-element-hidden'); // Add initial hidden class
             observer.observe(el);
         });
-
-        // Add CSS for animated-element-hidden and animation-visible
-        const animationStyle = document.createElement('style');
-        animationStyle.textContent = `
-            .animated-element-hidden {
-                opacity: 0;
-                transform: translateY(15px);
-                transition: opacity 0.6s ease-out, transform 0.6s ease-out;
-            }
-            .animated-element.animation-visible {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        `;
-        document.head.appendChild(animationStyle);
     </script>
 </body>
 </html>
+
