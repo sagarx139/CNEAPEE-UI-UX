@@ -18,171 +18,273 @@
     }
 
     body {
-      background-color: #f9f9fb;
-      color: #1d1d1f;
+      background-color: #08080c;
+      color: #f0f0f5;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
-    }
-    
-    .header-nav {
-        background-color: rgba(255, 255, 255, 0.8);
-        -webkit-backdrop-filter: blur(20px);
-        backdrop-filter: blur(20px);
-        border: 1px solid rgba(0, 0, 0, 0.05);
-    }
-    
-    .cta-button {
-        background-color: #0071e3;
-        transition: background-color 0.3s ease, transform 0.3s ease;
-    }
-    .cta-button:hover {
-        background-color: #0077ed;
-        transform: scale(1.05);
+      overflow-x: hidden;
+      position: relative;
     }
 
-    .feature-card {
-        background-color: #ffffff;
-        border-radius: 24px;
-        border: 1px solid #e5e5e5;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    /* --- Aurora Background --- */
+    .background-aurora {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: -1;
+      overflow: hidden;
     }
-    .feature-card:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.1);
+
+    .blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(150px);
+      opacity: 0.3;
+    }
+
+    .blob1 {
+      width: 600px;
+      height: 600px;
+      background: #8a2be2;
+      top: -25%;
+      left: -15%;
+      animation: moveBlob1 30s infinite alternate;
+    }
+
+    .blob2 {
+      width: 550px;
+      height: 550px;
+      background: #00bfff;
+      bottom: -20%;
+      right: -20%;
+      animation: moveBlob2 35s infinite alternate;
+    }
+
+    .blob3 {
+      width: 500px;
+      height: 500px;
+      background: #ff1493;
+      top: 30%;
+      left: 40%;
+      animation: moveBlob3 28s infinite alternate;
+    }
+
+    @keyframes moveBlob1 {
+      from { transform: translate(-10%, -20%) rotate(0deg); }
+      to { transform: translate(15%, 25%) rotate(360deg); }
+    }
+    @keyframes moveBlob2 {
+      from { transform: translate(-15%, 15%) rotate(0deg); }
+      to { transform: translate(20%, -20%) rotate(360deg); }
+    }
+    @keyframes moveBlob3 {
+      from { transform: translate(40%, 30%) rotate(0deg); }
+      to { transform: translate(25%, -15%) rotate(360deg); }
     }
     
-    /* Scroll-triggered Animations */
-    .reveal {
+    /* --- Liquid Glass Panel Style --- */
+    .glass-panel {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0));
+      -webkit-backdrop-filter: blur(40px);
+      backdrop-filter: blur(40px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 15px 30px rgba(0,0,0,0.25);
+    }
+
+    /* --- Navigation Liquid Effect --- */
+    .nav-container {
+        position: relative;
+    }
+    .nav-link {
+        position: relative;
+        z-index: 2;
+        transition: color 0.3s ease;
+    }
+    .liquid-bubble {
+        position: absolute;
+        z-index: 1;
+        top: 0;
+        left: 0;
+        border-radius: 9999px;
+        background-image: radial-gradient(circle at top left, #ff8a00, #e52e71, #8a2be2, #00bfff);
+        filter: blur(5px);
         opacity: 0;
-        transform: translateY(30px);
-        transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.165, 0.84, 0.44, 1);
-        transition-delay: 0.2s;
+        transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+        pointer-events: none;
+        box-shadow: 0 0 15px rgba(255,100,200,0.5), inset 0 0 5px rgba(255,255,255,0.5);
+    }
+    
+    /* --- CTA Button --- */
+    .cta-button {
+      background-image: linear-gradient(45deg, #00c6ff, #0072ff);
+      transition: all 0.3s ease;
+      box-shadow: 0 5px 20px -5px rgba(0, 114, 255, 0.5), inset 0 -2px 5px rgba(0,0,0,0.2);
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+    .cta-button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 8px 25px -5px rgba(0, 114, 255, 0.7), inset 0 -2px 5px rgba(0,0,0,0.2);
+    }
+
+    /* --- Feature Card --- */
+    .feature-card {
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .feature-card:hover {
+      transform: translateY(-12px) scale(1.02);
+      box-shadow: 0 25px 50px -15px rgba(0, 0, 0, 0.4);
+    }
+    
+    /* --- Scroll-triggered Animations --- */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.165, 0.84, 0.44, 1);
+      transition-delay: 0.2s;
     }
     .reveal.visible {
-        opacity: 1;
-        transform: translateY(0);
+      opacity: 1;
+      transform: translateY(0);
     }
   </style>
 </head>
 
 <body>
 
+  <div class="background-aurora">
+    <div class="blob blob1"></div>
+    <div class="blob blob2"></div>
+    <div class="blob blob3"></div>
+  </div>
+
   <header class="sticky top-4 left-0 right-0 z-50 px-4">
-    <nav class="header-nav rounded-2xl px-6 py-3 max-w-7xl mx-auto">
+    <nav class="glass-panel rounded-full px-6 py-3 max-w-7xl mx-auto">
       <div class="flex items-center justify-between">
         <a href="#" class="flex items-center space-x-3">
           <img src="assets/CNEAPEE 2026 LOGO.png" alt="CNEAPEE Logo" class="w-13 h-12 object-contain rounded-lg" />
-          <h1 class="text-xl font-bold text-gray-800 tracking-centre">CNEAPEE+</h1>
+          <h1 class="text-xl font-bold text-white tracking-centre">CNEAPEE+</h1>
         </a>
-        <div class="hidden md:flex items-center space-x-8">
-          <a href="subscriptionplans.html" class="text-sm font-medium text-gray-600 hover:text-black transition-colors duration-300">Try +</a>
-          <a href="store.html" class="text-sm font-medium text-gray-600 hover:text-black transition-colors duration-300">Store+</a>
-          <a href="news.html" class="text-sm font-medium text-gray-600 hover:text-black transition-colors duration-300">News+</a>
-          <a href="updates.html" class="text-sm font-medium text-gray-600 hover:text-black transition-colors duration-300">Vision</a>
+        <div id="nav-menu" class="hidden md:flex items-center space-x-8 nav-container">
+          <div id="liquid-bubble" class="liquid-bubble"></div>
+          <a href="subscriptionplans.html" class="nav-link text-sm font-medium text-gray-300 hover:text-white">Try +</a>
+          <a href="store.html" class="nav-link text-sm font-medium text-gray-300 hover:text-white">Store+</a>
+          <a href="news.html" class="nav-link text-sm font-medium text-gray-300 hover:text-white">News+</a>
+          <a href="updates.html" class="nav-link text-sm font-medium text-gray-300 hover:text-white">Vision</a>
         </div>
         <a href="profile.html" class="hidden md:block">
             <button class="cta-button text-white px-5 py-2 rounded-full text-sm font-semibold">
               Get Started
             </button>
         </a>
-        <button id="mobile-menu-button" class="md:hidden text-gray-800 p-2 rounded-md hover:bg-gray-100 transition-colors">
+        <button id="mobile-menu-button" class="md:hidden text-gray-300 p-2 rounded-md hover:bg-white/10 transition-colors">
           <i class="fas fa-bars text-xl"></i>
         </button>
       </div>
       <div id="mobile-menu" class="hidden md:hidden mt-4 space-y-4">
-        <a href="subscriptionplans.html" class="block text-gray-600 hover:text-black py-2">Try +</a>
-        <a href="store.html" class="block text-gray-600 hover:text-black py-2">Store</a>
-        <a href="updates.html" class="block text-gray-600 hover:text-black py-2">Vision</a>
+        <a href="subscriptionplans.html" class="block text-gray-300 hover:text-white py-2">Try +</a>
+        <a href="store.html" class="block text-gray-300 hover:text-white py-2">Store</a>
+        <a href="updates.html" class="block text-gray-300 hover:text-white py-2">Vision</a>
+        <a href="news.html" class="block text-gray-300 hover:text-white py-2">News+</a>
         <a href="profile.html" class="block cta-button text-white px-4 py-2.5 rounded-full text-center mt-2">Get Started</a>
       </div>
       </nav>
-      </header>
+  </header>
 
-        <main class="pt-24 pb-24">
-        <div class="container mx-auto px-4 text-center">
-          
-          <section class="py-20 sm:py-32">
-          <h1 class="text-5xl md:text-7xl font-black text-gray-900 mb-6 tracking-tighter reveal">
-            Intelligence for the future.
-          </h1>
-          <p class="max-w-3xl mx-auto text-lg md:text-xl text-gray-600 mb-10 leading-relaxed reveal" style="transition-delay: 0.3s;">
-            CNEAPEE now features a real-time chat system convo+, newsroom support, health+ and the soft launch of the Learning+ . Experience it free.
-          </p>
-          <div class="reveal flex flex-wrap justify-center gap-4 md:gap-6" style="transition-delay: 0.4s;">
-            <a href="newChat.html" class="cta-button text-white px-6 py-3 md:px-8 md:py-4 rounded-full text-lg font-semibold inline-block w-full sm:w-auto text-center">
-              Try Neuro+ AI
+      <main class="pt-24 pb-24 relative z-10">
+      <div class="container mx-auto px-4 text-center">
+        
+        <section class="py-20 sm:py-32">
+        <h1 class="text-5xl md:text-7xl font-black text-white mb-6 tracking-tighter reveal">
+          Intelligence for the future.
+        </h1>
+        <p class="max-w-3xl mx-auto text-lg md:text-xl text-gray-300 mb-10 leading-relaxed reveal" style="transition-delay: 0.3s;">
+          CNEAPEE now features a real-time chat system convo+, newsroom support, health+ and the soft launch of the Learning+ . Experience it free.
+        </p>
+        <div class="reveal flex flex-wrap justify-center gap-4 md:gap-6" style="transition-delay: 0.4s;">
+          <a href="newChat.html" class="cta-button text-white px-6 py-3 md:px-8 md:py-4 rounded-full text-lg font-semibold inline-block w-full sm:w-auto text-center">
+            Try Neuro+ AI
+          </a>
+          <a href="convo.html" class="cta-button text-white px-6 py-3 md:px-8 md:py-4 rounded-full text-lg font-semibold inline-block w-full sm:w-auto text-center">
+            Try Convo+
+          </a>
+          <a href="health.html" class="cta-button text-white px-6 py-3 md:px-8 md:py-4 rounded-full text-lg font-semibold inline-block w-full sm:w-auto text-center">
+            Try Health+
+          </a>
+          <a href="studyhub.html" class="cta-button text-white px-6 py-3 md:px-8 md:py-4 rounded-full text-lg font-semibold inline-block w-full sm:w-auto text-center">
+            Learning+
+          </a>
+        </div>
+        </section>
+
+        <section class="py-16 sm:py-24">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-12 max-w-6xl mx-auto">
+          <div class="text-center reveal" style="transition-delay: 0.2s;">
+            <i class="fas fa-shield-alt text-4xl mb-4" style="background-image: linear-gradient(45deg, #00c6ff, #0072ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i>
+            <h3 class="text-xl font-bold mb-2 text-white">Unbreakable Security</h3>
+            <p class="text-gray-300">Your data is protected with end-to-end 256-bit encryption.</p>
+          </div>
+          <div class="text-center reveal" style="transition-delay: 0.3s;">
+            <i class="fas fa-cloud text-4xl mb-4" style="background-image: linear-gradient(45deg, #8a2be2, #4a00e0); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i>
+            <h3 class="text-xl font-bold mb-2 text-white">Cloud-Native Platform</h3>
+            <p class="text-gray-300">Access your intelligent tools and insights from anywhere, anytime.</p>
+          </div>
+          <div class="text-center reveal" style="transition-delay: 0.4s;">
+            <i class="fas fa-brain text-4xl mb-4" style="background-image: linear-gradient(45deg, #ff1493, #ff7f7f); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i>
+            <h3 class="text-xl font-bold mb-2 text-white">Personalized Intelligence</h3>
+            <p class="text-gray-300">Our AI adapts to your needs, providing truly customized insights.</p>
+          </div>
+        </div>
+      </section>
+
+    <section class="py-16 sm:py-24">
+      <div class="max-w-6xl mx-auto">
+          <h2 class="text-4xl md:text-5xl font-bold text-white mb-16 reveal">Explore the Plus Ecosystem</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <a href="studyhub.html" class="group feature-card glass-panel p-8 text-left reveal rounded-3xl" style="transition-delay: 0.3s;">
+                <div class="w-16 h-16 mb-6 flex items-center justify-center rounded-2xl" style="background: linear-gradient(45deg, rgba(138, 43, 226, 0.2), rgba(74, 0, 224, 0.2));">
+                    <i class="fas fa-graduation-cap text-3xl text-purple-300"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-white mb-2">Learning+</h3>
+                <p class="text-gray-300 mb-6">AI-powered, truly adaptive education for a smarter learning curve.</p>
+                <span class="font-semibold text-sky-400">Start learning <i class="fas fa-arrow-right ml-1 transform group-hover:translate-x-1 transition-transform"></i></span>
             </a>
-            <a href="convo.html" class="cta-button text-white px-6 py-3 md:px-8 md:py-4 rounded-full text-lg font-semibold inline-block w-full sm:w-auto text-center">
-              Try Convo+
+            <a href="health.html" class="group feature-card glass-panel p-8 text-left reveal rounded-3xl" style="transition-delay: 0.4s;">
+                <div class="w-16 h-16 mb-6 flex items-center justify-center rounded-2xl" style="background: linear-gradient(45deg, rgba(60, 179, 113, 0.2), rgba(46, 139, 87, 0.2));">
+                    <i class="fas fa-heartbeat text-3xl text-green-300"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-white mb-2">Health+</h3>
+                <p class="text-gray-300 mb-6">Predictive insights and HIPAA compliant tools for smarter wellness.</p>
+                <span class="font-semibold text-sky-400">Analyze health <i class="fas fa-arrow-right ml-1 transform group-hover:translate-x-1 transition-transform"></i></span>
             </a>
-            <a href="health.html" class="cta-button text-white px-6 py-3 md:px-8 md:py-4 rounded-full text-lg font-semibold inline-block w-full sm:w-auto text-center">
-              Try Health+
+            <a href="news.html" class="group feature-card glass-panel p-8 text-left reveal rounded-3xl" style="transition-delay: 0.3s;">
+                <div class="w-16 h-16 mb-6 flex items-center justify-center rounded-2xl" style="background: linear-gradient(45deg, rgba(255, 165, 0, 0.2), rgba(255, 140, 0, 0.2));">
+                     <i class="fas fa-newspaper text-3xl text-orange-300"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-white mb-2">News+</h3>
+                <p class="text-gray-300 mb-6">Real-time, unbiased market insights from our dedicated newsroom.</p>
+                <span class="font-semibold text-sky-400">Get insights <i class="fas fa-arrow-right ml-1 transform group-hover:translate-x-1 transition-transform"></i></span>
             </a>
-            <a href="studyhub.html" class="cta-button text-white px-6 py-3 md:px-8 md:py-4 rounded-full text-lg font-semibold inline-block w-full sm:w-auto text-center">
-              Learning+
+            <a href="store.html" class="group feature-card glass-panel p-8 text-left reveal rounded-3xl" style="transition-delay: 0.4s;">
+                <div class="w-16 h-16 mb-6 flex items-center justify-center rounded-2xl" style="background: linear-gradient(45deg, rgba(0, 198, 255, 0.2), rgba(0, 114, 255, 0.2));">
+                     <i class="fas fa-store text-3xl text-blue-300"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-white mb-2">CNEAPEE Store+</h3>
+                <p class="text-gray-300 mb-6">Explore exclusive products including Premium Headphones , speakers and more.</p>
+                <span class="font-semibold text-sky-400">Visit store <i class="fas fa-arrow-right ml-1 transform group-hover:translate-x-1 transition-transform"></i></span>
             </a>
           </div>
-          </section>
-
-          <section class="py-16 sm:py-24">
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-12 max-w-6xl mx-auto">
-            <div class="text-center reveal" style="transition-delay: 0.2s;">
-              <i class="fas fa-shield-alt text-4xl text-blue-600 mb-4"></i>
-              <h3 class="text-xl font-bold mb-2">Unbreakable Security</h3>
-              <p class="text-gray-600">Your data is protected with end-to-end 256-bit encryption.</p>
-            </div>
-            <div class="text-center reveal" style="transition-delay: 0.3s;">
-              <i class="fas fa-cloud text-4xl text-blue-600 mb-4"></i>
-              <h3 class="text-xl font-bold mb-2">Cloud-Native Platform</h3>
-              <p class="text-gray-600">Access your intelligent tools and insights from anywhere, anytime.</p>
-            </div>
-            <div class="text-center reveal" style="transition-delay: 0.4s;">
-              <i class="fas fa-brain text-4xl text-blue-600 mb-4"></i>
-              <h3 class="text-xl font-bold mb-2">Personalized Intelligence</h3>
-              <p class="text-gray-600">Our AI adapts to your needs, providing truly customized insights.</p>
-            </div>
-        </div>
-      </section>
-
-      <section class="py-16 sm:py-24 bg-white rounded-3xl">
-        <div class="max-w-6xl mx-auto">
-            <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-16 reveal">Explore the Plus Ecosystem</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <a href="studyhub.html" class="group feature-card p-8 text-left reveal" style="transition-delay: 0.3s;">
-                    <i class="fas fa-graduation-cap text-3xl text-purple-600 bg-purple-100 p-4 rounded-xl mb-6"></i>
-                    <h3 class="text-2xl font-bold text-gray-900 mb-2">Learning+</h3>
-                    <p class="text-gray-600 mb-6">AI-powered, truly adaptive education for a smarter learning curve.</p>
-                    <span class="text-blue-600 font-semibold">Start learning <i class="fas fa-arrow-right ml-1 transform group-hover:translate-x-1 transition-transform"></i></span>
-                </a>
-                <a href="health.html" class="group feature-card p-8 text-left reveal" style="transition-delay: 0.4s;">
-                    <i class="fas fa-heartbeat text-3xl text-green-600 bg-green-100 p-4 rounded-xl mb-6"></i>
-                    <h3 class="text-2xl font-bold text-gray-900 mb-2">Health+</h3>
-                    <p class="text-gray-600 mb-6">Predictive insights and HIPAA compliant tools for smarter wellness.</p>
-                    <span class="text-blue-600 font-semibold">Analyze health <i class="fas fa-arrow-right ml-1 transform group-hover:translate-x-1 transition-transform"></i></span>
-                </a>
-                <a href="news.html" class="group feature-card p-8 text-left reveal" style="transition-delay: 0.3s;">
-                    <i class="fas fa-newspaper text-3xl text-orange-600 bg-orange-100 p-4 rounded-xl mb-6"></i>
-                    <h3 class="text-2xl font-bold text-gray-900 mb-2">News+</h3>
-                    <p class="text-gray-600 mb-6">Real-time, unbiased market insights from our dedicated newsroom.</p>
-                    <span class="text-blue-600 font-semibold">Get insights <i class="fas fa-arrow-right ml-1 transform group-hover:translate-x-1 transition-transform"></i></span>
-                </a>
-                <a href="store.html" class="group feature-card p-8 text-left reveal" style="transition-delay: 0.4s;">
-                    <i class="fas fa-store text-3xl text-blue-600 bg-blue-100 p-4 rounded-xl mb-6"></i>
-                    <h3 class="text-2xl font-bold text-gray-900 mb-2">CNEAPEE Store+</h3>
-                    <p class="text-gray-600 mb-6">Explore exclusive products including Premium Headphones , speakers and more.</p>
-                    <span class="text-blue-600 font-semibold">Visit store <i class="fas fa-arrow-right ml-1 transform group-hover:translate-x-1 transition-transform"></i></span>
-                </a>
-            </div>
-        </div>
-      </section>
+      </div>
+    </section>
 
     </div>
   </main>
 
-  <footer class="pt-20 pb-10">
+  <footer class="pt-20 pb-10 relative z-10">
       <div class="container mx-auto px-4 text-center text-gray-500">
       
-        <p class="text-sm">&copy; 2025 CNEAPEE. All Rights Reserved. Made in India for the World.</p>
+      <p class="text-sm">&copy; 2025 CNEAPEE. All Rights Reserved. Made in India for the World.</p>
       </div>
   </footer>
 
@@ -200,18 +302,44 @@
         entries.forEach(entry => {
             if (entry.isIntersecting) {
                 entry.target.classList.add('visible');
-                // Optional: unobserve after revealing to save resources
-                // observer.unobserve(entry.target);
             }
         });
     }, {
-        threshold: 0.1 // Trigger when 10% of the element is visible
+        threshold: 0.1
     });
 
     revealElements.forEach(element => {
         observer.observe(element);
     });
+
+    // --- Navigation Liquid Bubble Effect ---
+    const navMenu = document.getElementById('nav-menu');
+    const bubble = document.getElementById('liquid-bubble');
+    const navLinks = navMenu.querySelectorAll('.nav-link');
+
+    if (navMenu && bubble) {
+        navLinks.forEach(link => {
+            link.addEventListener('mouseenter', () => {
+                const linkRect = link.getBoundingClientRect();
+                const navRect = navMenu.getBoundingClientRect();
+
+                bubble.style.width = `${linkRect.width + 20}px`;
+                bubble.style.height = `${linkRect.height + 20}px`;
+                bubble.style.left = `${linkRect.left - navRect.left - 10}px`;
+                bubble.style.top = `${linkRect.top - navRect.top - 10}px`;
+                bubble.style.opacity = '1';
+                bubble.style.transform = 'scale(1)';
+            });
+        });
+
+        navMenu.addEventListener('mouseleave', () => {
+            bubble.style.opacity = '0';
+            bubble.style.transform = 'scale(0.8)';
+        });
+    }
+
   </script>
 
 </body>
 </html>
+
