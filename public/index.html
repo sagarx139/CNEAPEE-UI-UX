@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="CNEAPEE | The Future of Intelligence. Experience Neuro+ AI, Convo+, and more.">
+    <title>CNEAPEE | The Future of Intelligence</title>
+    <link rel="icon" type="image/png" href="assets/cneapee-ai-logo.png">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- FontAwesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    colors: {
+                        background: '#030305',
+                        surface: '#0A0A0C',
+                        surfaceHighlight: '#161618',
+                        primary: '#3b82f6',
+                        accent: '#8b5cf6',
+                    },
+                    animation: {
+                        'blob': 'blob 10s infinite',
+                        'fade-in-up': 'fadeInUp 0.8s ease-out forwards',
+                    },
+                    keyframes: {
+                        blob: {
+                            '0%': { transform: 'translate(0px, 0px) scale(1)' },
+                            '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
+                            '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+                            '100%': { transform: 'translate(0px, 0px) scale(1)' },
+                        },
+                        fadeInUp: {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Base Styles */
+        body {
+            background-color: #030305;
+            color: #e4e4e7;
+            overflow-x: hidden;
+        }
+
+        /* Subtle Grid Background */
+        .bg-grid-pattern {
+            background-size: 40px 40px;
+            background-image: linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+        }
+
+        /* Spotlight Card Effect */
+        .spotlight-card {
+            position: relative;
+            background: rgba(255, 255, 255, 0.015);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            overflow: hidden;
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+        
+        .spotlight-card::before {
+            content: "";
+            position: absolute;
+            height: 100%;
+            width: 100%;
+            top: 0;
+            left: 0;
+            background: radial-gradient(800px circle at var(--mouse-x) var(--mouse-y), rgba(255, 255, 255, 0.06), transparent 40%);
+            opacity: 0;
+            transition: opacity 0.5s;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .spotlight-card:hover::before {
+            opacity: 1;
+        }
+        
+        .spotlight-card:hover {
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        /* Gradient Text */
+        .text-gradient-hero {
+            background: linear-gradient(to bottom right, #ffffff 30%, #94a3b8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .text-gradient-accent {
+            background: linear-gradient(to right, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Nav Blur */
+        .nav-blur {
+            background: rgba(3, 3, 5, 0.6);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        /* Glowing Button */
+        .btn-glow {
+            position: relative;
+            background: linear-gradient(to right, #1e1e24, #121214);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        .btn-glow:hover {
+            border-color: rgba(96, 165, 250, 0.5);
+            box-shadow: 0 0 20px rgba(96, 165, 250, 0.15);
+        }
+        .btn-primary {
+            background: #e4e4e7;
+            color: #000;
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            background: #fff;
+            box-shadow: 0 0 25px rgba(255, 255, 255, 0.3);
+            transform: scale(1.02);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #030305;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+    </style>
+</head>
+
+<body class="antialiased selection:bg-indigo-500/30">
+
+    <!-- Background Elements -->
+    <div class="fixed inset-0 z-0 pointer-events-none">
+        <div class="absolute inset-0 bg-grid-pattern opacity-40"></div>
+        <!-- Ambient Glow Top Center -->
+        <div class="absolute top-[-20%] left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-indigo-600/20 blur-[120px] rounded-full opacity-30"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="fixed top-6 left-0 right-0 z-50 flex justify-center px-4">
+        <div class="nav-blur rounded-full px-2 py-2 flex items-center justify-between gap-2 max-w-4xl w-full sm:w-auto shadow-2xl transition-all duration-300">
+            
+            <!-- Logo Area -->
+            <a href="#" class="flex items-center gap-3 px-4 py-2 hover:bg-white/5 rounded-full transition-colors">
+                <div class="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center text-white font-bold text-xs shadow-lg">
+                    C
+                </div>
+                <span class="font-bold text-gray-100 tracking-tight hidden sm:block">CNEAPEE<span class="text-indigo-400">+</span></span>
+            </a>
+
+            <!-- Desktop Links -->
+            <div class="hidden md:flex items-center gap-1">
+                <a href="subscriptionplans.html" class="text-sm font-medium text-zinc-400 hover:text-white px-4 py-2 rounded-full hover:bg-white/5 transition-all">Try +</a>
+                <a href="store.html" class="text-sm font-medium text-zinc-400 hover:text-white px-4 py-2 rounded-full hover:bg-white/5 transition-all">Store+</a>
+                <a href="news.html" class="text-sm font-medium text-zinc-400 hover:text-white px-4 py-2 rounded-full hover:bg-white/5 transition-all">News+</a>
+                <a href="updates.html" class="text-sm font-medium text-zinc-400 hover:text-white px-4 py-2 rounded-full hover:bg-white/5 transition-all">Vision</a>
+            </div>
+
+            <!-- Action & Mobile Toggle -->
+            <div class="flex items-center gap-2 pl-2">
+                <a href="profile.html" class="hidden md:block bg-white text-black text-xs font-bold px-5 py-2.5 rounded-full hover:scale-105 transition-transform">
+                    Get Started
+                </a>
+                <button id="mobile-menu-btn" class="md:hidden text-zinc-300 p-3 hover:bg-white/10 rounded-full transition-colors">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu Overlay -->
+    <div id="mobile-menu" class="fixed inset-0 bg-black/95 z-40 transform translate-x-full transition-transform duration-300 flex flex-col items-center justify-center space-y-8 md:hidden backdrop-blur-xl">
+        <button id="close-menu-btn" class="absolute top-8 right-8 text-zinc-400 hover:text-white text-2xl">
+            <i class="fas fa-times"></i>
+        </button>
+        <a href="subscriptionplans.html" class="text-2xl font-medium text-white">Try +</a>
+        <a href="store.html" class="text-2xl font-medium text-white">Store+</a>
+        <a href="news.html" class="text-2xl font-medium text-white">News+</a>
+        <a href="updates.html" class="text-2xl font-medium text-white">Vision</a>
+        <a href="profile.html" class="px-8 py-3 bg-white text-black rounded-full font-bold mt-4">Get Started</a>
+    </div>
+
+    <main class="relative z-10 pt-40 pb-20 px-4 sm:px-6">
+        
+        <!-- Hero Section -->
+        <section class="max-w-5xl mx-auto text-center mb-32 opacity-0 animate-fade-in-up">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-medium text-indigo-300 mb-8 hover:bg-white/10 transition-colors cursor-pointer">
+                <span class="flex h-2 w-2 relative">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
+                </span>
+                Introducing Learning+ v2.0
+            </div>
+            
+            <h1 class="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight mb-8 leading-[1.1]">
+                <span class="text-gradient-hero">Intelligence,</span><br>
+                <span class="text-white/40">Evolved.</span>
+            </h1>
+            
+            <p class="text-lg md:text-xl text-zinc-400 max-w-2xl mx-auto mb-12 leading-relaxed">
+                CNEAPEE unites real-time conversation, predictive health, and adaptive learning into one seamless intelligence layer.
+            </p>
+
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4 w-full sm:w-auto">
+                <a href="newChat.html" class="w-full sm:w-auto btn-primary px-8 py-4 rounded-full font-bold text-sm tracking-wide">
+                    Try Neuro+ AI
+                </a>
+                <a href="convo.html" class="w-full sm:w-auto btn-glow px-8 py-4 rounded-full font-bold text-sm text-zinc-300 tracking-wide hover:text-white">
+                    Start Conversation
+                </a>
+            </div>
+
+            <!-- Trust Indicators -->
+            <div class="mt-16 pt-8 border-t border-white/5 flex justify-center gap-8 md:gap-16 text-zinc-500 grayscale opacity-60 hover:opacity-100 transition-opacity duration-500">
+                <div class="flex items-center gap-2"><i class="fas fa-shield-alt"></i> <span class="text-xs font-semibold uppercase tracking-wider">Encrypted</span></div>
+                <div class="flex items-center gap-2"><i class="fas fa-bolt"></i> <span class="text-xs font-semibold uppercase tracking-wider">Real-time</span></div>
+                <div class="flex items-center gap-2"><i class="fas fa-globe"></i> <span class="text-xs font-semibold uppercase tracking-wider">Global</span></div>
+            </div>
+        </section>
+
+        <!-- Bento Grid Features Section -->
+        <section class="max-w-6xl mx-auto mb-32">
+            <div class="flex items-end justify-between mb-12 px-2">
+                <div>
+                    <h2 class="text-3xl font-bold text-white mb-2">The Plus Ecosystem</h2>
+                    <p class="text-zinc-400">Everything you need to upgrade your daily workflow.</p>
+                </div>
+                <a href="store.html" class="hidden sm:flex items-center gap-2 text-sm text-indigo-400 hover:text-indigo-300 transition-colors">
+                    View All Products <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+
+            <!-- Grid Layout -->
+            <div class="grid grid-cols-1 md:grid-cols-3 md:grid-rows-2 gap-4 h-auto md:h-[600px]">
+                
+                <!-- Card 1: Learning+ (Large, Span 2 Cols) -->
+                <a href="studyhub.html" class="spotlight-card rounded-3xl p-8 md:col-span-2 md:row-span-1 group relative flex flex-col justify-between bg-gradient-to-br from-white/5 to-transparent">
+                    <div class="absolute right-4 top-4 p-3 rounded-full bg-indigo-500/10 text-indigo-400 group-hover:bg-indigo-500 group-hover:text-white transition-all duration-300">
+                        <i class="fas fa-graduation-cap text-xl"></i>
+                    </div>
+                    <div class="relative z-10 mt-auto">
+                        <h3 class="text-2xl font-bold text-white mb-2">Learning+</h3>
+                        <p class="text-zinc-400 text-sm max-w-md group-hover:text-zinc-200 transition-colors">AI-powered, truly adaptive education that evolves with your learning curve. Personalized curriculums instantly.</p>
+                    </div>
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60"></div>
+                </a>
+
+                <!-- Card 2: Health+ (Tall, Span 1 Col, Span 2 Rows) -->
+                <a href="health.html" class="spotlight-card rounded-3xl p-8 md:col-span-1 md:row-span-2 group relative flex flex-col overflow-hidden bg-gradient-to-b from-emerald-900/10 to-transparent">
+                    <div class="absolute right-4 top-4 p-3 rounded-full bg-emerald-500/10 text-emerald-400 group-hover:bg-emerald-500 group-hover:text-white transition-all duration-300">
+                        <i class="fas fa-heartbeat text-xl"></i>
+                    </div>
+                    <div class="flex-1 flex items-center justify-center my-8">
+                         <!-- Abstract Visualization using CSS -->
+                        <div class="w-32 h-32 rounded-full border-4 border-emerald-500/20 flex items-center justify-center relative">
+                            <div class="w-24 h-24 rounded-full border-4 border-emerald-500/40 animate-pulse"></div>
+                            <i class="fas fa-activity absolute text-4xl text-emerald-500/80"></i>
+                        </div>
+                    </div>
+                    <div class="relative z-10">
+                        <h3 class="text-2xl font-bold text-white mb-2">Health+</h3>
+                        <p class="text-zinc-400 text-sm group-hover:text-zinc-200 transition-colors">Predictive wellness insights and HIPAA compliant tools.</p>
+                    </div>
+                </a>
+
+                <!-- Card 3: News+ (Square) -->
+                <a href="news.html" class="spotlight-card rounded-3xl p-8 group relative flex flex-col justify-between bg-gradient-to-br from-orange-500/5 to-transparent">
+                    <div class="absolute right-4 top-4 p-3 rounded-full bg-orange-500/10 text-orange-400 group-hover:bg-orange-500 group-hover:text-white transition-all duration-300">
+                        <i class="fas fa-newspaper text-xl"></i>
+                    </div>
+                    <div class="mt-12">
+                        <h3 class="text-xl font-bold text-white mb-2">News+</h3>
+                        <p class="text-zinc-400 text-xs">Unbiased, real-time market intelligence.</p>
+                    </div>
+                </a>
+
+                <!-- Card 4: Store+ (Square) -->
+                <a href="store.html" class="spotlight-card rounded-3xl p-8 group relative flex flex-col justify-between bg-gradient-to-br from-blue-500/5 to-transparent">
+                    <div class="absolute right-4 top-4 p-3 rounded-full bg-blue-500/10 text-blue-400 group-hover:bg-blue-500 group-hover:text-white transition-all duration-300">
+                        <i class="fas fa-store text-xl"></i>
+                    </div>
+                    <div class="mt-12">
+                        <h3 class="text-xl font-bold text-white mb-2">Store+</h3>
+                        <p class="text-zinc-400 text-xs">Premium hardware ecosystem.</p>
+                    </div>
+                </a>
+
+            </div>
+        </section>
+
+        <!-- Value Props (Grid of Icons) -->
+        <section class="max-w-4xl mx-auto py-16 border-t border-white/5">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
+                <div class="group">
+                    <div class="w-12 h-12 mx-auto mb-4 rounded-xl bg-zinc-900 border border-white/10 flex items-center justify-center group-hover:border-indigo-500/50 transition-colors">
+                        <i class="fas fa-lock text-indigo-400"></i>
+                    </div>
+                    <h3 class="text-white font-semibold mb-2">Security First</h3>
+                    <p class="text-sm text-zinc-500">End-to-end 256-bit encryption for all your personal data.</p>
+                </div>
+                <div class="group">
+                    <div class="w-12 h-12 mx-auto mb-4 rounded-xl bg-zinc-900 border border-white/10 flex items-center justify-center group-hover:border-purple-500/50 transition-colors">
+                        <i class="fas fa-cloud text-purple-400"></i>
+                    </div>
+                    <h3 class="text-white font-semibold mb-2">Cloud Native</h3>
+                    <p class="text-sm text-zinc-500">Seamless synchronization across all your devices instantly.</p>
+                </div>
+                <div class="group">
+                    <div class="w-12 h-12 mx-auto mb-4 rounded-xl bg-zinc-900 border border-white/10 flex items-center justify-center group-hover:border-pink-500/50 transition-colors">
+                        <i class="fas fa-brain text-pink-400"></i>
+                    </div>
+                    <h3 class="text-white font-semibold mb-2">Adaptive AI</h3>
+                    <p class="text-sm text-zinc-500">Models that learn from your preferences to serve you better.</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="border-t border-white/5 bg-[#050507] py-12 relative z-10">
+        <div class="max-w-6xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
+            <div class="flex items-center gap-3">
+                <div class="w-6 h-6 bg-zinc-800 rounded flex items-center justify-center text-xs text-white font-bold">C</div>
+                <span class="text-zinc-500 text-sm">© 2025 CNEAPEE. Made in India.</span>
+            </div>
+            <div class="flex gap-6">
+                <a href="#" class="text-zinc-500 hover:text-white transition-colors"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="text-zinc-500 hover:text-white transition-colors"><i class="fab fa-instagram"></i></a>
+                <a href="#" class="text-zinc-500 hover:text-white transition-colors"><i class="fab fa-linkedin"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // --- Mobile Menu Logic ---
+        const btn = document.getElementById('mobile-menu-btn');
+        const menu = document.getElementById('mobile-menu');
+        const closeBtn = document.getElementById('close-menu-btn');
+
+        function toggleMenu() {
+            const isHidden = menu.classList.contains('translate-x-full');
+            if (isHidden) {
+                menu.classList.remove('translate-x-full');
+            } else {
+                menu.classList.add('translate-x-full');
+            }
+        }
+
+        btn.addEventListener('click', toggleMenu);
+        closeBtn.addEventListener('click', toggleMenu);
+
+
+        // --- Spotlight Hover Effect Logic ---
+        // This calculates the mouse position relative to each card and updates CSS variables
+        const cards = document.querySelectorAll(".spotlight-card");
+
+        document.addEventListener("mousemove", (e) => {
+            cards.forEach((card) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+
+                card.style.setProperty("--mouse-x", `${x}px`);
+                card.style.setProperty("--mouse-y", `${y}px`);
+            });
+        });
+
+    </script>
+</body>
+</html>

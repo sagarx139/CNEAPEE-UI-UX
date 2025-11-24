@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CNEAPEE AI Neuro EXE</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'sans': ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        'light-bg': '#FFFFFF',
+                        'dark-bg': '#000000',
+                        
+                        'light-surface': 'rgba(255, 255, 255, 0.7)',
+                        'dark-surface': 'rgba(20, 20, 20, 0.7)',
+
+                        'light-text': '#000000',
+                        'dark-text': '#FFFFFF',
+                        
+                        'light-subtle': '#6b7280',
+                        'dark-subtle': '#9ca3af',
+                        
+                        'accent-light': '#000000',
+                        'accent-dark': '#FFFFFF',
+                        
+                        'user-bubble-light': '#F3F4F6',
+                        'user-bubble-dark': '#1F2937',
+                    },
+                    boxShadow: {
+                        'soft-light': '8px 8px 16px #e0e0e0, -8px -8px 16px #ffffff',
+                        'soft-dark': '8px 8px 16px #000000, -8px -8px 16px #1a1a1a',
+                        'soft-inset-light': 'inset 4px 4px 8px #e0e0e0, inset -4px -4px 8px #ffffff',
+                        'soft-inset-dark': 'inset 4px 4px 8px #000000, inset -4px -4px 8px #1a1a1a',
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-out forwards',
+                        'slide-up': 'slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                        'aurora': 'aurora 30s ease-in-out infinite alternate',
+                    },
+                    keyframes: {
+                        fadeIn: { '0%': { opacity: 0 }, '100%': { opacity: 1 } },
+                        slideUp: {
+                            '0%': { transform: 'translateY(20px)', opacity: 0 },
+                            '100%': { transform: 'translateY(0)', opacity: 1 }
+                        },
+                        aurora: {
+                            '0%': { transform: 'translate(var(--x-start), var(--y-start))' },
+                            '100%': { transform: 'translate(var(--x-end), var(--y-end))' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image:
+                radial-gradient(circle at 10% 20%, rgba(150,150,150,0.3) 0%, transparent 25%),
+                radial-gradient(circle at 80% 30%, rgba(150,150,150,0.3) 0%, transparent 25%),
+                radial-gradient(circle at 30% 90%, rgba(150,150,150,0.3) 0%, transparent 25%);
+            filter: blur(100px);
+            opacity: 0.2;
+            z-index: -1;
+            animation: aurora 20s linear infinite alternate;
+        }
+
+        .dark body::before {
+            opacity: 0.15;
+             background-image:
+                radial-gradient(circle at 10% 20%, rgba(200,200,200,0.3) 0%, transparent 30%),
+                radial-gradient(circle at 90% 40%, rgba(200,200,200,0.3) 0%, transparent 35%),
+                radial-gradient(circle at 20% 85%, rgba(200,200,200,0.3) 0%, transparent 30%);
+        }
+
+        .surface-element {
+            background-color: var(--surface-color);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+        
+        html {
+            --surface-color: rgba(255, 255, 255, 0.5);
+            --border-color: rgba(0, 0, 0, 0.08);
+        }
+        html.dark {
+            --surface-color: rgba(20, 20, 20, 0.5);
+            --border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .scroll-container::-webkit-scrollbar { width: 6px; }
+        .scroll-container::-webkit-scrollbar-track { background: transparent; }
+        .scroll-container::-webkit-scrollbar-thumb { background-color: rgba(120,120,120,0.3); border-radius: 3px; }
+        .dark .scroll-container::-webkit-scrollbar-thumb { background-color: rgba(200,200,200,0.2); }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                position: fixed;
+                top: 0;
+                left: -100%;
+                width: 85%;
+                max-width: 320px;
+                height: 100%;
+                z-index: 50;
+                transition: left 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            }
+            .sidebar.open { left: 0; }
+            .sidebar-overlay.active { display: block; }
+        }
+    </style>
+</head>
+
+<body class="bg-light-bg dark:bg-dark-bg text-light-text dark:text-dark-text font-sans h-screen flex overflow-hidden">
+    
+    <aside id="sidebar" class="w-80 flex-shrink-0 surface-element flex flex-col md:relative md:left-0 sidebar">
+        <div class="p-5 border-b border-[var(--border-color)]">
+            <div class="flex items-center gap-3">
+                 <div class="w-10 h-10 bg-light dark:bg-dark-text rounded-lg flex items-center justify-center shadow-md">
+                    <img src="assets/CNEAPEE 2026 LOGO.png" alt="CNEAPEE Logo" class="w-21 h-21 object-contain rounded-lg" />
+                </div>
+                <div>
+                    <h1 class="text-lg font-bold">CNEAPEE AI</h1>
+                    <p class="text-xs text-light-subtle dark:text-dark-subtle font-medium">Model - Neuro EXE</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="p-5 flex-shrink-0">
+            <button id="new-chat" class="w-full bg-accent-light dark:bg-accent-dark text-light-bg dark:text-dark-bg px-4 py-3 rounded-xl font-semibold flex items-center justify-center shadow-lg hover:opacity-80 active:scale-95 transition-all duration-200">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                </svg>
+                New Chat
+            </button>
+        </div>
+
+        <div class="flex-1 overflow-y-auto scroll-container px-5 pb-5">
+            <h3 class="text-sm font-semibold mb-3 text-light-subtle dark:text-dark-subtle">Recent Chats</h3>
+            <div id="chat-history" class="space-y-2">
+                </div>
+        </div>
+
+        <div class="p-5 border-t border-[var(--border-color)] flex-shrink-0">
+             <div class="flex items-center justify-between">
+                <a href="profile.html" class="flex items-center gap-3 group">
+                    <div class="w-10 h-10 bg-light-bg dark:bg-user-bubble-dark rounded-full flex items-center justify-center font-bold text-light-text dark:text-dark-text group-hover:opacity-80 transition-opacity">U</div>
+                    <div>
+                        <div class="font-semibold text-sm group-hover:underline">User Profile</div>
+                        <div class="text-xs text-light-subtle dark:text-dark-subtle">View Settings</div>
+                    </div>
+                </a>
+                <button id="theme-toggle" class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-black/5 dark:hover:bg-white/5 transition-colors active:scale-90">
+                    <svg id="theme-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"></svg>
+                </button>
+             </div>
+        </div>
+    </aside>
+
+    <div id="sidebar-overlay" class="sidebar-overlay fixed inset-0 bg-black/50 z-40 transition-opacity duration-300 hidden"></div>
+
+    <main class="flex-1 flex flex-col relative">
+        <header class="p-4 flex-shrink-0 flex items-center justify-between md:justify-end">
+             <button id="mobile-sidebar-toggle" class="md:hidden p-2 rounded-lg surface-element mr-3">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+            </button>
+            <p class="text-xs font-semibold text-light-subtle dark:text-dark-subtle px-3 py-1.5 rounded-lg surface-element">
+                Developer Preview — Spring 2026
+            </p>
+        </header>
+
+        <div id="messages-container" class="flex-1 overflow-y-auto scroll-container p-4 md:p-6">
+            </div>
+
+        <div class="p-4 md:p-6 flex-shrink-0">
+            <div class="max-w-4xl mx-auto">
+                 <div class="relative">
+                    <textarea id="message-input" placeholder="Ask anything..."
+                        class="w-full p-4 pr-16 bg-light-surface dark:bg-dark-surface rounded-2xl shadow-soft-inset-light dark:shadow-soft-inset-dark resize-none placeholder-light-subtle dark:placeholder-dark-subtle outline-none focus:ring-2 focus:ring-light-text dark:focus:ring-dark-text transition-shadow"
+                        rows="1" style="min-height: 56px; max-height: 200px;"></textarea>
+                    <button id="send-button"
+                        class="absolute right-3 bottom-3 w-10 h-10 bg-accent-light dark:bg-accent-dark text-light-bg dark:text-dark-bg rounded-full shadow-lg flex items-center justify-center hover:opacity-80 active:scale-90 transition-all duration-200 opacity-60" disabled>
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                           <path d="M3.478 2.405a.75.75 0 00-.926.94l2.432 7.905H13.5a.75.75 0 010 1.5H4.984l-2.432 7.905a.75.75 0 00.926.94 60.519 60.519 0 0018.445-8.986.75.75 0 000-1.218A60.517 60.517 0 003.478 2.405z" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        class CNEAPEE_AI_APP {
+            constructor() {
+                this.elements = {
+                    body: document.body,
+                    sidebar: document.getElementById('sidebar'),
+                    sidebarOverlay: document.getElementById('sidebar-overlay'),
+                    mobileToggle: document.getElementById('mobile-sidebar-toggle'),
+                    themeToggle: document.getElementById('theme-toggle'),
+                    themeIcon: document.getElementById('theme-icon'),
+                    newChatBtn: document.getElementById('new-chat'),
+                    sendBtn: document.getElementById('send-button'),
+                    messageInput: document.getElementById('message-input'),
+                    messagesContainer: document.getElementById('messages-container'),
+                    chatHistoryContainer: document.getElementById('chat-history')
+                };
+                this.state = {
+                    messages: [],
+                    currentChatId: null,
+                    isTyping: false
+                };
+                this.init();
+            }
+
+            init() {
+                this.loadTheme();
+                this.bindEvents();
+                this.loadChatHistory();
+                this.startNewChat();
+            }
+
+            bindEvents() {
+                this.elements.themeToggle.addEventListener('click', () => this.toggleTheme());
+                this.elements.newChatBtn.addEventListener('click', () => this.startNewChat());
+                this.elements.sendBtn.addEventListener('click', () => this.sendMessage());
+                this.elements.messageInput.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        this.sendMessage();
+                    }
+                });
+                this.elements.messageInput.addEventListener('input', () => this.handleInput());
+                this.elements.mobileToggle.addEventListener('click', () => this.toggleSidebar());
+                this.elements.sidebarOverlay.addEventListener('click', () => this.toggleSidebar());
+            }
+            
+            toggleSidebar() {
+                this.elements.sidebar.classList.toggle('open');
+                this.elements.sidebarOverlay.classList.toggle('active');
+            }
+
+            toggleTheme() {
+                document.documentElement.classList.toggle('dark');
+                localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+                this.updateThemeIcon();
+            }
+
+            loadTheme() {
+                const savedTheme = localStorage.getItem('theme');
+                const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+                    document.documentElement.classList.add('dark');
+                }
+                this.updateThemeIcon();
+            }
+            
+            updateThemeIcon() {
+                const isDark = document.documentElement.classList.contains('dark');
+                this.elements.themeIcon.innerHTML = isDark
+                    ? `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>`
+                    : `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>`;
+            }
+
+            startNewChat() {
+                if (this.state.messages.length > 0) this.saveChatToHistory();
+                this.state.currentChatId = Date.now().toString();
+                this.state.messages = [];
+                this.elements.messagesContainer.innerHTML = '';
+                this.showWelcomeScreen();
+                this.elements.messageInput.focus();
+                if (window.innerWidth < 768) this.toggleSidebar();
+            }
+
+            sendMessage() {
+                const messageText = this.elements.messageInput.value.trim();
+                if (!messageText || this.state.isTyping) return;
+
+                if (this.state.messages.length === 0) {
+                    this.elements.messagesContainer.innerHTML = ''; // Clear welcome screen
+                }
+
+                this.addMessage(messageText, 'user');
+                this.elements.messageInput.value = '';
+                this.handleInput();
+                this.simulateAIResponse(messageText);
+            }
+            
+            addMessage(content, sender) {
+                const message = { content, sender, timestamp: new Date() };
+                this.state.messages.push(message);
+
+                const messageElement = document.createElement('div');
+                messageElement.className = `flex w-full mb-6 animate-slide-up ${sender === 'user' ? 'justify-end' : 'justify-start'}`;
+                
+                const bubbleClass = sender === 'user' 
+                    ? 'bg-user-bubble-light dark:bg-user-bubble-dark shadow-soft-light dark:shadow-soft-dark text-light-text dark:text-dark-text rounded-2xl rounded-br-md'
+                    : 'bg-accent-light dark:bg-accent-dark text-light-bg dark:text-dark-bg shadow-lg rounded-2xl rounded-bl-md';
+
+                messageElement.innerHTML = `
+                    <div class="max-w-xl">
+                        <div class="px-5 py-4 ${bubbleClass}">
+                            <p class="text-sm md:text-base leading-relaxed">${this.formatMessage(content)}</p>
+                        </div>
+                    </div>
+                `;
+                this.elements.messagesContainer.appendChild(messageElement);
+                this.scrollToBottom();
+                this.autoSaveChat();
+            }
+            
+            simulateAIResponse(userMessage) {
+                this.state.isTyping = true;
+                this.showTypingIndicator();
+
+                setTimeout(() => {
+                    this.hideTypingIndicator();
+                    const response = this.generateAIResponse(userMessage);
+                    this.addMessage(response, 'ai');
+                    this.state.isTyping = false;
+                }, 1500 + Math.random() * 1000);
+            }
+
+            generateAIResponse(userMessage) {
+                const lowerMsg = userMessage.toLowerCase();
+                if (lowerMsg.includes('code') || lowerMsg.includes('python')) {
+                    return "Of course! Let's dive into the code. What specific function or logic are you working on? I can provide examples in Python, JavaScript, or any other language you prefer.";
+                }
+                if (lowerMsg.includes('idea') || lowerMsg.includes('creative')) {
+                    return "I'd love to brainstorm! To get started, what's the general theme or goal? Are we thinking about a new business, a story, or perhaps a unique art project?";
+                }
+                if (lowerMsg.includes('hello') || lowerMsg.includes('hi')) {
+                    return "Hello there! I'm CNEAPEE AI, ready to assist you. What can I help you with today?";
+                }
+                return "That's an interesting point. Could you elaborate a bit more? I'm processing the information and would like to provide the most accurate response possible.";
+            }
+
+            showTypingIndicator() {
+                const typingElement = document.createElement('div');
+                typingElement.id = 'typing-indicator';
+                typingElement.className = 'flex justify-start mb-6 animate-fade-in';
+                typingElement.innerHTML = `
+                    <div class="px-5 py-4 bg-light-surface dark:bg-dark-surface shadow-soft-light dark:shadow-soft-dark rounded-2xl rounded-bl-md flex items-center gap-3">
+                         <div class="w-2 h-2 bg-light-subtle dark:bg-dark-subtle rounded-full animate-pulse" style="animation-delay: 0s;"></div>
+                         <div class="w-2 h-2 bg-light-subtle dark:bg-dark-subtle rounded-full animate-pulse" style="animation-delay: 0.2s;"></div>
+                         <div class="w-2 h-2 bg-light-subtle dark:bg-dark-subtle rounded-full animate-pulse" style="animation-delay: 0.4s;"></div>
+                    </div>
+                `;
+                this.elements.messagesContainer.appendChild(typingElement);
+                this.scrollToBottom();
+            }
+
+            hideTypingIndicator() {
+                const indicator = document.getElementById('typing-indicator');
+                if (indicator) indicator.remove();
+            }
+            
+            handleInput() {
+                this.autoResizeTextarea();
+                const hasText = this.elements.messageInput.value.trim().length > 0;
+                this.elements.sendBtn.disabled = !hasText;
+                this.elements.sendBtn.style.opacity = hasText ? '1' : '0.8';
+                this.elements.sendBtn.style.cursor = hasText ? 'pointer' : 'not-allowed';
+            }
+
+            autoResizeTextarea() {
+                const textarea = this.elements.messageInput;
+                textarea.style.height = 'auto';
+                textarea.style.height = Math.min(textarea.scrollHeight, 200) + 'px';
+            }
+            
+            scrollToBottom() {
+                this.elements.messagesContainer.scrollTo({ top: this.elements.messagesContainer.scrollHeight, behavior: 'smooth' });
+            }
+            
+            formatMessage(text) {
+                return text.replace(/\n/g, '<br>');
+            }
+
+            showWelcomeScreen() {
+                this.elements.messagesContainer.innerHTML = `
+                    <div class="max-w-4xl mx-auto text-center flex flex-col justify-center h-full animate-fade-in">
+                        <div class="w-20 h-20 mx-auto bg-light dark:bg-dark-text rounded-2xl flex items-center justify-center shadow-lg mb-6">
+                            <img src="assets/CNEAPEE 2026 LOGO.png" alt="CNEAPEE Logo" class="w-50 h-50 object-contain mx-auto" />
+                        </div>
+                        <h1 class="text-3xl md:text-xl font-bold mb-3">Welcome to Neuro+</h1>
+                        <p class="text-base md:text-lg text-light-subtle dark:text-dark-subtle max-w-2xl mx-auto">
+                            How can I help you today? Select an option or type your own question.
+                        </p>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-12">
+                            ${this.createQuickActionCard('conversation', 'Start a Conversation', 'Begin a dialogue with AI', 'M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z')}
+                            ${this.createQuickActionCard('code', 'Help me with Code', 'Get expert programming help', 'M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4')}
+                            ${this.createQuickActionCard('creative', 'Generate Creative Ideas', 'Explore innovative possibilities', 'M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z')}
+                        </div>
+                    </div>
+                `;
+                this.bindQuickActions();
+            }
+            
+            createQuickActionCard(action, title, subtitle, dPath) {
+                return `
+                    <div class="quick-action p-6 rounded-2xl cursor-pointer shadow-soft-light dark:shadow-soft-dark hover:scale-105 active:scale-100 transition-transform duration-200" data-action="${action}">
+                        <div class="w-12 h-12 flex items-center justify-center rounded-xl bg-light-bg dark:bg-dark-bg shadow-soft-inset-light dark:shadow-soft-inset-dark mx-auto mb-4">
+                            <svg class="w-6 h-6 text-light-text dark:text-dark-text" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${dPath}"></path></svg>
+                        </div>
+                        <h3 class="font-bold mb-1">${title}</h3>
+                        <p class="text-sm text-light-subtle dark:text-dark-subtle">${subtitle}</p>
+                    </div>
+                `;
+            }
+            
+            bindQuickActions() {
+                document.querySelectorAll('.quick-action').forEach(card => {
+                    card.addEventListener('click', () => {
+                        const prompts = {
+                            conversation: "Hello! Let's start a conversation.",
+                            code: "I need help with some code. Can you show me an example in Python?",
+                            creative: "I'm looking for creative ideas for a new project."
+                        };
+                        this.elements.messageInput.value = prompts[card.dataset.action] || '';
+                        this.elements.messageInput.focus();
+                        this.handleInput();
+                    });
+                });
+            }
+            
+            autoSaveChat() {
+                 if (this.state.messages.length > 0) {
+                    clearTimeout(this.autoSaveTimeout);
+                    this.autoSaveTimeout = setTimeout(() => this.saveChatToHistory(), 1000);
+                }
+            }
+
+            saveChatToHistory() {
+                if (this.state.messages.length === 0) return;
+                const chatHistory = JSON.parse(localStorage.getItem('chatHistory') || '[]');
+                const firstMessage = this.state.messages[0];
+                const title = firstMessage.content.substring(0, 35) + (firstMessage.content.length > 35 ? '...' : '');
+
+                const chatData = {
+                    id: this.state.currentChatId,
+                    title,
+                    messages: this.state.messages,
+                    timestamp: Date.now()
+                };
+
+                const existingIndex = chatHistory.findIndex(chat => chat.id === this.state.currentChatId);
+                if (existingIndex > -1) {
+                    chatHistory[existingIndex] = chatData;
+                } else {
+                    chatHistory.unshift(chatData);
+                }
+                
+                localStorage.setItem('chatHistory', JSON.stringify(chatHistory.slice(0, 20)));
+                this.loadChatHistory();
+            }
+
+            loadChatHistory() {
+                const chatHistory = JSON.parse(localStorage.getItem('chatHistory') || '[]');
+                if (chatHistory.length === 0) {
+                    this.elements.chatHistoryContainer.innerHTML = `<p class="text-center text-sm text-light-subtle dark:text-dark-subtle p-4">No recent chats.</p>`;
+                    return;
+                }
+                this.elements.chatHistoryContainer.innerHTML = chatHistory.map(chat => `
+                    <div class="chat-history-item p-3 rounded-xl hover:bg-black/5 dark:hover:bg-white/5 cursor-pointer transition-colors" data-chat-id="${chat.id}">
+                        <div class="font-semibold text-sm truncate">${chat.title}</div>
+                        <div class="text-xs text-light-subtle dark:text-dark-subtle">${new Date(chat.timestamp).toLocaleDateString()}</div>
+                    </div>
+                `).join('');
+
+                document.querySelectorAll('.chat-history-item').forEach(item => {
+                    item.addEventListener('click', () => {
+                        this.loadChatFromHistory(item.dataset.chatId);
+                    });
+                });
+            }
+
+            loadChatFromHistory(chatId) {
+                const chatHistory = JSON.parse(localStorage.getItem('chatHistory') || '[]');
+                const chat = chatHistory.find(c => c.id === chatId);
+                if (!chat) return;
+
+                this.state.currentChatId = chatId;
+                this.state.messages = chat.messages;
+                this.elements.messagesContainer.innerHTML = '';
+                
+                chat.messages.forEach(msg => {
+                     const messageElement = document.createElement('div');
+                    messageElement.className = `flex w-full mb-6 ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`;
+                    const bubbleClass = msg.sender === 'user' 
+                        ? 'bg-user-bubble-light dark:bg-user-bubble-dark shadow-soft-light dark:shadow-soft-dark text-light-text dark:text-dark-text rounded-2xl rounded-br-md'
+                        : 'bg-accent-light dark:bg-accent-dark text-light-bg dark:text-dark-bg shadow-lg rounded-2xl rounded-bl-md';
+                    messageElement.innerHTML = `<div class="max-w-xl"><div class="px-5 py-4 ${bubbleClass}"><p class="text-sm md:text-base leading-relaxed">${this.formatMessage(msg.content)}</p></div></div>`;
+                    this.elements.messagesContainer.appendChild(messageElement);
+                });
+
+                this.scrollToBottom();
+                if (window.innerWidth < 768) this.toggleSidebar();
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => new CNEAPEE_AI_APP());
+    </script>
+</body>
+
+</html>

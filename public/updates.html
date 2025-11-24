@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="google-adsense-account" content="ca-pub-5733699332666340">
+    <title>CNEAPEE - Our Vision</title>
+    <link rel="icon" type="image/png" href="assets/cneapeelogo-removebg-preview.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        /* Black and White Minimalist Base Styles - REFINED */
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f8f8f8; /* Slightly brighter, very light gray background */
+            color: #333333; /* Softer dark text */
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Minimalist Card Style - REFINED */
+        .minimal-card {
+            background: #ffffff; /* Pure white card background */
+            border: 1px solid #ebebeb; /* Lighter, softer border */
+            border-radius: 16px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 2px 6px rgba(0, 0, 0, 0.02); /* Lighter, more diffused shadow */
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .minimal-card:hover {
+            transform: translateY(-4px);
+            border-color: #d0d0d0; /* Subtle darker border on hover */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06); /* Slightly stronger but still light shadow on hover */
+        }
+        
+        /* Minimalist Button Style - REFINED */
+        .minimal-btn {
+            padding: 12px 28px;
+            border: none;
+            border-radius: 50px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            color: #ffffff;
+            background: #333333; /* Softer black button background */
+        }
+        .minimal-btn:hover {
+            background: #1a1a1a; /* Darker on hover */
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1); /* Lighter glow */
+            transform: translateY(-2px);
+        }
+        .minimal-btn.secondary {
+            background: transparent;
+            border: 1px solid #d0d0d0; /* Softer border for secondary */
+            color: #495057; /* Softer text for secondary */
+        }
+        .minimal-btn.secondary:hover {
+            background: #f0f0f0; /* Lighter background on hover */
+            border-color: #a0a0a0; /* Darker border on hover */
+            color: #212529; /* Darker text on hover */
+        }
+
+        /* Header Specifics - REFINED */
+        .header-clean {
+            background: rgba(255, 255, 255, 0.95); /* More opaque header background */
+            backdrop-filter: blur(5px);
+            border-bottom: 1px solid #e5e5e5; /* Lighter border */
+        }
+        .logo-clean {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #212529;
+            letter-spacing: -0.01em;
+        }
+        .nav-link-clean {
+            color: #6c757d;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+        .nav-link-clean:hover {
+            color: #212529;
+        }
+
+        /* Hero Section Specifics - REFINED */
+        .hero-badge-minimal {
+            background: #f0f0f0; /* Lighter badge background */
+            border: 1px solid #d0d0d0; /* Lighter badge border */
+            color: #495057; /* Softer text */
+        }
+        .hero-title-main { color: #212529; } /* Ensure main title is dark */
+        .hero-title-clip { 
+          background: linear-gradient(135deg, #222222, #555555); /* B&W gradient for "CNEAPEE" */
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+        }
+        .hero-subtitle-text { color: #6c757d; } /* Softer subtitle text */
+        
+        /* Pricing Card Specifics - REFINED */
+        .plan-name-minimal, .price-minimal { color: #212529; } /* Darker text for key numbers */
+        .plan-description-minimal, .currency-minimal, .period-minimal { color: #888888; } /* Softer muted text */
+        .plan-feature-text-minimal { color: #495057; } /* Consistent dark text */
+        .feature-icon-minimal { background: #495057; } /* Softer dark for icons */
+        .feature-icon-minimal.unavailable { background: #e0e0e0; color: #a0a0a0; }
+        .pricing-card.popular-minimal { 
+            border-color: #a0a0a0; /* Softer dark border for popular */
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); /* Softer popular shadow */
+            background: #f5f5f5; /* Slightly darker background for popular */
+        }
+        .popular-badge-minimal { background: #495057; color: white; } /* Darker badge for popular */
+
+        /* Features Section Specifics - REFINED */
+        .feature-card-title-minimal { color: #212529; }
+        .feature-card-text-minimal { color: #6c757d; }
+        .feature-card-icon-minimal { background: #495057; } /* Softer dark icon background */
+
+        /* Footer Specifics - REFINED */
+        .footer-title-minimal { color: #212529; }
+        .footer-text-minimal { color: #6c757d; }
+        .footer-link-minimal { color: #888888; }
+        .footer-link-minimal:hover { color: #495057; }
+        .copyright-minimal { color: #888888; }
+
+        /* Animation Overrides */
+        @keyframes slideUpMinimal {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animated-element {
+            opacity: 0;
+            transform: translateY(15px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        .animated-element.animation-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Custom Scrollbar (B&W) */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f0f0f0; }
+        ::-webkit-scrollbar-thumb { background: #999; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #666; }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            body { padding: 0; } /* Remove body padding on very small screens, let inner containers handle */
+            .container { padding: 0 16px; }
+            .header-content { justify-content: center; text-align: center; flex-direction: column; gap: 10px; }
+            .nav-links { display: none; }
+            .hero-title { font-size: 2.5rem; }
+            .hero-subtitle { font-size: 1rem; }
+            .pricing-grid, .features-grid { grid-template-columns: 1fr; gap: 24px; }
+            .pricing-card.popular-minimal { transform: none; }
+            .price-minimal { font-size: 3rem; }
+            .animated-border::before { display: none; } /* Hide complex animation on small screens */
+        }
+    </style>
+</head>
+<body>
+    <div class="relative z-10 w-full">
+        <header class="header-clean py-4 border-b">
+            <div class="max-w-6xl mx-auto px-6 flex justify-between items-center header-content">
+                <div class="flex items-center space-x-3">
+                    <img src="assets/CNEAPEE 2026 LOGO.png" alt="CNEAPEE Logo" class="w-14 h-13 rounded-full shadow" />
+                </div>
+                <nav>
+                    <ul class="flex space-x-8 nav-links">
+                        <li><a href="subscriptionplans.html" class="nav-link-clean">Pricing</a></li>
+                        <li><a href="store.html" class="nav-link-clean">Store</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </header>
+
+        <div class="min-h-screen flex items-center justify-center pt-24 pb-16">
+            <div class="max-w-6xl mx-auto px-6 text-center">
+                <div class="mb-12">
+                    <img src="assets/CNEAPEE 2026 LOGO.png" alt="CNEAPEE 2026 Logo" class="mx-auto mb-6 w-64 md:w-96 rounded-xl shadow-lg" />
+                    <p class="text-xl hero-subtitle-text max-w-4xl mx-auto mb-10 leading-relaxed font-light">
+                        Creating a future where intelligence, simplicity, and accessibility seamlessly integrate, proudly carrying the "Made in India" tag.
+                    </p>
+                    
+                </div>
+                
+                <div class="minimal-card rounded-xl p-8 md:p-12 max-w-4xl mx-auto animated-element">
+                    <div class="flex items-start mb-6">
+                        <div class="w-14 h-14 bg-gray-900 rounded-xl flex items-center justify-center mr-4">
+                            <span class="text-xl font-bold text-white">CEO</span>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-semibold text-gray-900 mb-1">Sazar Sczenelafe</h3>
+                            <p class="text-gray-700 text-sm font-medium">Chief Executive</p>
+                        </div>
+                    </div>
+                    <div class="bg-gray-100 rounded-xl p-6 border-l-4 border-gray-400">
+                        <blockquote class="text-lg text-gray-700 leading-relaxed">
+                            "At CNEAPEE, proudly envisioned, designed, and built in India, our mission is rooted in the spirit of Atmanirbhar Bharat — to create a future where intelligence, simplicity, and accessibility empower every Indian and global citizen alike. With the launch of Neuro 1.1, our indigenous AI, we're not just introducing another tech platform — we're raising the tricolor in the world of innovation.
+
+                            This is more than technology. It's India’s voice in the digital revolution — bold, brilliant, and self-made.
+
+                            CNEAPEE is not just a product; it's a vision born on Indian soil, nurtured by the dreams of young innovators, and driven by a deep love for our nation. Built for the world, inspired by Bharat." <br><br>
+                            <span class="font-medium text-gray-800">CNEAPEE isn't just a product — it's a vision.</span> A vision born out of curiosity, driven by innovation, and designed with purpose."
+                        </blockquote>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="max-w-6xl mx-auto px-6 py-16">
+            <section class="mb-20">
+                <div class="text-center mb-12">
+                    <div class="inline-block px-4 py-2 bg-gray-100 text-gray-700 rounded-full text-sm font-medium mb-4 border border-gray-300">
+                        2nd Anniversary Launch
+                    </div>
+                    <h2 class="text-5xl md:text-6xl font-bold mb-6 text-gray-900">
+                        Introducing Neuro 1.1
+                    </h2>
+                    <p class="text-xl text-gray-700 max-w-3xl mx-auto leading-relaxed">
+                        Launched on CNEAPEE's 2nd Anniversary – Spring 2026
+                    </p>
+                </div>
+                
+                <div class="minimal-card rounded-xl p-8 md:p-12 mb-12 animated-element">
+                    <p class="text-lg text-gray-700 mb-8 leading-relaxed">
+                        We are proud to announce the official launch of Neuro 1.1, CNEAPEE's next-generation AI model, introduced in celebration of our 2nd anniversary. This milestone reflects our continuous commitment to innovation, user empowerment, and social impact through advanced technology.
+                    </p>
+                    
+                    <div class="grid md:grid-cols-3 gap-8 mb-12">
+                        <div class="minimal-card rounded-xl p-6 text-center animated-element" style="animation-delay: 0.1s;">
+                            <div class="text-4xl mb-4">🎓</div>
+                            <h3 class="text-xl font-bold mb-3 text-gray-900">Education</h3>
+                            <p class="text-gray-700 leading-relaxed">
+                                Smart learning companion providing real-time doubt-solving, concept clarity, and personalized academic assistance
+                            </p>
+                        </div>
+                        
+                        <div class="minimal-card rounded-xl p-6 text-center animated-element" style="animation-delay: 0.2s;">
+                            <div class="text-4xl mb-4">🏥</div>
+                            <h3 class="text-xl font-bold mb-3 text-gray-900">Healthcare Awareness</h3>
+                            <p class="text-gray-700 leading-relaxed">
+                                AI-driven insights for general wellness, preventive care, and accessible health literacy
+                            </p>
+                        </div>
+                        
+                        <div class="minimal-card rounded-xl p-6 text-center animated-element" style="animation-delay: 0.3s;">
+                            <div class="text-4xl mb-4">📰</div>
+                            <h3 class="text-xl font-bold mb-3 text-gray-900">Smart Newsrooms</h3>
+                            <p class="text-gray-700 leading-relaxed">
+                                Intelligent, AI-curated updates with real-time headlines and trusted insights
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gray-100 rounded-xl p-8 border border-gray-300">
+                        <h3 class="text-2xl font-bold mb-4 text-gray-900"> </h3>
+                        <div class="text-center mb-6">
+                            
+                        </div>
+                        <blockquote class="text-center text-lg italic text-gray-700 mb-4">
+                            "Technology should solve real problems, not just mimic intelligence."
+                        </blockquote>
+                        <p class="text-center text-gray-700">
+                            <span class="font-semibold text-gray-900">Welcome to the next era of AI. Welcome to Neuro.</span>
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="mb-20">
+                <div class="text-center mb-12">
+                    <h2 class="text-5xl font-bold mb-6 text-gray-900">What Powers CNEAPEE?</h2>
+                    <p class="text-xl text-gray-700 max-w-3xl mx-auto leading-relaxed">
+                        Advanced GPT architecture meets specialized intelligence
+                    </p>
+                </div>
+                
+                <div class="grid md:grid-cols-2 gap-12 items-center mb-12">
+                    <div>
+                        <h3 class="text-3xl font-bold mb-4 text-gray-900">Built on Excellence</h3>
+                        <p class="text-lg text-gray-700 mb-6 leading-relaxed">
+                            CNEAPEE is powered by Enhanced AI models and other real-time large language models (LLMs) and APIs, trained and tested on diverse data to deliver natural, context-aware conversations and intelligent responses across topics.
+                        </p>
+                        <p class="text-lg text-gray-700 leading-relaxed">
+                            We've enhanced this foundation with Neuro 1.1 — our custom-trained system that excels in education, healthcare awareness, and news delivery.
+                        </p>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <div class="minimal-card rounded-xl p-6 animated-element" style="animation-delay: 0.1s;">
+                            <div class="flex items-center mb-3">
+                                <span class="text-3xl mr-3">🎓</span>
+                                <h4 class="text-xl font-semibold text-gray-900">Education</h4>
+                            </div>
+                            <p class="text-gray-700">Tailored explanations, study plans, and assignment support from school to university level</p>
+                        </div>
+                        
+                        <div class="minimal-card rounded-xl p-6 animated-element" style="animation-delay: 0.2s;">
+                            <div class="flex items-center mb-3">
+                                <span class="text-3xl mr-3">🏥</span>
+                                <h4 class="text-xl font-semibold text-gray-900">Healthcare Awareness</h4>
+                            </div>
+                            <p class="text-gray-700">Simplified medical knowledge and wellness guidance (not replacing professional advice)</p>
+                        </div>
+                        
+                        <div class="minimal-card rounded-xl p-6 animated-element" style="animation-delay: 0.3s;">
+                            <div class="flex items-center mb-3">
+                                <span class="text-3xl mr-3">📰</span>
+                                <h4 class="text-xl font-semibold text-gray-900">Latest Newsrooms</h4>
+                            </div>
+                            <p class="text-gray-700">Real-time, fact-checked updates in business, technology, science, and more</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="mb-20">
+                <div class="text-center mb-12">
+                    <h2 class="text-5xl font-bold mb-6 text-gray-900">Frequently Asked Questions</h2>
+                </div>
+                
+                <div class="space-y-4 max-w-4xl mx-auto">
+                    <details class="minimal-card rounded-xl animated-element" style="animation-delay: 0.1s;">
+                        <summary class="p-6 font-semibold text-lg cursor-pointer text-gray-900 hover:text-gray-700 transition-colors">
+                            What is CNEAPEE?
+                        </summary>
+                        <div class="px-6 pb-6">
+                            <p class="text-gray-700 leading-relaxed">CNEAPEE is an advanced AI-powered platform designed to assist users with intelligent conversations, information retrieval, and productivity tools, specializing in education, healthcare awareness, and news.</p>
+                        </div>
+                    </details>
+                    
+                    <details class="minimal-card rounded-xl animated-element" style="animation-delay: 0.2s;">
+                        <summary class="p-6 font-semibold text-lg cursor-pointer text-gray-900 hover:text-gray-700 transition-colors">
+                            How does Neuro 1.1 work?
+                        </summary>
+                        <div class="px-6 pb-6">
+                            <p class="text-gray-700 leading-relaxed">Neuro 1.1 is our proprietary AI layer built on GPT architecture, specifically trained to excel in education, healthcare awareness, and news delivery with enhanced context understanding and domain expertise.</p>
+                        </div>
+                    </details>
+                    
+                    <details class="minimal-card rounded-xl animated-element" style="animation-delay: 0.3s;">
+                        <summary class="p-6 font-semibold text-lg cursor-pointer text-gray-900 hover:text-gray-700 transition-colors">
+                            What makes CNEAPEE different from other AI?
+                        </summary>
+                        <div class="px-6 pb-6">
+                            <p class="text-gray-700 leading-relaxed">Our specialized focus on education, healthcare, and news, combined with our custom-trained Neuro 1.1 layer, provides more accurate and relevant responses in these critical domains.</p>
+                        </div>
+                    </details>
+                    
+                    <details class="minimal-card rounded-xl animated-element" style="animation-delay: 0.4s;">
+                        <summary class="p-6 font-semibold text-lg cursor-pointer text-gray-900 hover:text-gray-700 transition-colors">
+                            Is my data secure and encrypted?
+                        </summary>
+                        <div class="px-6 pb-6">
+                            <p class="text-gray-700 leading-relaxed">Yes, all data transmitted to and from CNEAPEE is encrypted using industry-standard SSL/TLS protocols. We implement comprehensive security measures to protect your information.</p>
+                        </div>
+                    </details>
+                    
+                    <details class="minimal-card rounded-xl animated-element" style="animation-delay: 0.5s;">
+                        <summary class="p-6 font-semibold text-lg cursor-pointer text-gray-900 hover:text-gray-700 transition-colors">
+                            Who has access to my conversations?
+                        </summary>
+                        <div class="px-6 pb-6">
+                            <p class="text-gray-700 leading-relaxed">Only you have access to your full conversation history. Our staff can only access anonymized data for service improvement purposes, with all personal identifiers removed.</p>
+                        </div>
+                    </details>
+                    
+                    <details class="minimal-card rounded-xl animated-element" style="animation-delay: 0.6s;">
+                        <summary class="p-6 font-semibold text-lg cursor-pointer text-gray-900 hover:text-gray-700 transition-colors">
+                            How can I contact support?
+                        </summary>
+                        <div class="px-6 pb-6">
+                            <p class="text-gray-700 leading-relaxed">You can reach our dedicated support team at <a href="mailto:support@cneapee.com" class="text-gray-900 hover:text-gray-700 font-medium underline">support@cneapee.com</a></p>
+                        </div>
+                    </details>
+                </div>
+            </section>
+
+            <section class="mb-20">
+                <div class="text-center mb-12">
+                    <h2 class="text-5xl font-bold mb-6 text-gray-900">Terms & Conditions</h2>
+                </div>
+                
+                <div class="minimal-card rounded-xl p-8 md:p-12 max-w-5xl mx-auto animated-element">
+                    <div class="bg-gray-100 rounded-xl p-6 mb-8 border border-gray-300">
+                        <p class="text-lg text-gray-700 leading-relaxed">
+                            By accessing and using CNEAPEE AI Neuro 1.1, you acknowledge and agree to the following Terms & Conditions, designed to ensure a safe, fair, and transparent experience for all users.
+                        </p>
+                    </div>
+                    
+                    <div class="grid md:grid-cols-2 gap-8">
+                        <div class="space-y-4">
+                            <div class="border-l-4 border-gray-400 pl-4 bg-gray-100 p-4 rounded">
+                                <h4 class="font-semibold text-gray-900 mb-2">Acceptable Use</h4>
+                                <p class="text-gray-700 text-sm leading-relaxed">Use CNEAPEE solely for lawful, ethical, and constructive purposes. Misuse including spamming or harassment is prohibited.</p>
+                            </div>
+                            
+                            <div class="border-l-4 border-gray-500 pl-4 bg-gray-100 p-4 rounded">
+                                <h4 class="font-semibold text-gray-900 mb-2">Account Responsibility</h4>
+                                <p class="text-gray-700 text-sm leading-relaxed">Maintain confidentiality of your credentials and promptly report any unauthorized access.</p>
+                            </div>
+                            
+                            <div class="border-l-4 border-gray-600 pl-4 bg-gray-100 p-4 rounded">
+                                <h4 class="font-semibold text-gray-900 mb-2">Intellectual Property</h4>
+                                <p class="text-gray-700 text-sm leading-relaxed">All CNEAPEE content is protected by IP laws. No unauthorized copying or distribution permitted.</p>
+                            </div>
+                            
+                            <div class="border-l-4 border-gray-400 pl-4 bg-gray-100 p-4 rounded">
+                                <h4 class="font-semibold text-gray-900 mb-2">Data Usage & Privacy</h4>
+                                <p class="text-gray-700 text-sm leading-relaxed">Data handled according to our Privacy Policy with your explicit consent.</p>
+                            </div>
+                            
+                            <div class="border-l-4 border-gray-700 pl-4 bg-gray-100 p-4 rounded">
+                                <h4 class="font-semibold text-gray-900 mb-2">Prohibited Activities</h4>
+                                <p class="text-gray-700 text-sm leading-relaxed">No unauthorized access attempts or transmission of malicious code.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-4">
+                            <div class="border-l-4 border-gray-500 pl-4 bg-gray-100 p-4 rounded">
+                                <h4 class="font-semibold text-gray-900 mb-2">Content Standards</h4>
+                                <p class="text-gray-700 text-sm leading-relaxed">No illegal, offensive, or discriminatory content generation or sharing.</p>
+                            </div>
+                            
+                            <div class="border-l-4 border-gray-600 pl-4 bg-gray-100 p-4 rounded">
+                                <h4 class="font-semibold text-gray-900 mb-2">Service Availability</h4>
+                                <p class="text-gray-700 text-sm leading-relaxed">We strive for high availability but are not liable for downtime or data loss.</p>
+                            </div>
+                            
+                            <div class="border-l-4 border-gray-700 pl-4 bg-gray-100 p-4 rounded">
+                                <h4 class="font-semibold text-gray-900 mb-2">Limitation of Liability</h4>
+                                <p class="text-gray-700 text-sm leading-relaxed">AI responses are informational and should not replace professional advice.</p>
+                            </div>
+                            
+                            <div class="border-l-4 border-gray-400 pl-4 bg-gray-100 p-4 rounded">
+                                <h4 class="font-semibold text-gray-900 mb-2">Modifications</h4>
+                                <p class="text-gray-700 text-sm leading-relaxed">We reserve the right to update terms. Continued use constitutes acceptance.</p>
+                            </div>
+                            
+                            <div class="border-l-4 border-gray-500 pl-4 bg-gray-100 p-4 rounded">
+                                <h4 class="font-semibold text-gray-900 mb-2">Termination</h4>
+                                <p class="text-gray-700 text-sm leading-relaxed">Terms violations may result in account suspension or termination.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-8 text-center">
+                        <p class="text-gray-700">
+                            Questions? Contact us at <a href="mailto:support@cneapee.com" class="text-gray-900 hover:text-gray-700 font-medium underline">support@cneapee.com</a>
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="mb-20">
+                <div class="text-center mb-12">
+                    <h2 class="text-5xl font-bold mb-6 text-gray-900">Privacy Policy</h2>
+                    <p class="text-xl text-gray-700">Your privacy is our top priority</p>
+                </div>
+                
+                <div class="minimal-card rounded-xl p-8 md:p-12 max-w-5xl mx-auto animated-element">
+                    <div class="bg-gray-100 rounded-xl p-6 mb-8 border border-gray-300">
+                        <p class="text-lg text-gray-700 leading-relaxed">
+                            At CNEAPEE, we are committed to safeguarding your personal information and ensuring complete transparency in how your data is collected, used, and protected.
+                        </p>
+                    </div>
+                    
+                    <div class="grid md:grid-cols-2 gap-8">
+                        <div class="space-y-6">
+                            <div class="bg-gray-100 rounded-xl p-6 border border-gray-300">
+                                <h4 class="font-semibold text-gray-900 mb-3 flex items-center">
+                                    <span class="w-8 h-8 bg-gray-900 text-white rounded-full flex items-center justify-center text-sm mr-3">1</span>
+                                    Data Collection
+                                </h4>
+                                <p class="text-gray-700 leading-relaxed">We collect only essential information for service delivery and improvement. Conversations are processed securely and never sold to third parties.</p>
+                            </div>
+                            
+                            <div class="bg-gray-100 rounded-xl p-6 border border-gray-300">
+                                <h4 class="font-semibold text-gray-900 mb-3 flex items-center">
+                                    <span class="w-8 h-8 bg-gray-900 text-white rounded-full flex items-center justify-center text-sm mr-3">2</span>
+                                    Data Usage
+                                </h4>
+                                <p class="text-gray-700 leading-relaxed">Your data enhances your experience and maintains platform security. No profiling or marketing without explicit consent.</p>
+                            </div>
+                            
+                            <div class="bg-gray-100 rounded-xl p-6 border border-gray-300">
+                                <h4 class="font-semibold text-gray-900 mb-3 flex items-center">
+                                    <span class="w-8 h-8 bg-gray-900 text-white rounded-full flex items-center justify-center text-sm mr-3">3</span>
+                                    Data Security
+                                </h4>
+                                <p class="text-gray-700 leading-relaxed">Industry-standard SSL/TLS encryption protects all transmissions with robust security measures preventing unauthorized access.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-6">
+                            <div class="bg-gray-100 rounded-xl p-6 border border-gray-300">
+                                <h4 class="font-semibold text-gray-900 mb-3 flex items-center">
+                                    <span class="w-8 h-8 bg-gray-900 text-white rounded-full flex items-center justify-center text-sm mr-3">4</span>
+                                    Your Control
+                                </h4>
+                                <p class="text-gray-700 leading-relaxed">Full control over your data with options to access, correct, or completely delete information anytime through account settings.</p>
+                            </div>
+                            
+                            <div class="bg-gray-100 rounded-xl p-6 border border-gray-300">
+                                <h4 class="font-semibold text-gray-900 mb-3 flex items-center">
+                                    <span class="w-8 h-8 bg-gray-900 text-white rounded-full flex items-center justify-center text-sm mr-3">5</span>
+                                    Third-Party Sharing
+                                </h4>
+                                <p class="text-gray-700 leading-relaxed">No personal data sharing except as legally required or for core services under strict confidentiality agreements.</p>
+                            </div>
+                            
+                            <div class="bg-gray-100 rounded-xl p-6 border border-gray-300">
+                                <h4 class="font-semibold text-gray-900 mb-3 flex items-center">
+                                    <span class="w-8 h-8 bg-gray-900 text-white rounded-full flex items-center justify-center text-sm mr-3">6</span>
+                                    GDPR Compliance
+                                </h4>
+                                <p class="text-gray-700 leading-relaxed">Full General Data Protection Regulation compliance with rights to data access, portability, and erasure exercisable at any time.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-8 text-center">
+                        <p class="text-gray-700">
+                            Questions? Contact us at <a href="mailto:support@cneapee.com" class="text-gray-900 hover:text-gray-700 font-medium underline">support@cneapee.com</a>
+                        </p>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <footer class="relative mt-20 py-16 border-t border-gray-200">
+            <div class="max-w-6xl mx-auto px-6">
+                <div class="text-center mb-12">
+                    <h3 class="text-5xl font-bold mb-4 text-gray-900">CNEAPEE</h3>
+                    <p class="text-xl text-gray-700 max-w-3xl mx-auto leading-relaxed">
+                        Empowering the future through intelligent AI solutions in education, healthcare, and news
+                    </p>
+                </div>
+                
+                <div class="grid md:grid-cols-3 gap-8 mb-12">
+                    <div class="minimal-card rounded-xl p-6 text-center">
+                        <div class="text-3xl mb-3">🎓</div>
+                        <h4 class="text-lg font-semibold text-gray-900 mb-2">Education</h4>
+                        <p class="text-gray-700 text-sm">Smart learning Structure</p>
+                    </div>
+                    
+                    <div class="minimal-card rounded-xl p-6 text-center">
+                        <div class="text-3xl mb-3">🏥</div>
+                        <h4 class="text-lg font-semibold text-gray-900 mb-2">Healthcare</h4>
+                        <p class="text-gray-700 text-sm">AI-driven wellness insights</p>
+                    </div>
+                    
+                    <div class="minimal-card rounded-xl p-6 text-center">
+                        <div class="text-3xl mb-3">📰</div>
+                        <h4 class="text-lg font-semibold text-gray-900 mb-2">News</h4>
+                        <p class="text-gray-700 text-sm">Real-time intelligent updates</p>
+                    </div>
+                </div>
+                
+                <div class="border-t border-gray-300 pt-8">
+                    <div class="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+                        <div class="text-gray-700">
+                            <p class="mb-1">
+                                <span class="text-gray-900 font-semibold">Neuro 1.1</span> • Coming This Spring 2026
+                            </p>
+                            <p class="text-sm">
+                                Built with ❤️ in <span class="text-gray-900 font-semibold">Incredible India With Security</span>
+                            </p>
+                        </div>
+                        
+                        <div class="text-gray-700 text-center md:text-right">
+                            <p class="mb-1">Last updated: September 2025</p>
+                            <p class="text-sm">© 2025 CNEAPEE. All rights reserved.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="text-center mt-8">
+                    <div class="inline-flex items-center px-4 py-2 bg-gray-100 rounded-full text-sm">
+                        <div class="w-2 h-2 bg-gray-500 rounded-full mr-2 animate-pulse"></div>
+                        <span class="text-gray-700">Powered by Enhanced AI Architecture</span>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // --- Intersection Observer for animations ---
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animation-visible');
+                } else {
+                    entry.target.classList.remove('animation-visible'); // Optional: reset animation on scroll out
+                }
+            });
+        }, observerOptions);
+
+        // Apply initial hidden state and observe elements
+        document.querySelectorAll('.animated-element').forEach(el => {
+            el.classList.add('animated-element-hidden'); // Add initial hidden class
+            observer.observe(el);
+        });
+
+        // Add CSS for animated-element-hidden and animation-visible (for Intersection Observer)
+        const animationStyle = document.createElement('style');
+        animationStyle.textContent = `
+            .animated-element-hidden {
+                opacity: 0;
+                transform: translateY(20px);
+                transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+            }
+            .animated-element.animation-visible {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        `;
+        document.head.appendChild(animationStyle);
+
+        // --- Smooth scrolling for navigation links ---
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

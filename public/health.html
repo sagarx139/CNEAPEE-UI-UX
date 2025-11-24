@@ -1,0 +1,2320 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google-adsense-account" content="ca-pub-5733699332666340">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <title>Health Diagnosis</title>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5733699332666340"
+        crossorigin="anonymous"></script>
+    <style>
+        body {
+            background: #ffffff;
+            overflow-x: hidden;
+        }
+
+        /* Minimalist particle system */
+        #particles-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .content-layer {
+            position: relative;
+            z-index: 10;
+        }
+
+        .disease-button {
+            transition: all 0.3s ease;
+            transform: scale(1);
+            background: #ffffff;
+            border: 2px solid #e5e7eb;
+            color: #1f2937;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .disease-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            border-color: #374151;
+            background: #f9fafb;
+        }
+
+        .blur-background {
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+
+        .modal-enter {
+            animation: modalEnter 0.3s ease-out;
+        }
+
+        @keyframes modalEnter {
+            from {
+                opacity: 0;
+                transform: scale(0.9) translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .modal-content {
+            background: #ffffff;
+            border: 2px solid #e5e7eb;
+            color: #1f2937;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .modal-title {
+            color: #111827;
+        }
+
+        .modal-section-title {
+            color: #374151;
+        }
+
+        .footer-bg {
+            background: #f9fafb;
+            border-top: 2px solid #e5e7eb;
+        }
+
+        .main-title {
+            color: #111827;
+        }
+
+        .subtitle {
+            color: #6b7280;
+        }
+
+        .neuro-badge {
+            background: #111827;
+            color: #ffffff;
+            border: 2px solid #374151;
+        }
+
+        .popup-content {
+            background: #ffffff;
+            border: 2px solid #e5e7eb;
+            color: #1f2937;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .popup-title {
+            color: #111827;
+        }
+
+        .popup-button {
+            background: #111827;
+            color: #ffffff;
+        }
+
+        .popup-button:hover {
+            background: #374151;
+            transform: scale(1.05);
+        }
+
+        .brief-section {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        .info-section {
+            background: #ffffff;
+            border-left: 4px solid #374151;
+            padding: 12px 16px;
+            margin-bottom: 12px;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f3f4f6;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #9ca3af;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #6b7280;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen">
+    <!-- Minimalist Particles Canvas -->
+    <canvas id="particles-canvas"></canvas>
+
+    <!-- Content Layer -->
+    <div class="content-layer">
+        <!-- Welcome Popup Script -->
+        <script>
+            window.addEventListener('DOMContentLoaded', function () {
+                const overlay = document.createElement('div');
+                overlay.className = 'fixed inset-0 bg-black bg-opacity-50 blur-background flex items-center justify-center z-50';
+                overlay.id = 'welcomePopup';
+
+                const popup = document.createElement('div');
+                popup.className = 'popup-content rounded-lg shadow-2xl max-w-md w-full p-6 relative text-center modal-enter mx-4';
+
+                const closeBtn = document.createElement('button');
+                closeBtn.innerHTML = '&times;';
+                closeBtn.className = 'absolute top-2 right-2 text-gray-400 hover:text-red-500 text-2xl transition-colors duration-200 hover:scale-110 transform';
+                closeBtn.onclick = function () {
+                    overlay.style.animation = 'fadeOut 0.3s ease-in';
+                    setTimeout(() => overlay.remove(), 300);
+                };
+
+                popup.innerHTML = `
+                    <h2 class="popup-title text-xl font-bold mb-2">⚠️ Medical Disclaimer</h2>
+                    <p class="mb-4 text-gray-700">
+                        <strong>Always consult with a qualified healthcare professional for medical emergencies.</strong><br>
+                        This is powered by Cneapee AI (Neuro 1.1 Elite). Information provided is for educational purposes only.
+                    </p>
+                    <div class="mb-4 text-gray-600 text-sm bg-gray-50 p-3 rounded-lg border">
+                        <strong>Important:</strong> This tool provides general health information and should not replace professional medical advice, diagnosis, or treatment.
+                    </div>
+                    <button class="popup-button mt-2 px-6 py-2 rounded-full font-semibold shadow transition-all duration-200 transform" onclick="document.getElementById('welcomePopup').style.animation='fadeOut 0.3s ease-in'; setTimeout(() => document.getElementById('welcomePopup').remove(), 300)">I Understand</button>
+                `;
+
+                const style = document.createElement('style');
+                style.textContent = `
+                    @keyframes fadeOut {
+                        from { opacity: 1; transform: scale(1); }
+                        to { opacity: 0; transform: scale(0.9); }
+                    }
+                `;
+                document.head.appendChild(style);
+
+                popup.appendChild(closeBtn);
+                overlay.appendChild(popup);
+                document.body.appendChild(overlay);
+
+                setTimeout(function () {
+                    if (document.getElementById('welcomePopup')) {
+                        const popup = document.getElementById('welcomePopup');
+                        popup.style.animation = 'fadeOut 0.3s ease-in';
+                        setTimeout(() => popup.remove(), 300);
+                    }
+                }, 12000);
+            });
+        </script>
+
+        <div class="container mx-auto py-8 px-4" id="mainContent">
+            <h1 class="main-title text-4xl font-bold mb-6 text-center">
+                🏥 Health Diagnosis <br>
+                <span class="subtitle font-normal text-lg">Powered by Cneapee AI</span>
+                <span id="neuro-badge"
+                    class="neuro-badge ml-2 align-middle text-xs font-semibold px-3 py-1 rounded-full shadow cursor-pointer">
+                    Neuro 1.1 Elite
+                </span>
+            </h1>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                <!-- Common Health Issues -->
+                <button onclick="openModal(0)" class="disease-button rounded-lg p-4 transition-all duration-300">
+                    <div class="font-semibold">🤒 Fever</div>
+                </button>
+                <button onclick="openModal(1)" class="disease-button rounded-lg p-4 transition-all duration-300">
+                    <div class="font-semibold">💪 Body Ache</div>
+                </button>
+                <button onclick="openModal(2)" class="disease-button rounded-lg p-4 transition-all duration-300">
+                    <div class="font-semibold">🤧 Common Cold</div>
+                </button>
+                <button onclick="openModal(3)" class="disease-button rounded-lg p-4 transition-all duration-300">
+                    <div class="font-semibold">😷 Cough</div>
+                </button>
+                <button onclick="openModal(4)" class="disease-button rounded-lg p-4 transition-all duration-300">
+                    <div class="font-semibold">🤕 Headache</div>
+                </button>
+                <button onclick="openModal(5)" class="disease-button rounded-lg p-4 transition-all duration-300">
+                    <div class="font-semibold">🤢 Nausea</div>
+                </button>
+                <button onclick="openModal(6)" class="disease-button rounded-lg p-4 transition-all duration-300">
+                    <div class="font-semibold">💩 Diarrhea</div>
+                </button>
+                <button onclick="openModal(7)" class="disease-button rounded-lg p-4 transition-all duration-300">
+                    <div class="font-semibold">🤮 Vomiting</div>
+                </button>
+
+                <!-- Skin Conditions -->
+                <button onclick="openModal(8)" class="disease-button rounded-lg p-4 transition-all duration-300">
+                    <div class="font-semibold">🔥 Itching</div>
+                </button>
+                <button onclick="openModal(9)" class="disease-button rounded-lg p-4 transition-all duration-300">
+                    <div class="font-semibold">✨ Skin Care</div>
+                </button>
+                <button onclick="openModal(10)" class="disease-button rounded-lg p-4 transition-all duration-300">
+                    <div class="font-semibold">🎯 Vitiligo</div>
+                </button>
+                <button onclick="openModal(11)" class="disease-button rounded-lg p-4 transition-all duration-300">
+                    <div class="font-semibold">🔴 Eczema</div>
+                </button>
+
+                <!-- Lifestyle & Fitness -->
+                <button onclick="openModal(12)" class="disease-button rounded-lg p-4 transition-all duration-300">
+                    <div class="font-semibold">🔥 Weight Loss</div>
+                </button>
+                <button onclick="openModal(13)" class="disease-button rounded-lg p-4 transition-all duration-300">
+                    <div class="font-semibold">💪 Exercise Guide</div>
+                </button>
+                <button onclick="openModal(14)" class="disease-button rounded-lg p-4 transition-all duration-300">
+                    <div class="font-semibold">😴 Sleep Disorders</div>
+                </button>
+                <button onclick="openModal(15)" class="disease-button rounded-lg p-4 transition-all duration-300">
+                    <div class="font-semibold">🧘 Stress Management</div>
+                </button>
+
+                <!-- Chronic Diseases -->
+                <button onclick="openModal(16)" class="disease-button rounded-lg p-4 transition-all duration-300">
+                    <div class="font-semibold">🩺 Diabetes</div>
+                </button>
+                <button onclick="openModal(17)" class="disease-button rounded-lg p-4 transition-all duration-300">
+                    <div class="font-semibold">💓 Hypertension</div>
+                </button>
+                <button onclick="openModal(18)" class="disease-button rounded-lg p-4 transition-all duration-300">
+                    <div class="font-semibold">❤️ Heart Disease</div>
+                </button>
+                <button onclick="openModal(19)" class="disease-button rounded-lg p-4 transition-all duration-300">
+                    <div class="font-semibold">🫁 Asthma</div>
+                </button>
+
+                <!-- Infectious Diseases -->
+                <button onclick="openModal(20)" class="disease-button rounded-lg p-4 transition-all duration-300">
+                    <div class="font-semibold">🫁 Tuberculosis</div>
+                </button>
+                <button onclick="openModal(21)" class="disease-button rounded-lg p-4 transition-all duration-300">
+                    <div class="font-semibold">🦟 Malaria</div>
+                </button>
+                <button onclick="openModal(22)" class="disease-button rounded-lg p-4 transition-all duration-300">
+                    <div class="font-semibold">🦟 Dengue</div>
+                </button>
+                <button onclick="openModal(23)" class="disease-button rounded-lg p-4 transition-all duration-300">
+                    <div class="font-semibold">😷 COVID-19</div>
+                </button>
+
+                <!-- Digestive Issues -->
+                <button onclick="openModal(24)" class="disease-button rounded-lg p-4 transition-all duration-300">
+                    <div class="font-semibold">🔥 Acidity</div>
+                </button>
+                <button onclick="openModal(25)" class="disease-button rounded-lg p-4 transition-all duration-300">
+                    <div class="font-semibold">🤐 Constipation</div>
+                </button>
+                <button onclick="openModal(26)" class="disease-button rounded-lg p-4 transition-all duration-300">
+                    <div class="font-semibold">🤕 Gastritis</div>
+                </button>
+                <button onclick="openModal(27)" class="disease-button rounded-lg p-4 transition-all duration-300">
+                    <div class="font-semibold">💊 Food Poisoning</div>
+                </button>
+
+                <!-- Mental Health -->
+                <button onclick="openModal(28)" class="disease-button rounded-lg p-4 transition-all duration-300">
+                    <div class="font-semibold">😔 Depression</div>
+                </button>
+                <button onclick="openModal(29)" class="disease-button rounded-lg p-4 transition-all duration-300">
+                    <div class="font-semibold">😰 Anxiety</div>
+                </button>
+
+                <!-- Women's Health -->
+                <button onclick="openModal(30)" class="disease-button rounded-lg p-4 transition-all duration-300">
+                    <div class="font-semibold">🌸 Menstrual Issues</div>
+                </button>
+                <button onclick="openModal(31)" class="disease-button rounded-lg p-4 transition-all duration-300">
+                    <div class="font-semibold">🤱 Pregnancy Care</div>
+                </button>
+            </div>
+        </div>
+
+        <!-- Enhanced Modal -->
+        <div id="diseaseModal"
+            class="fixed inset-0 bg-black bg-opacity-50 blur-background f</button>lex items-center justify-center z-50 hidden">
+            <div
+                class="modal-content rounded-lg shadow-2xl max-w-2xl w-full p-6 relative modal-enter mx-4 max-h-screen overflow-y-auto">
+                <button onclick="closeModal()"
+                    class="absolute top-4 right-4 text-gray-400 hover:text-red-500 text-2xl transition-colors duration-200 hover:scale-110 transform">&times;</button>
+                <h2 id="modalTitle" class="modal-title text-2xl font-bold mb-4"></h2>
+                <div id="modalBrief" class="brief-section mb-4 hidden"></div>
+
+                <div class="info-section">
+                    <h3 class="modal-section-title font-semibold mb-3 text-lg">🔍 Symptoms & Signs:</h3>
+                    <ul id="modalSymptoms" class="list-disc list-inside mb-4 text-gray-700 space-y-1"></ul>
+                </div>
+
+                <div class="info-section">
+                    <h3 class="modal-section-title font-semibold mb-3 text-lg">🚨 When to See a Doctor:</h3>
+                    <ul id="modalWarnings" class="list-disc list-inside mb-4 text-red-600 space-y-1"></ul>
+                </div>
+
+                <div class="info-section">
+                    <h3 class="modal-section-title font-semibold mb-3 text-lg">🏠 Home Care & Precautions:</h3>
+                    <ul id="modalPrecautions" class="list-disc list-inside mb-4 text-gray-700 space-y-1"></ul>
+                </div>
+
+                <div class="info-section">
+                    <h3 class="modal-section-title font-semibold mb-3 text-lg">💊 Treatment Options:</h3>
+                    <ul id="modalMedicines" class="list-disc list-inside mb-4 text-gray-700 space-y-1"></ul>
+                </div>
+
+                <div class="info-section">
+                    <h3 class="modal-section-title font-semibold mb-3 text-lg">🛡️ Prevention Tips:</h3>
+                    <ul id="modalPrevention" class="list-disc list-inside text-gray-700 space-y-1"></ul>
+                </div>
+
+                <!-- Support Tips for Partners section, created once -->
+                <div id="modalSupportTipsForPartners" class="info-section" style="display: none;"></div>
+            </div>
+        </div>
+
+        <footer class="mt-12 footer-bg py-6">
+            <div class="container mx-auto flex flex-col items-center space-y-4 px-4">
+                <p class="text-sm text-center text-gray-600 max-w-2xl">
+                    <strong class="text-red-600">⚠️ Medical Disclaimer:</strong> Always consult with a qualified
+                    healthcare professional for medical emergencies or serious health concerns. This AI-powered tool
+                    provides general information for educational purposes only and should not replace professional
+                    medical advice, diagnosis, or treatment.
+                </p>
+                <div class="flex space-x-4">
+                    <a href="index.html"
+                        class="inline-flex items-center px-6 py-2 bg-gray-900 hover:bg-gray-700 text-white rounded-full font-semibold shadow-lg transition-all duration-200 transform hover:scale-105">
+                        🏠 Home
+                    </a>
+                    <button onclick="window.location.reload()"
+                        class="inline-flex items-center px-6 py-2 border-2 border-gray-900 hover:bg-gray-900 hover:text-white text-gray-900 rounded-full font-semibold shadow-lg transition-all duration-200 transform hover:scale-105">
+                        🔄 Refresh
+                    </button>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Minimalist Particle Animation Script -->
+    <script>
+        class MinimalistParticleSystem {
+            constructor() {
+                this.canvas = document.getElementById('particles-canvas');
+                this.ctx = this.canvas.getContext('2d');
+                this.particles = [];
+                this.resize();
+                this.init();
+                this.animate();
+
+                window.addEventListener('resize', () => this.resize());
+            }
+
+            resize() {
+                this.canvas.width = window.innerWidth;
+                this.canvas.height = window.innerHeight;
+            }
+
+            init() {
+                const particleCount = Math.floor((this.canvas.width * this.canvas.height) / 20000);
+                for (let i = 0; i < particleCount; i++) {
+                    this.particles.push(new MinimalistParticle(this.canvas.width, this.ca</footer>nvas.height));
+                }
+            }
+
+            animate() {
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+                this.particles.forEach(particle => {
+                    particle.update();
+                    particle.draw(this.ctx);
+                });
+
+                requestAnimationFrame(() => this.animate());
+            }
+        }
+
+        class MinimalistParticle {
+            constructor(canvasWidth, canvasHeight) {
+                this.x = Math.random() * canvasWidth;
+                this.y = Math.random() * canvasHeight;
+                this.vx = (Math.random() - 0.5) * 0.5;
+                this.vy = (Math.random() - 0.5) * 0.5;
+                this.radius = Math.random() * 2 + 1;
+                this.canvasWidth = canvasWidth;
+                this.canvasHeight = canvasHeight;
+                this.opacity = Math.random() * 0.3 + 0.1;
+            }
+
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+
+                if (this.x < 0 || this.x > this.canvasWidth) this.vx = -this.vx;
+                if (this.y < 0 || this.y > this.canvasHeight) this.vy = -this.vy;
+
+                this.x = Math.max(0, Math.min(this.canvasWidth, this.x));
+                this.y = Math.max(0, Math.min(this.canvasHeight, this.y));
+            }
+
+            draw(ctx) {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(107, 114, 128, ${this.opacity})`;
+                ctx.fill();
+            }
+        }
+
+        window.addEventListener('load', () => {
+            new MinimalistParticleSystem();
+        });
+    </script>
+
+    <!-- Enhanced Disease Data and Modal Functions -->
+    <script>
+        const diseases = [
+            {
+                name: "Fever",
+                brief: "Fever is a temporary increase in body temperature, often indicating the body is fighting an infection. Normal body temperature is around 98.6°F (37°C).",
+                symptoms: [
+                    "Body temperature above 100.4°F (38°C)",
+                    "Chills and shivering",
+                    "Sweating or hot flashes",
+                    "Headache and body aches",
+                    "Weakness and fatigue",
+                    "Loss of appetite",
+                    "Dehydration",
+                    "General discomfort"
+                ],
+                warnings: [
+                    "Fever above 103°F (39.4°C)",
+                    "Fever lasting more than 3 days",
+                    "Difficulty breathing or chest pain",
+                    "Severe headache or neck stiffness",
+                    "Persistent vomiting",
+                    "Signs of dehydration",
+                    "Confusion or altered mental state",
+                    "Fever in infants under 3 months"
+                ],
+                precautions: [
+                    "Rest in a cool, comfortable environment",
+                    "Drink plenty of fluids (water, ORS, clear broths)",
+                    "Wear light, breathable clothing",
+                    "Use cool, damp cloths on forehead",
+                    "Take lukewarm baths or showers",
+                    "Monitor temperature regularly",
+                    "Avoid alcohol and caffeine",
+                    "Get adequate sleep"
+                ],
+                medicines: [
+                    "Adults: Paracetamol 500-1000mg every 4-6 hours",
+                    "Adults: Ibuprofen 200-400mg every 4-6 hours",
+                    "Children: Paracetamol syrup (dose per weight - consult doctor)",
+                    "Children: Avoid aspirin (risk of Reye's syndrome)",
+                    "ORS for hydration",
+                    "Tepid sponging for high fever",
+                    "Always follow dosage instructions",
+                    "Consult pharmacist for proper dosing"
+                ],
+                prevention: [
+                    "Maintain good hand hygiene",
+                    "Avoid close contact with sick individuals",
+                    "Get vaccinated as recommended",
+                    "Eat a balanced diet to boost immunity",
+                    "Exercise regularly",
+                    "Get adequate sleep",
+                    "Manage stress levels",
+                    "Stay hydrated"
+                ]
+            },
+            {
+                name: "Body Ache",
+                brief: "Body aches refer to pain or discomfort in muscles and joints throughout the body, commonly caused by viral infections, overexertion, stress, or underlying conditions.",
+                symptoms: [
+                    "Muscle pain and soreness",
+                    "Joint stiffness and pain",
+                    "General body discomfort",
+                    "Fatigue and weakness",
+                    "Difficulty moving normally",
+                    "Pain that worsens with movement",
+                    "Sometimes accompanied by mild fever",
+                    "Tender muscles when touched"
+                ],
+                warnings: [
+                    "Severe, persistent pain lasting over a week",
+                    "Pain with high fever and chills",
+                    "Muscle weakness or paralysis",
+                    "Joint swelling or redness",
+                    "Difficulty breathing with chest pain",
+                    "Pain after injury or accident",
+                    "Unexplained muscle pain with rash",
+                    "Pain interfering with daily activities"
+                ],
+                precautions: [
+                    "Get adequate rest and sleep",
+                    "Apply heat or cold therapy as needed",
+                    "Gentle stretching and light movement",
+                    "Stay well hydrated",
+                    "Maintain good posture",
+                    "Avoid strenuous activities temporarily",
+                    "Use supportive pillows while sleeping",
+                    "Practice stress management techniques"
+                ],
+                medicines: [
+                    "Adults: Paracetamol 500-1000mg every 6-8 hours",
+                    "Adults: Ibuprofen 200-400mg every 8 hours",
+                    "Topical pain relief gels (Diclofenac, Methyl salicylate)",
+                    "Muscle relaxants (if prescribed by doctor)",
+                    "Magnesium supplements (consult doctor)",
+                    "Children: Paracetamol syrup (age-appropriate dose)",
+                    "Warm compress or heating pad",
+                    "Avoid overuse of pain medications"
+                ],
+                prevention: [
+                    "Regular exercise to strengthen muscles",
+                    "Proper warm-up before physical activity",
+                    "Maintain good posture",
+                    "Use ergonomic furniture and tools",
+                    "Stay hydrated throughout the day",
+                    "Get regular massage therapy",
+                    "Practice yoga or stretching",
+                    "Manage stress effectively"
+                ]
+            },
+            {
+                name: "Common Cold",
+                brief: "The common cold is a viral infection of the upper respiratory tract, primarily affecting the nose and throat. It's highly contagious but usually mild and self-limiting.",
+                symptoms: [
+                    "Runny or stuffy nose",
+                    "Frequent sneezing",
+                    "Sore or scratchy throat",
+                    "Mild to moderate cough",
+                    "Low-grade fever (especially in children)",
+                    "Watery, red eyes",
+                    "Mild headache",
+                    "General feeling of being unwell",
+                    "Reduced sense of taste and smell"
+                ],
+                warnings: [
+                    "Symptoms lasting more than 10 days",
+                    "High fever above 101.3°F (38.5°C)",
+                    "Severe headache or sinus pain",
+                    "Difficulty breathing or wheezing",
+                    "Persistent cough with blood",
+                    "Ear pain or discharge",
+                    "Worsening symptoms after initial improvement",
+                    "Signs of dehydration"
+                ],
+                precautions: [
+                    "Get plenty of rest and sleep",
+                    "Stay well hydrated with warm fluids",
+                    "Use a humidifier or breathe steam",
+                    "Gargle with warm salt water",
+                    "Avoid cold foods and drinks",
+                    "Stay warm and avoid cold air",
+                    "Use tissues and dispose properly",
+                    "Wash hands frequently"
+                ],
+                medicines: [
+                    "Adults: Paracetamol for fever and aches",
+                    "Antihistamines (Cetirizine, Loratadine) for runny nose",
+                    "Saline nasal drops or spray",
+                    "Cough suppressants (Dextromethorphan) if needed",
+                    "Throat lozenges for sore throat",
+                    "Decongestants (short-term use only)",
+                    "Children: Paracetamol syrup, avoid cough medicines under 6 years",
+                    "Natural remedies: Honey, ginger tea, warm lemon water"
+                ],
+                prevention: [
+                    "Wash hands frequently with soap",
+                    "Avoid touching face with unwashed hands",
+                    "Stay away from sick individuals",
+                    "Disinfect frequently touched surfaces",
+                    "Maintain good overall health",
+                    "Get adequate sleep",
+                    "Exercise regularly to boost immunity",
+                    "Avoid crowded places during cold season"
+                ]
+            },
+            {
+                name: "Cough",
+                brief: "Cough is a reflex action that helps clear the throat and airways of irritants, mucus, or foreign particles. It can be dry or productive (with phlegm).",
+                symptoms: [
+                    "Persistent dry cough or cough with mucus",
+                    "Throat irritation or tickling sensation",
+                    "Chest discomfort or tightness",
+                    "Hoarse voice",
+                    "Fatigue from frequent coughing",
+                    "Sleep disturbance due to nighttime cough",
+                    "Sometimes accompanied by fever",
+                    "Shortness of breath with severe coughing"
+                ],
+                warnings: [
+                    "Cough lasting more than 3 weeks",
+                    "Coughing up blood or pink frothy sputum",
+                    "High fever with productive cough",
+                    "Difficulty breathing or wheezing",
+                    "Chest pain with coughing",
+                    "Sudden onset of severe cough",
+                    "Cough with unexplained weight loss",
+                    "Night sweats with chronic cough"
+                ],
+                precautions: [
+                    "Stay hydrated with warm fluids",
+                    "Use a humidifier in your room",
+                    "Avoid irritants like smoke and strong odors",
+                    "Sleep with head elevated",
+                    "Practice deep breathing exercises",
+                    "Avoid cold air and sudden temperature changes",
+                    "Cover mouth when coughing",
+                    "Rest your voice"
+                ],
+                medicines: [
+                    "Dry cough: Dextromethorphan-based cough suppressants",
+                    "Productive cough: Expectorants (Guaifenesin)",
+                    "Honey and warm water for natural relief",
+                    "Throat lozenges or hard candies",
+                    "Steam inhalation with menthol",
+                    "Bronchodilators if prescribed for asthma",
+                    "Anti-inflammatory medications if needed",
+                    "Avoid cough suppressants for productive cough"
+                ],
+                prevention: [
+                    "Avoid smoking and secondhand smoke",
+                    "Stay away from environmental pollutants",
+                    "Get vaccinated against flu and pneumonia",
+                    "Practice good hand hygiene",
+                    "Stay hydrated",
+                    "Treat underlying conditions like GERD",
+                    "Use air purifiers in polluted areas",
+                    "Avoid known allergens"
+                ]
+            },
+            {
+                name: "Headache",
+                brief: "Headaches are pain sensations in the head or neck region. They can range from mild discomfort to severe, debilitating pain and have various causes.",
+                symptoms: [
+                    "Pain in head, scalp, or neck",
+                    "Throbbing, sharp, or dull pain",
+                    "Sensitivity to light or sound",
+                    "Nausea or vomiting",
+                    "Dizziness or lightheadedness",
+                    "Difficulty concentrating",
+                    "Fatigue or irritability",
+                    "Muscle tension in neck and shoulders"
+                ],
+                warnings: [
+                    "Sudden, severe headache ('worst headache of life')",
+                    "Headache with high fever and neck stiffness",
+                    "Headache after head injury",
+                    "Progressive worsening of headaches",
+                    "Headache with vision changes or weakness",
+                    "Headache with confusion or speech problems",
+                    "New headache pattern in people over 50",
+                    "Headache with persistent vomiting"
+                ],
+                precautions: [
+                    "Rest in a quiet, dark room",
+                    "Apply cold or warm compress to head/neck",
+                    "Stay hydrated",
+                    "Practice relaxation techniques",
+                    "Maintain regular sleep schedule",
+                    "Avoid known triggers",
+                    "Limit screen time",
+                    "Practice good posture"
+                ],
+                medicines: [
+                    "Over-the-counter: Paracetamol, Ibuprofen, Aspirin",
+                    "For migraines: Sumatriptan (prescription required)",
+                    "Topical pain relief balms",
+                    "Caffeine (in moderation) may help some headaches",
+                    "Avoid overuse of pain medications",
+                    "Prescription medications for chronic headaches",
+                    "Natural remedies: Peppermint oil, ginger",
+                    "Muscle relaxants if tension-related"
+                ],
+                prevention: [
+                    "Identify and avoid personal triggers",
+                    "Maintain regular sleep patterns",
+                    "Stay well hydrated",
+                    "Eat regular, balanced meals",
+                    "Exercise regularly",
+                    "Manage stress effectively",
+                    "Limit alcohol and caffeine",
+                    "Take regular breaks from screens"
+                ]
+            },
+            {
+                name: "Nausea",
+                brief: "Nausea is the unpleasant sensation of feeling like you might vomit. It can be caused by various factors including infections, medications, motion sickness, or digestive issues.",
+                symptoms: [
+                    "Feeling of queasiness or unsettled stomach",
+                    "Loss of appetite",
+                    "Increased salivation",
+                    "Sweating or clamminess",
+                    "Dizziness or lightheadedness",
+                    "Weakness or fatigue",
+                    "Sometimes leads to vomiting",
+                    "Aversion to certain smells or foods"
+                ],
+                warnings: [
+                    "Persistent nausea for more than 24 hours",
+                    "Nausea with severe abdominal pain",
+                    "Signs of dehydration",
+                    "Nausea with high fever",
+                    "Blood in vomit",
+                    "Severe headache with nausea",
+                    "Difficulty keeping fluids down",
+                    "Nausea with chest pain"
+                ],
+                precautions: [
+                    "Eat small, frequent meals",
+                    "Avoid strong odors and spicy foods",
+                    "Stay hydrated with clear fluids",
+                    "Rest in a comfortable position",
+                    "Get fresh air",
+                    "Avoid lying down immediately after eating",
+                    "Practice deep breathing",
+                    "Avoid sudden movements"
+                ],
+                medicines: [
+                    "Ondansetron (prescription anti-nausea medication)",
+                    "Domperidone for nausea and vomiting",
+                    "Ginger supplements or ginger tea",
+                    "ORS for hydration",
+                    "Antacids if related to acid reflux",
+                    "Motion sickness medications if travel-related",
+                    "Vitamin B6 (especially for pregnancy nausea)",
+                    "Avoid solid foods until nausea subsides"
+                ],
+                prevention: [
+                    "Eat slowly and chew food thoroughly",
+                    "Avoid triggers like strong smells",
+                    "Stay hydrated",
+                    "Avoid large meals",
+                    "Manage stress and anxiety",
+                    "Get adequate rest",
+                    "Avoid alcohol and smoking",
+                    "Take medications with food if recommended"
+                ]
+            },
+            {
+                name: "Diarrhea",
+                brief: "Diarrhea is the frequent passage of loose or watery stools, often caused by infections, food intolerance, or digestive disorders. It can lead to dehydration if not managed properly.",
+                symptoms: [
+                    "Frequent loose or watery stools",
+                    "Abdominal cramps or pain",
+                    "Urgency to have a bowel movement",
+                    "Bloating or gas",
+                    "Nausea",
+                    "Mild fever (sometimes)",
+                    "Dehydration (dry mouth, low urine output)",
+                    "Fatigue"
+                ],
+                warnings: [
+                    "Diarrhea lasting more than 2 days (adults) or 24 hours (children)",
+                    "Blood or pus in stool",
+                    "High fever (above 102°F/39°C)",
+                    "Signs of severe dehydration (dizziness, confusion, sunken eyes)",
+                    "Persistent vomiting",
+                    "Severe abdominal pain",
+                    "Black or tarry stools",
+                    "Diarrhea in infants, elderly, or immunocompromised"
+                ],
+                precautions: [
+                    "Drink plenty of fluids (ORS, clear broths, coconut water)",
+                    "Eat bland foods (rice, bananas, toast)",
+                    "Avoid dairy, caffeine, alcohol, and fatty foods",
+                    "Rest as much as possible",
+                    "Wash hands frequently",
+                    "Avoid anti-diarrheal medicines in children unless prescribed",
+                    "Monitor for signs of dehydration",
+                    "Resume normal diet gradually"
+                ],
+                medicines: [
+                    "Oral Rehydration Solution (ORS) for hydration",
+                    "Zinc supplements (especially for children)",
+                    "Probiotics (may help recovery)",
+                    "Paracetamol for fever",
+                    "Antibiotics only if prescribed (bacterial cause)",
+                    "Avoid anti-diarrheal medicines unless advised by doctor",
+                    "Consult doctor for persistent symptoms",
+                    "Hospitalization for severe dehydration"
+                ],
+                prevention: [
+                    "Practice good hand hygiene",
+                    "Drink clean, safe water",
+                    "Eat well-cooked food",
+                    "Wash fruits and vegetables thoroughly",
+                    "Avoid street food in unsafe conditions",
+                    "Refrigerate leftovers promptly",
+                    "Vaccinate against rotavirus (children)",
+                    "Educate about safe food and water practices"
+                ]
+            },
+            {
+                name: "Vomiting",
+                brief: "Vomiting is the forceful expulsion of stomach contents through the mouth. It can be caused by infections, food poisoning, motion sickness, or other medical conditions.",
+                symptoms: [
+                    "Nausea (feeling of wanting to vomit)",
+                    "Forceful expulsion of stomach contents",
+                    "Abdominal discomfort",
+                    "Sweating or clamminess",
+                    "Increased salivation",
+                    "Loss of appetite",
+                    "Weakness or fatigue",
+                    "Dehydration (if persistent)"
+                ],
+                warnings: [
+                    "Vomiting lasting more than 24 hours (adults) or 12 hours (children)",
+                    "Blood in vomit (red or coffee-ground appearance)",
+                    "Severe abdominal pain",
+                    "Signs of dehydration (dry mouth, low urine, dizziness)",
+                    "High fever",
+                    "Projectile vomiting (especially in infants)",
+                    "Vomiting with severe headache or stiff neck",
+                    "Vomiting after head injury"
+                ],
+                precautions: [
+                    "Sip clear fluids (ORS, water, clear soups) frequently",
+                    "Avoid solid foods until vomiting stops",
+                    "Rest in a comfortable position",
+                    "Avoid strong odors and spicy foods",
+                    "Eat small, bland meals when tolerated",
+                    "Monitor for signs of dehydration",
+                    "Avoid sudden movements",
+                    "Wash hands after vomiting"
+                ],
+                medicines: [
+                    "Oral Rehydration Solution (ORS) for hydration",
+                    "Antiemetics (Ondansetron, Domperidone – if prescribed)",
+                    "Paracetamol for fever or pain",
+                    "Avoid self-medicating, especially in children",
+                    "Consult doctor for persistent vomiting",
+                    "Hospitalization for severe dehydration",
+                    "Treat underlying cause if identified",
+                    "Probiotics (may help in some cases)"
+                ],
+                prevention: [
+                    "Practice good food and water hygiene",
+                    "Avoid overeating or eating spoiled food",
+                    "Wash hands before eating",
+                    "Avoid known triggers (motion, certain foods)",
+                    "Treat infections promptly",
+                    "Avoid alcohol and smoking",
+                    "Vaccinate against rotavirus (children)",
+                    "Educate about safe eating habits"
+                ]
+            },
+            {
+                name: "Itching",
+                brief: "Itching (pruritus) is an uncomfortable sensation that provokes the urge to scratch. It can be caused by allergies, skin conditions, insect bites, or infections.",
+                symptoms: [
+                    "Persistent urge to scratch",
+                    "Redness or rash on skin",
+                    "Dry or flaky skin",
+                    "Swelling or bumps",
+                    "Blisters or oozing (sometimes)",
+                    "Localized or generalized itching",
+                    "Worsening at night",
+                    "Possible skin thickening from scratching"
+                ],
+                warnings: [
+                    "Itching lasting more than 2 weeks",
+                    "Severe itching interfering with sleep",
+                    "Itching with yellowing of eyes/skin (jaundice)",
+                    "Itching with unexplained weight loss",
+                    "Open sores or signs of infection",
+                    "Itching with fever or swollen lymph nodes",
+                    "Itching after starting new medication",
+                    "Itching with difficulty breathing (allergic reaction)"
+                ],
+                precautions: [
+                    "Keep skin moisturized",
+                    "Avoid hot showers and harsh soaps",
+                    "Wear loose, cotton clothing",
+                    "Use mild, fragrance-free products",
+                    "Avoid scratching (trim nails short)",
+                    "Apply cool compresses",
+                    "Identify and avoid triggers",
+                    "Use gentle laundry detergents"
+                ],
+                medicines: [
+                    "Antihistamines (Cetirizine, Loratadine)",
+                    "Topical calamine lotion",
+                    "Moisturizing creams (petroleum jelly, ceramides)",
+                    "Topical corticosteroids (for severe cases, short-term)",
+                    "Oatmeal baths",
+                    "Menthol or camphor creams",
+                    "Consult doctor for persistent or severe itching",
+                    "Avoid overuse of steroid creams"
+                ],
+                prevention: [
+                    "Maintain good skin hygiene",
+                    "Avoid known allergens",
+                    "Keep skin hydrated",
+                    "Use sunscreen outdoors",
+                    "Avoid excessive sweating",
+                    "Wear protective clothing outdoors",
+                    "Treat underlying skin conditions promptly",
+                    "Manage stress"
+                ]
+            },
+            {
+                name: "Skin Care",
+                brief: "Skin care involves practices that support skin integrity, enhance appearance, and relieve skin conditions. Good skin care prevents many common issues.",
+                symptoms: [
+                    "Dryness or flakiness",
+                    "Oily or shiny skin",
+                    "Acne or pimples",
+                    "Redness or irritation",
+                    "Uneven skin tone",
+                    "Itching or sensitivity",
+                    "Blackheads or whiteheads",
+                    "Premature aging signs"
+                ],
+                warnings: [
+                    "Persistent rashes or irritation",
+                    "Sudden changes in skin color",
+                    "Non-healing sores or ulcers",
+                    "Moles changing in size, color, or shape",
+                    "Severe acne with scarring",
+                    "Signs of infection (pus, swelling, pain)",
+                    "Allergic reactions to products",
+                    "Skin pain or burning"
+                ],
+                precautions: [
+                    "Cleanse skin gently twice daily",
+                    "Use sunscreen daily (SPF 30+)",
+                    "Moisturize after bathing",
+                    "Avoid harsh scrubs and chemicals",
+                    "Remove makeup before sleeping",
+                    "Stay hydrated",
+                    "Avoid touching face frequently",
+                    "Patch test new products"
+                ],
+                medicines: [
+                    "Non-comedogenic moisturizers",
+                    "Topical retinoids (for acne, prescription)",
+                    "Benzoyl peroxide or salicylic acid (for acne)",
+                    "Hydrocortisone cream (for mild irritation)",
+                    "Antibiotic creams for infected lesions",
+                    "Vitamin C or niacinamide serums",
+                    "Consult dermatologist for persistent issues",
+                    "Avoid self-medicating with strong steroids"
+                ],
+                prevention: [
+                    "Follow a daily skin care routine",
+                    "Eat a balanced diet rich in antioxidants",
+                    "Avoid excessive sun exposure",
+                    "Manage stress",
+                    "Get adequate sleep",
+                    "Avoid smoking and limit alcohol",
+                    "Keep pillowcases and towels clean",
+                    "Seek early treatment for skin problems"
+                ]
+            },
+            {
+                name: "Vitiligo",
+                brief: "Vitiligo is a long-term skin condition causing loss of pigment, resulting in white patches on the skin. It occurs when pigment-producing cells are destroyed.",
+                symptoms: [
+                    "White patches on skin",
+                    "Patchy loss of skin color",
+                    "Premature whitening of hair",
+                    "Change in color of inner mouth or nose",
+                    "Usually painless and not itchy",
+                    "Symmetrical or localized patches",
+                    "Slow progression over time",
+                    "More noticeable in sun-exposed areas"
+                ],
+                warnings: [
+                    "Rapid spread of white patches",
+                    "Emotional distress or low self-esteem",
+                    "Sunburn on depigmented areas",
+                    "Skin irritation or infection",
+                    "Eye or ear pigment changes",
+                    "Associated autoimmune symptoms",
+                    "Family history of autoimmune diseases",
+                    "New symptoms or changes in patches"
+                ],
+                precautions: [
+                    "Protect skin from sunburn (use sunscreen SPF 50+)",
+                    "Wear protective clothing outdoors",
+                    "Moisturize regularly",
+                    "Avoid skin trauma or friction",
+                    "Use gentle skin care products",
+                    "Monitor for new patches",
+                    "Seek counseling for emotional support",
+                    "Avoid tattoos or skin injuries"
+                ],
+                medicines: [
+                    "Topical corticosteroids (prescription)",
+                    "Topical calcineurin inhibitors (Tacrolimus)",
+                    "Phototherapy (UVB light, under supervision)",
+                    "Depigmentation therapy (for extensive cases)",
+                    "Vitamin D analog creams",
+                    "Camouflage cosmetics",
+                    "Oral medications for severe cases (rare)",
+                    "Consult dermatologist for personalized treatment"
+                ],
+                prevention: [
+                    "No known prevention, but early treatment may slow progression",
+                    "Protect skin from sun exposure",
+                    "Manage stress",
+                    "Avoid skin injuries",
+                    "Monitor for associated autoimmune conditions",
+                    "Maintain healthy lifestyle",
+                    "Regular follow-up with dermatologist",
+                    "Educate about the non-contagious nature"
+                ]
+            },
+            {
+                name: "Eczema",
+                brief: "Eczema (atopic dermatitis) is a chronic skin condition causing red, itchy, and inflamed patches. It often flares up periodically and can be triggered by irritants or allergens.",
+                symptoms: [
+                    "Red, inflamed skin patches",
+                    "Intense itching",
+                    "Dry, scaly, or cracked skin",
+                    "Blisters that may ooze or crust",
+                    "Thickened or leathery skin (chronic cases)",
+                    "Swelling in affected areas",
+                    "Worsening at night",
+                    "Common on hands, elbows, knees, face"
+                ],
+                warnings: [
+                    "Signs of skin infection (pus, yellow crusts, swelling)",
+                    "Severe, persistent itching",
+                    "Widespread rash",
+                    "Fever with skin symptoms",
+                    "Painful, open sores",
+                    "Eczema interfering with daily life",
+                    "Rapid worsening after new product use",
+                    "Eczema in infants under 6 months"
+                ],
+                precautions: [
+                    "Moisturize skin several times daily",
+                    "Avoid known triggers (soaps, detergents, allergens)",
+                    "Use lukewarm water for bathing",
+                    "Pat skin dry gently",
+                    "Wear soft, breathable fabrics",
+                    "Keep nails short to prevent scratching",
+                    "Use fragrance-free products",
+                    "Manage stress"
+                ],
+                medicines: [
+                    "Topical corticosteroids (prescription)",
+                    "Topical calcineurin inhibitors",
+                    "Antihistamines for itching",
+                    "Moisturizing ointments and creams",
+                    "Antibiotics for infected eczema",
+                    "Oral steroids for severe flares (short-term)",
+                    "Phototherapy (under medical supervision)",
+                    "Consult dermatologist for persistent cases"
+                ],
+                prevention: [
+                    "Maintain regular moisturizing routine",
+                    "Avoid triggers and allergens",
+                    "Wear protective gloves for cleaning",
+                    "Use mild, fragrance-free soaps",
+                    "Keep home humidity moderate",
+                    "Manage stress",
+                    "Avoid overheating and sweating",
+                    "Early treatment of flare-ups"
+                ]
+            },
+            {
+                name: "Weight Loss",
+                brief: "Healthy weight loss involves gradual reduction of body fat through balanced diet, regular exercise, and lifestyle changes. Rapid or unintentional weight loss may indicate underlying health issues.",
+                symptoms: [
+                    "Gradual reduction in body weight",
+                    "Improved energy and fitness",
+                    "Better sleep and mood",
+                    "Loose-fitting clothes",
+                    "Visible fat loss in certain areas",
+                    "Increased muscle tone (with exercise)",
+                    "Improved blood sugar and cholesterol",
+                    "Unintentional weight loss may cause weakness"
+                ],
+                warnings: [
+                    "Unintentional weight loss over 5% in 6-12 months",
+                    "Loss of appetite with fatigue",
+                    "Weight loss with persistent diarrhea or vomiting",
+                    "Rapid weight loss without trying",
+                    "Weight loss with fever or night sweats",
+                    "Signs of malnutrition (hair loss, brittle nails)",
+                    "Eating disorders (anorexia, bulimia)",
+                    "Consult doctor before starting weight loss plan"
+                ],
+                precautions: [
+                    "Set realistic, gradual goals (0.5-1 kg/week)",
+                    "Eat a balanced, calorie-controlled diet",
+                    "Include regular physical activity",
+                    "Stay hydrated",
+                    "Avoid fad diets or extreme restrictions",
+                    "Monitor for signs of nutritional deficiency",
+                    "Get adequate sleep",
+                    "Seek professional guidance if needed"
+                ],
+                medicines: [
+                    "No medicines needed for healthy weight loss",
+                    "Prescription weight loss drugs (for obesity, under doctor supervision)",
+                    "Avoid unregulated supplements",
+                    "Meal replacement shakes (short-term, supervised)",
+                    "Consult doctor before using any medication",
+                    "Focus on lifestyle changes",
+                    "Treat underlying medical conditions",
+                    "Behavioral therapy for emotional eating"
+                ],
+                prevention: [
+                    "Maintain healthy eating habits",
+                    "Exercise regularly",
+                    "Monitor weight periodically",
+                    "Avoid sugary drinks and processed foods",
+                    "Manage stress and emotional triggers",
+                    "Get enough sleep",
+                    "Limit alcohol intake",
+                    "Seek support from friends or groups"
+                ]
+            },
+            {
+                name: "Exercise Guide",
+                brief: "Regular exercise improves physical and mental health, strengthens muscles, boosts immunity, and helps maintain a healthy weight. Choose activities you enjoy for long-term success.",
+                symptoms: [
+                    "Increased energy and stamina",
+                    "Improved mood and sleep",
+                    "Better muscle tone and strength",
+                    "Weight management",
+                    "Reduced risk of chronic diseases",
+                    "Improved flexibility and balance",
+                    "Lower stress levels",
+                    "Enhanced self-confidence"
+                ],
+                warnings: [
+                    "Chest pain or shortness of breath during exercise",
+                    "Dizziness or fainting",
+                    "Joint or muscle pain that persists",
+                    "Irregular heartbeat or palpitations",
+                    "Severe fatigue after mild activity",
+                    "Exercise-induced asthma symptoms",
+                    "Injury during exercise",
+                    "Consult doctor before starting if you have chronic illness"
+                ],
+                precautions: [
+                    "Warm up before and cool down after exercise",
+                    "Start slow and gradually increase intensity",
+                    "Stay hydrated",
+                    "Use proper footwear and equipment",
+                    "Listen to your body and rest if needed",
+                    "Avoid overexertion",
+                    "Maintain good posture",
+                    "Include variety (cardio, strength, flexibility)"
+                ],
+                medicines: [
+                    "No medicines required for general exercise",
+                    "Pain relief (Paracetamol, Ibuprofen) for minor aches",
+                    "Muscle relaxants (if prescribed for injury)",
+                    "Supplements (protein, vitamins) if needed",
+                    "Consult doctor for persistent pain",
+                    "Treat injuries promptly",
+                    "Avoid performance-enhancing drugs",
+                    "Use ice/heat packs for soreness"
+                ],
+                prevention: [
+                    "Exercise regularly (at least 150 min/week)",
+                    "Use correct technique",
+                    "Cross-train to prevent overuse injuries",
+                    "Rest between sessions",
+                    "Eat a balanced diet",
+                    "Stay hydrated",
+                    "Get adequate sleep",
+                    "Listen to your body"
+                ]
+            },
+            {
+                name: "Sleep Disorders",
+                brief: "Sleep disorders include problems like insomnia, sleep apnea, and restless legs syndrome. They affect sleep quality and can impact overall health and daily functioning.",
+                symptoms: [
+                    "Difficulty falling or staying asleep",
+                    "Daytime fatigue or sleepiness",
+                    "Loud snoring or gasping during sleep",
+                    "Restless legs or frequent movements",
+                    "Morning headaches",
+                    "Mood changes (irritability, depression)",
+                    "Poor concentration",
+                    "Waking up unrefreshed"
+                ],
+                warnings: [
+                    "Persistent insomnia over several weeks",
+                    "Falling asleep during daily activities",
+                    "Breathing pauses or choking at night",
+                    "Severe snoring with daytime sleepiness",
+                    "Unexplained weight gain or high blood pressure",
+                    "Sleepwalking or night terrors",
+                    "Sleep problems affecting work or relationships",
+                    "Consult doctor for persistent sleep issues"
+                ],
+                precautions: [
+                    "Maintain regular sleep schedule",
+                    "Create a relaxing bedtime routine",
+                    "Limit caffeine and alcohol before bed",
+                    "Keep bedroom dark and cool",
+                    "Avoid screens before bedtime",
+                    "Exercise regularly (not close to bedtime)",
+                    "Manage stress",
+                    "Avoid heavy meals late at night"
+                ],
+                medicines: [
+                    "Melatonin supplements (short-term use)",
+                    "Prescription sleep aids (under doctor supervision)",
+                    "Antihistamines (occasionally, short-term)",
+                    "Treat underlying conditions (anxiety, pain)",
+                    "Cognitive behavioral therapy for insomnia",
+                    "Avoid long-term use of sleeping pills",
+                    "Consult doctor for sleep apnea treatment",
+                    "Lifestyle changes preferred over medication"
+                ],
+                prevention: [
+                    "Practice good sleep hygiene",
+                    "Stick to a consistent sleep schedule",
+                    "Limit naps during the day",
+                    "Exercise regularly",
+                    "Avoid stimulants in the evening",
+                    "Create a comfortable sleep environment",
+                    "Manage stress and anxiety",
+                    "Seek help early for sleep problems"
+                ]
+            },
+            {
+                name: "Stress Management",
+                brief: "Stress management involves techniques to control and reduce tension caused by daily life challenges. Chronic stress can affect physical and mental health.",
+                symptoms: [
+                    "Feeling overwhelmed or anxious",
+                    "Irritability or mood swings",
+                    "Difficulty concentrating",
+                    "Sleep disturbances",
+                    "Muscle tension or headaches",
+                    "Fatigue or low energy",
+                    "Digestive issues",
+                    "Changes in appetite"
+                ],
+                warnings: [
+                    "Persistent stress affecting daily life",
+                    "Physical symptoms (chest pain, palpitations)",
+                    "Depression or anxiety symptoms",
+                    "Substance abuse to cope with stress",
+                    "Social withdrawal",
+                    "Thoughts of self-harm",
+                    "Unexplained physical complaints",
+                    "Consult doctor if stress is unmanageable"
+                ],
+                precautions: [
+                    "Practice relaxation techniques (deep breathing, meditation)",
+                    "Exercise regularly",
+                    "Maintain social connections",
+                    "Set realistic goals and priorities",
+                    "Take breaks and time for hobbies",
+                    "Limit caffeine and alcohol",
+                    "Get adequate sleep",
+                    "Seek support when needed"
+                ],
+                medicines: [
+                    "No medicines needed for mild stress",
+                    "Short-term use of anxiolytics (doctor prescribed)",
+                    "Antidepressants for chronic anxiety/depression",
+                    "Herbal remedies (ashwagandha, chamomile) with caution",
+                    "Therapy and counseling",
+                    "Avoid self-medicating",
+                    "Lifestyle changes preferred",
+                    "Consult doctor for persistent symptoms"
+                ],
+                prevention: [
+                    "Develop healthy coping strategies",
+                    "Maintain work-life balance",
+                    "Practice mindfulness",
+                    "Exercise regularly",
+                    "Stay connected with friends/family",
+                    "Get enough sleep",
+                    "Eat a balanced diet",
+                    "Seek help early for stress-related issues"
+                ]
+            },
+            {
+                name: "Diabetes",
+                brief: "Diabetes is a chronic condition where the body cannot properly regulate blood sugar levels. It requires lifestyle management and sometimes medication.",
+                symptoms: [
+                    "Frequent urination",
+                    "Excessive thirst",
+                    "Unexplained weight loss",
+                    "Increased hunger",
+                    "Fatigue",
+                    "Blurred vision",
+                    "Slow-healing wounds",
+                    "Tingling or numbness in hands/feet"
+                ],
+                warnings: [
+                    "Very high or low blood sugar (emergency)",
+                    "Confusion or loss of consciousness",
+                    "Severe abdominal pain",
+                    "Vomiting or dehydration",
+                    "Signs of infection (fever, redness, pus)",
+                    "Chest pain or shortness of breath",
+                    "Sudden vision loss",
+                    "Foot ulcers or gangrene"
+                ],
+                precautions: [
+                    "Monitor blood sugar regularly",
+                    "Follow prescribed diet and exercise plan",
+                    "Take medications as directed",
+                    "Maintain healthy weight",
+                    "Check feet daily for sores",
+                    "Avoid smoking and limit alcohol",
+                    "Manage stress",
+                    "Attend regular medical checkups"
+                ],
+                medicines: [
+                    "Oral antidiabetic drugs (Metformin, Sulfonylureas)",
+                    "Insulin injections (if prescribed)",
+                    "GLP-1 agonists, DPP-4 inhibitors (as advised)",
+                    "Statins for cholesterol (if needed)",
+                    "Blood pressure medications (if needed)",
+                    "Treat infections promptly",
+                    "Never skip or double dose medicines",
+                    "Consult doctor for medication adjustments"
+                ],
+                prevention: [
+                    "Maintain healthy weight",
+                    "Exercise regularly",
+                    "Eat a balanced, low-sugar diet",
+                    "Limit processed foods",
+                    "Monitor blood sugar if at risk",
+                    "Avoid smoking",
+                    "Manage blood pressure and cholesterol",
+                    "Regular health checkups"
+                ]
+            },
+            {
+                name: "Hypertension",
+                brief: "Hypertension (high blood pressure) is a chronic condition that increases the risk of heart disease, stroke, and kidney problems. It often has no symptoms.",
+                symptoms: [
+                    "Often asymptomatic",
+                    "Headaches (especially in the morning)",
+                    "Dizziness or blurred vision",
+                    "Nosebleeds (rare)",
+                    "Shortness of breath",
+                    "Chest pain (in severe cases)",
+                    "Fatigue",
+                    "Palpitations"
+                ],
+                warnings: [
+                    "Severe headache with confusion",
+                    "Chest pain or shortness of breath",
+                    "Sudden vision changes",
+                    "Weakness or numbness on one side",
+                    "Difficulty speaking",
+                    "Blood pressure above 180/120 mmHg",
+                    "Signs of stroke or heart attack",
+                    "Kidney problems (swelling, reduced urination)"
+                ],
+                precautions: [
+                    "Monitor blood pressure regularly",
+                    "Reduce salt intake",
+                    "Maintain healthy weight",
+                    "Exercise regularly",
+                    "Limit alcohol and avoid smoking",
+                    "Manage stress",
+                    "Take medications as prescribed",
+                    "Regular medical checkups"
+                ],
+                medicines: [
+                    "ACE inhibitors (Enalapril, Ramipril)",
+                    "ARBs (Losartan, Telmisartan)",
+                    "Calcium channel blockers (Amlodipine)",
+                    "Diuretics (Hydrochlorothiazide)",
+                    "Beta-blockers (Atenolol, Metoprolol)",
+                    "Monitor for side effects",
+                    "Never stop medicines abruptly",
+                    "Consult doctor for dose adjustments"
+                ],
+                prevention: [
+                    "Eat a low-salt, balanced diet",
+                    "Exercise regularly",
+                    "Maintain healthy weight",
+                    "Limit alcohol and caffeine",
+                    "Avoid smoking",
+                    "Manage stress",
+                    "Monitor blood pressure",
+                    "Regular health screenings"
+                ]
+            },
+            {
+                name: "Heart Disease",
+                brief: "Heart disease refers to various conditions affecting the heart, including coronary artery disease, arrhythmias, and heart failure. Risk factors include hypertension, diabetes, and high cholesterol.",
+                symptoms: [
+                    "Chest pain or discomfort (angina)",
+                    "Shortness of breath",
+                    "Palpitations or irregular heartbeat",
+                    "Fatigue or weakness",
+                    "Swelling in legs, ankles, or feet",
+                    "Dizziness or fainting",
+                    "Pain radiating to arm, neck, or jaw",
+                    "Nausea or sweating (with chest pain)"
+                ],
+                warnings: [
+                    "Severe chest pain (heart attack)",
+                    "Sudden shortness of breath",
+                    "Loss of consciousness",
+                    "Rapid or irregular heartbeat",
+                    "Swelling with weight gain",
+                    "Persistent cough with pink frothy sputum",
+                    "Sudden weakness or numbness",
+                    "Signs of stroke"
+                ],
+                precautions: [
+                    "Take medications as prescribed",
+                    "Monitor blood pressure and cholesterol",
+                    "Follow heart-healthy diet",
+                    "Exercise regularly (as advised)",
+                    "Avoid smoking and limit alcohol",
+                    "Manage stress",
+                    "Maintain healthy weight",
+                    "Attend regular checkups"
+                ],
+                medicines: [
+                    "Antiplatelets (Aspirin, Clopidogrel)",
+                    "Statins for cholesterol",
+                    "Beta-blockers",
+                    "ACE inhibitors/ARBs",
+                    "Diuretics (for heart failure)",
+                    "Nitrates (for angina)",
+                    "Anticoagulants (if prescribed)",
+                    "Consult doctor for medication changes"
+                ],
+                prevention: [
+                    "Eat a heart-healthy diet",
+                    "Exercise regularly",
+                    "Maintain healthy weight",
+                    "Avoid smoking",
+                    "Limit alcohol",
+                    "Manage diabetes and hypertension",
+                    "Reduce stress",
+                    "Regular health screenings"
+                ]
+            },
+            {
+                name: "Asthma",
+                brief: "Asthma is a chronic lung condition causing inflammation and narrowing of airways, leading to wheezing, breathlessness, and coughing. Triggers include allergens, exercise, and infections.",
+                symptoms: [
+                    "Wheezing (whistling sound when breathing)",
+                    "Shortness of breath",
+                    "Chest tightness",
+                    "Coughing (especially at night or early morning)",
+                    "Difficulty breathing during exercise",
+                    "Rapid breathing",
+                    "Fatigue during attacks",
+                    "Symptoms worsen with triggers"
+                ],
+                warnings: [
+                    "Severe shortness of breath",
+                    "Difficulty speaking or walking",
+                    "Bluish lips or face",
+                    "No relief from inhaler",
+                    "Rapid worsening of symptoms",
+                    "Frequent nighttime symptoms",
+                    "Repeated ER visits",
+                    "Peak flow meter readings below personal best"
+                ],
+                precautions: [
+                    "Use inhalers as prescribed",
+                    "Avoid known triggers (dust, pollen, smoke)",
+                    "Monitor symptoms and peak flow",
+                    "Keep rescue inhaler accessible",
+                    "Follow asthma action plan",
+                    "Get vaccinated against flu and pneumonia",
+                    "Maintain good indoor air quality",
+                    "Regular follow-up with doctor"
+                ],
+                medicines: [
+                    "Short-acting bronchodilators (Salbutamol inhaler)",
+                    "Inhaled corticosteroids (Budesonide, Fluticasone)",
+                    "Long-acting bronchodilators (Salmeterol, Formoterol)",
+                    "Leukotriene modifiers (Montelukast)",
+                    "Oral steroids for severe attacks",
+                    "Allergy medications if needed",
+                    "Avoid overuse of rescue inhaler",
+                    "Consult doctor for medication adjustments"
+                ],
+                prevention: [
+                    "Identify and avoid triggers",
+                    "Take maintenance medicines regularly",
+                    "Monitor symptoms",
+                    "Keep home dust-free",
+                    "Avoid smoking and secondhand smoke",
+                    "Get regular exercise (as tolerated)",
+                    "Manage allergies",
+                    "Regular medical checkups"
+                ]
+            },
+            {
+                name: "Tuberculosis",
+                brief: "Tuberculosis (TB) is a contagious bacterial infection, mainly affecting the lungs but can involve other organs. It spreads through airborne droplets.",
+                symptoms: [
+                    "Persistent cough (more than 2 weeks)",
+                    "Coughing up blood or sputum",
+                    "Fever and night sweats",
+                    "Unintentional weight loss",
+                    "Fatigue and weakness",
+                    "Chest pain",
+                    "Loss of appetite",
+                    "Swollen lymph nodes"
+                ],
+                warnings: [
+                    "Severe shortness of breath",
+                    "Coughing up large amounts of blood",
+                    "High fever with confusion",
+                    "Rapid weight loss",
+                    "Signs of drug side effects (jaundice, rash)",
+                    "TB in children, elderly, or immunocompromised",
+                    "Non-resolving symptoms despite treatment",
+                    "Exposure to TB patient"
+                ],
+                precautions: [
+                    "Take all TB medicines as prescribed",
+                    "Do not skip or stop treatment early",
+                    "Cover mouth when coughing",
+                    "Ventilate living spaces",
+                    "Wear mask in public (if infectious)",
+                    "Eat nutritious food",
+                    "Avoid alcohol and smoking",
+                    "Regular follow-up with doctor"
+                ],
+                medicines: [
+                    "Isoniazid, Rifampicin, Pyrazinamide, Ethambutol (standard regimen)",
+                    "Take medicines for full duration (6+ months)",
+                    "Monitor for side effects",
+                    "Vitamin B6 supplementation (with Isoniazid)",
+                    "Consult doctor for drug-resistant TB",
+                    "Treat contacts if advised",
+                    "Do not share medicines",
+                    "Report side effects promptly"
+                ],
+                prevention: [
+                    "Early diagnosis and treatment",
+                    "BCG vaccination (children)",
+                    "Good ventilation in living spaces",
+                    "Cover mouth when coughing",
+                    "Screen close contacts",
+                    "Maintain good nutrition",
+                    "Avoid crowded places if at risk",
+                    "Regular health checkups"
+                ]
+            },
+            {
+                name: "Malaria",
+                brief: "Malaria is a mosquito-borne infectious disease caused by Plasmodium parasites. It is common in tropical regions and can be life-threatening if untreated.",
+                symptoms: [
+                    "High fever with chills and sweating",
+                    "Headache",
+                    "Muscle aches",
+                    "Nausea and vomiting",
+                    "Fatigue",
+                    "Abdominal pain",
+                    "Jaundice (yellowing of skin/eyes)",
+                    "Dark urine"
+                ],
+                warnings: [
+                    "Severe anemia",
+                    "Altered mental status or confusion",
+                    "Difficulty breathing",
+                    "Seizures",
+                    "Persistent vomiting",
+                    "Signs of dehydration",
+                    "Malaria in children, pregnant women, or elderly",
+                    "Travel to malaria-endemic area with fever"
+                ],
+                precautions: [
+                    "Use mosquito nets and repellents",
+                    "Wear long-sleeved clothing outdoors",
+                    "Take antimalarial medicines as prescribed (for travelers)",
+                    "Eliminate stagnant water sources",
+                    "Seek prompt treatment for fever",
+                    "Monitor for complications",
+                    "Avoid outdoor activities at dusk/dawn",
+                    "Regular follow-up if diagnosed"
+                ],
+                medicines: [
+                    "Chloroquine (if sensitive)",
+                    "Artemisinin-based combination therapy (ACT)",
+                    "Primaquine (for liver stage, as advised)",
+                    "Paracetamol for fever",
+                    "IV fluids for severe cases",
+                    "Avoid self-medication",
+                    "Consult doctor for drug-resistant malaria",
+                    "Complete full course of treatment"
+                ],
+                prevention: [
+                    "Use mosquito nets and repellents",
+                    "Take prophylactic medicines when traveling",
+                    "Eliminate mosquito breeding sites",
+                    "Wear protective clothing",
+                    "Screen windows and doors",
+                    "Educate about malaria symptoms",
+                    "Prompt treatment of fever",
+                    "Community vector control programs"
+                ]
+            },
+            {
+                name: "Dengue",
+                brief: "Dengue is a viral infection transmitted by Aedes mosquitoes. It causes high fever, severe joint/muscle pain, and can lead to serious complications.",
+                symptoms: [
+                    "Sudden high fever",
+                    "Severe headache",
+                    "Pain behind the eyes",
+                    "Joint and muscle pain ('breakbone fever')",
+                    "Nausea and vomiting",
+                    "Skin rash (appears 2-5 days after fever)",
+                    "Mild bleeding (nose, gums, easy bruising)",
+                    "Fatigue"
+                ],
+                warnings: [
+                    "Severe abdominal pain",
+                    "Persistent vomiting",
+                    "Bleeding from nose/gums",
+                    "Blood in vomit or stool",
+                    "Difficulty breathing",
+                    "Restlessness or drowsiness",
+                    "Rapid drop in platelet count",
+                    "Signs of shock (cold, clammy skin, rapid pulse)"
+                ],
+                precautions: [
+                    "Rest and drink plenty of fluids",
+                    "Monitor for warning signs",
+                    "Avoid NSAIDs (Ibuprofen, Aspirin)",
+                    "Use paracetamol for fever",
+                    "Seek medical attention for severe symptoms",
+                    "Prevent mosquito bites",
+                    "Monitor platelet count if diagnosed",
+                    "Avoid dehydration"
+                ],
+                medicines: [
+                    "Paracetamol for fever and pain",
+                    "ORS for hydration",
+                    "IV fluids for severe cases",
+                    "No specific antiviral for dengue",
+                    "Avoid blood thinners",
+                    "Hospitalization for severe dengue",
+                    "Monitor blood counts regularly",
+                    "Consult doctor for persistent symptoms"
+                ],
+                prevention: [
+                    "Eliminate mosquito breeding sites",
+                    "Use mosquito nets and repellents",
+                    "Wear long-sleeved clothing",
+                    "Screen windows and doors",
+                    "Community fogging programs",
+                    "Educate about dengue symptoms",
+                    "Prompt treatment of fever",
+                    "No vaccine for general use (as of now)"
+                ]
+            },
+            {
+                name: "COVID-19",
+                brief: "COVID-19 is a viral respiratory illness caused by SARS-CoV-2. Symptoms range from mild cold-like illness to severe pneumonia and complications.",
+                symptoms: [
+                    "Fever or chills",
+                    "Cough",
+                    "Shortness of breath",
+                    "Loss of taste or smell",
+                    "Fatigue",
+                    "Body aches",
+                    "Sore throat",
+                    "Headache",
+                    "Nausea, vomiting, or diarrhea"
+                ],
+                warnings: [
+                    "Difficulty breathing",
+                    "Persistent chest pain or pressure",
+                    "New confusion or inability to wake",
+                    "Bluish lips or face",
+                    "High fever not responding to medicines",
+                    "Severe dehydration",
+                    "Worsening symptoms after initial improvement",
+                    "COVID-19 in elderly or high-risk individuals"
+                ],
+                precautions: [
+                    "Isolate if symptomatic or positive",
+                    "Wear mask in public",
+                    "Practice hand hygiene",
+                    "Maintain physical distancing",
+                    "Monitor symptoms regularly",
+                    "Stay hydrated and rest",
+                    "Seek medical help for severe symptoms",
+                    "Follow local health guidelines"
+                ],
+                medicines: [
+                    "Paracetamol for fever",
+                    "ORS for hydration",
+                    "Cough suppressants (if needed)",
+                    "Antivirals (if prescribed)",
+                    "Steroids for severe cases (hospital use)",
+                    "Oxygen therapy (if needed)",
+                    "Monitor oxygen saturation",
+                    "Consult doctor for medication guidance"
+                ],
+                prevention: [
+                    "Get vaccinated",
+                    "Wear masks in crowded places",
+                    "Practice hand hygiene",
+                    "Avoid close contact with sick individuals",
+                    "Ventilate indoor spaces",
+                    "Follow public health advisories",
+                    "Stay home if unwell",
+                    "Regularly clean surfaces"
+                ]
+            },
+            {
+                name: "Acidity",
+                brief: "Acidity (acid reflux) is a condition where stomach acid flows back into the esophagus, causing heartburn and discomfort.",
+                symptoms: [
+                    "Burning sensation in chest (heartburn)",
+                    "Sour or bitter taste in mouth",
+                    "Regurgitation of food or liquid",
+                    "Bloating",
+                    "Burping or belching",
+                    "Nausea",
+                    "Sore throat or hoarseness",
+                    "Worsening after meals or lying down"
+                ],
+                warnings: [
+                    "Severe chest pain (rule out heart attack)",
+                    "Difficulty swallowing",
+                    "Unintentional weight loss",
+                    "Vomiting blood or black stools",
+                    "Persistent symptoms despite treatment",
+                    "Chronic cough or wheezing",
+                    "Hoarseness or sore throat",
+                    "Symptoms at night disturbing sleep"
+                ],
+                precautions: [
+                    "Eat small, frequent meals",
+                    "Avoid spicy, fatty, or acidic foods",
+                    "Do not lie down immediately after eating",
+                    "Elevate head while sleeping",
+                    "Maintain healthy weight",
+                    "Avoid tight clothing around waist",
+                    "Limit caffeine and alcohol",
+                    "Quit smoking"
+                ],
+                medicines: [
+                    "Antacids (Gelusil, Tums)",
+                    "H2 blockers (Ranitidine, Famotidine)",
+                    "Proton pump inhibitors (Omeprazole, Pantoprazole)",
+                    "Prokinetics (Domperidone, if prescribed)",
+                    "Avoid overuse of antacids",
+                    "Consult doctor for persistent symptoms",
+                    "Treat underlying causes",
+                    "Lifestyle changes preferred"
+                ],
+                prevention: [
+                    "Maintain healthy weight",
+                    "Eat slowly and chew food well",
+                    "Avoid trigger foods",
+                    "Do not overeat",
+                    "Avoid lying down after meals",
+                    "Limit alcohol and caffeine",
+                    "Quit smoking",
+                    "Manage stress"
+                ]
+            },
+            {
+                name: "Constipation",
+                brief: "Constipation is infrequent or difficult passage of stools, often caused by low fiber diet, dehydration, or lack of physical activity.",
+                symptoms: [
+                    "Fewer than 3 bowel movements per week",
+                    "Hard, dry, or lumpy stools",
+                    "Straining during bowel movements",
+                    "Feeling of incomplete evacuation",
+                    "Abdominal discomfort or bloating",
+                    "Loss of appetite",
+                    "Mild nausea",
+                    "Occasional rectal pain"
+                ],
+                warnings: [
+                    "Constipation lasting more than 2 weeks",
+                    "Blood in stool",
+                    "Severe abdominal pain",
+                    "Unintentional weight loss",
+                    "Vomiting with constipation",
+                    "Sudden onset in elderly",
+                    "Fever with constipation",
+                    "Symptoms not relieved by home care"
+                ],
+                precautions: [
+                    "Increase fiber intake (fruits, vegetables, whole grains)",
+                    "Drink plenty of water",
+                    "Exercise regularly",
+                    "Establish regular toilet routine",
+                    "Do not ignore urge to pass stool",
+                    "Avoid excessive use of laxatives",
+                    "Use stool softeners if needed (short-term)",
+                    "Consult doctor for persistent symptoms"
+                ],
+                medicines: [
+                    "Bulk-forming laxatives (Psyllium, Isabgol)",
+                    "Osmotic laxatives (Lactulose, Polyethylene glycol)",
+                    "Stool softeners (Docusate)",
+                    "Glycerin suppositories (for immediate relief)"
+                ],
+                prevention: [
+                    "Eat a high-fiber diet",
+                    "Drink plenty of fluids",
+                    "Exercise regularly",
+                    "Establish a regular toilet routine",
+                    "Do not ignore the urge to pass stool",
+                    "Avoid overuse of laxatives",
+                    "Manage stress",
+                    "Consult a doctor for persistent symptoms"
+                ]
+            },
+            {
+                name: "Gastritis",
+                brief: "Gastritis is inflammation of the stomach lining, often caused by infection, certain medications, alcohol, or stress.",
+                symptoms: [
+                    "Upper abdominal pain or discomfort",
+                    "Nausea or vomiting",
+                    "Loss of appetite",
+                    "Bloating or feeling full quickly",
+                    "Indigestion or heartburn",
+                    "Black, tarry stools (if bleeding)",
+                    "Hiccups",
+                    "Belching"
+                ],
+                warnings: [
+                    "Severe or persistent abdominal pain",
+                    "Vomiting blood or coffee-ground material",
+                    "Black or tarry stools",
+                    "Unintentional weight loss",
+                    "Difficulty swallowing",
+                    "Symptoms not improving with treatment",
+                    "High fever with abdominal pain",
+                    "Signs of dehydration"
+                ],
+                precautions: [
+                    "Avoid spicy, acidic, or fried foods",
+                    "Eat small, frequent meals",
+                    "Limit alcohol and caffeine",
+                    "Avoid NSAIDs and aspirin unless prescribed",
+                    "Manage stress",
+                    "Do not smoke",
+                    "Stay hydrated",
+                    "Rest as needed"
+                ],
+                medicines: [
+                    "Antacids for symptom relief",
+                    "Proton pump inhibitors (Omeprazole, Pantoprazole)",
+                    "H2 blockers (Ranitidine, Famotidine)",
+                    "Antibiotics for H. pylori infection (if diagnosed)",
+                    "Sucralfate for stomach lining protection",
+                    "Avoid self-medication with painkillers",
+                    "Consult doctor for persistent symptoms",
+                    "Follow prescribed treatment course"
+                ],
+                prevention: [
+                    "Avoid excessive alcohol",
+                    "Limit use of NSAIDs",
+                    "Eat a balanced diet",
+                    "Manage stress",
+                    "Practice good hand hygiene",
+                    "Treat infections promptly",
+                    "Avoid smoking",
+                    "Regular medical checkups if at risk"
+                ]
+            },
+            {
+                name: "Food Poisoning",
+                brief: "Food poisoning is illness caused by consuming contaminated food or water, leading to digestive symptoms and sometimes fever.",
+                symptoms: [
+                    "Nausea and vomiting",
+                    "Diarrhea (sometimes bloody)",
+                    "Abdominal cramps or pain",
+                    "Fever and chills",
+                    "Loss of appetite",
+                    "Weakness or fatigue",
+                    "Headache",
+                    "Dehydration (dry mouth, low urine output)"
+                ],
+                warnings: [
+                    "Severe dehydration (dizziness, confusion, low urine)",
+                    "Blood in vomit or stool",
+                    "High fever (above 102°F/39°C)",
+                    "Persistent vomiting or diarrhea (>2 days)",
+                    "Signs of shock (rapid pulse, low BP)",
+                    "Food poisoning in infants, elderly, or immunocompromised",
+                    "Difficulty breathing",
+                    "Severe abdominal pain"
+                ],
+                precautions: [
+                    "Drink plenty of fluids (ORS, clear broths)",
+                    "Rest and avoid solid foods until vomiting stops",
+                    "Eat bland foods when tolerated (rice, toast, bananas)",
+                    "Avoid dairy, caffeine, alcohol, and fatty foods",
+                    "Wash hands frequently",
+                    "Do not prepare food for others while ill",
+                    "Monitor for signs of dehydration",
+                    "Seek medical help if symptoms worsen"
+                ],
+                medicines: [
+                    "ORS for rehydration",
+                    "Paracetamol for fever",
+                    "Antiemetics (Ondansetron, if prescribed)",
+                    "Antibiotics only if prescribed (bacterial cause)",
+                    "Probiotics (may help recovery)",
+                    "Avoid anti-diarrheal medicines unless advised",
+                    "Consult doctor for persistent symptoms",
+                    "Hospitalization for severe cases"
+                ],
+                prevention: [
+                    "Practice safe food handling and hygiene",
+                    "Cook food thoroughly",
+                    "Avoid raw or undercooked meats/eggs",
+                    "Wash fruits and vegetables",
+                    "Drink clean, safe water",
+                    "Refrigerate leftovers promptly",
+                    "Avoid street food in unsafe conditions",
+                    "Wash hands before eating"
+                ]
+            },
+            {
+                name: "Depression",
+                brief: "Depression is a common mental health disorder characterized by persistent sadness, loss of interest, and impaired daily functioning.",
+                symptoms: [
+                    "Persistent sadness or low mood",
+                    "Loss of interest in activities",
+                    "Fatigue or low energy",
+                    "Sleep disturbances (too much or too little)",
+                    "Changes in appetite or weight",
+                    "Difficulty concentrating",
+                    "Feelings of worthlessness or guilt",
+                    "Thoughts of self-harm or suicide"
+                ],
+                warnings: [
+                    "Thoughts of self-harm or suicide",
+                    "Inability to perform daily activities",
+                    "Severe withdrawal from social contact",
+                    "Neglect of personal hygiene",
+                    "Substance abuse",
+                    "Rapid worsening of symptoms",
+                    "Psychotic symptoms (hallucinations, delusions)",
+                    "Depression in children or elderly"
+                ],
+                precautions: [
+                    "Seek professional help (counselor, psychiatrist)",
+                    "Talk to trusted friends or family",
+                    "Maintain regular routine",
+                    "Engage in physical activity",
+                    "Avoid alcohol and recreational drugs",
+                    "Practice relaxation techniques",
+                    "Monitor for worsening symptoms",
+                    "Follow prescribed treatment plan"
+                ],
+                medicines: [
+                    "Antidepressants (SSRIs, SNRIs, as prescribed)",
+                    "Psychotherapy (CBT, counseling)",
+                    "Mood stabilizers (if needed)",
+                    "Sleep aids (short-term, if prescribed)",
+                    "Avoid self-medication",
+                    "Regular follow-up with mental health professional",
+                    "Lifestyle modifications",
+                    "Emergency help for suicidal thoughts"
+                ],
+                prevention: [
+                    "Maintain social connections",
+                    "Manage stress effectively",
+                    "Exercise regularly",
+                    "Eat a balanced diet",
+                    "Get adequate sleep",
+                    "Seek help early for symptoms",
+                    "Avoid substance abuse",
+                    "Practice mindfulness and self-care"
+                ]
+            },
+            {
+                name: "Anxiety",
+                brief: "Anxiety is excessive worry or fear that interferes with daily life. It can be generalized or related to specific situations.",
+                symptoms: [
+                    "Excessive worry or fear",
+                    "Restlessness or feeling on edge",
+                    "Rapid heartbeat or palpitations",
+                    "Sweating or trembling",
+                    "Difficulty concentrating",
+                    "Sleep disturbances",
+                    "Muscle tension",
+                    "Irritability"
+                ],
+                warnings: [
+                    "Panic attacks (sudden intense fear)",
+                    "Difficulty breathing or chest pain",
+                    "Thoughts of self-harm",
+                    "Inability to function at work or home",
+                    "Substance abuse to cope",
+                    "Severe avoidance of situations",
+                    "Rapid worsening of symptoms",
+                    "Physical symptoms without medical cause"
+                ],
+                precautions: [
+                    "Practice relaxation techniques (deep breathing, meditation)",
+                    "Limit caffeine and stimulants",
+                    "Maintain regular sleep schedule",
+                    "Exercise regularly",
+                    "Talk to supportive friends or family",
+                    "Seek professional counseling",
+                    "Avoid self-medicating with alcohol/drugs",
+                    "Follow prescribed treatment"
+                ],
+                medicines: [
+                    "Anti-anxiety medications (Benzodiazepines, short-term, as prescribed)",
+                    "SSRIs/SNRIs (for chronic anxiety)",
+                    "Cognitive behavioral therapy (CBT)",
+                    "Beta-blockers (for physical symptoms, if prescribed)",
+                    "Lifestyle changes",
+                    "Avoid abrupt stopping of medicines",
+                    "Regular follow-up with doctor",
+                    "Emergency help for severe symptoms"
+                ],
+                prevention: [
+                    "Develop healthy coping strategies",
+                    "Practice mindfulness",
+                    "Exercise regularly",
+                    "Limit caffeine and alcohol",
+                    "Maintain social support",
+                    "Manage stress proactively",
+                    "Seek help early",
+                    "Maintain healthy lifestyle"
+                ]
+            },
+            // Menstrual Issues
+            {
+                name: "Menstrual Issues",
+                brief: "Menstrual issues include irregular periods, heavy bleeding, painful cramps, or missed periods. Causes range from hormonal imbalance to underlying health conditions.",
+                symptoms: [
+                    "Irregular or missed periods",
+                    "Heavy or prolonged bleeding",
+                    "Severe menstrual cramps (dysmenorrhea)",
+                    "Spotting between periods",
+                    "Breast tenderness",
+                    "Mood changes",
+                    "Bloating",
+                    "Fatigue"
+                ],
+                warnings: [
+                    "Bleeding lasting more than 7 days",
+                    "Passing large blood clots",
+                    "Severe pain not relieved by medicines",
+                    "Sudden change in menstrual pattern",
+                    "Bleeding between periods or after sex",
+                    "Symptoms of anemia (fatigue, pale skin)",
+                    "Fever with pelvic pain",
+                    "Missed periods for 3+ cycles (not pregnant)"
+                ],
+                precautions: [
+                    "Track menstrual cycle",
+                    "Maintain healthy weight",
+                    "Manage stress",
+                    "Use heat therapy for cramps",
+                    "Stay hydrated",
+                    "Exercise regularly",
+                    "Avoid excessive caffeine and salt",
+                    "Consult doctor for persistent issues"
+                ],
+                medicines: [
+                    "Pain relievers (Paracetamol, Ibuprofen)",
+                    "Hormonal contraceptives (as prescribed)",
+                    "Tranexamic acid for heavy bleeding (doctor prescribed)",
+                    "Iron supplements for anemia",
+                    "Antispasmodics for cramps",
+                    "Lifestyle changes",
+                    "Consult gynecologist for persistent symptoms",
+                    "Avoid self-medication with hormones"
+                ],
+                prevention: [
+                    "Maintain healthy lifestyle",
+                    "Manage stress",
+                    "Exercise regularly",
+                    "Eat a balanced diet",
+                    "Track cycles for early detection of issues",
+                    "Seek early treatment for irregularities",
+                    "Avoid smoking and excess alcohol",
+                    "Regular gynecological checkups"
+                ],
+                supportTipsForPartners: [
+                    "Be understanding and supportive during difficult days",
+                    "Help with household chores during menstrual periods",
+                    "Keep track of her cycle to be more supportive",
+                    "Stock up on feminine hygiene products",
+                    "Offer comfort foods and warm drinks",
+                    "Give space when needed, but be available for support",
+                    "Learn about menstrual health to better understand",
+                    "Encourage seeking medical help for severe symptoms",
+                    "Be patient with mood changes and physical discomfort",
+                    "Offer heating pads, massages, or other comfort measures",
+                    "Offer comfort items like a heating pad, warm water bottle, or their favorite snacks (such as dark chocolate, fruit, or herbal tea).",
+                    "Be patient and understanding with mood changes.",
+                    "Give genuine compliments and emotional support.",
+                    "Help with chores or daily tasks to reduce stress.",
+                    "Respect their need for rest or space.",
+                    "Surprise them with small gifts or kind gestures (flowers, a handwritten note, or a cozy blanket).",
+                    "Listen without judgment if they want to talk.",
+                    "Show empathy and avoid minimizing their discomfort.",
+                    "Items to give: sanitary pads/tampons (Whisper, Stayfree, Sofy), pain relief patches (Sirona, Nua), soft tissues, a cute plush toy, or a relaxing essential oil (lavender, peppermint).",
+                    "Food items to give: dark chocolate (Cadbury Bournville, Lindt, Amul, Hershey's), fresh fruits (bananas, berries, apples), yogurt, nuts (almonds, walnuts), herbal teas (chamomile, ginger, peppermint), warm soups, or homemade comfort food."
+                ]
+            },
+
+            // Pregnancy Care
+            {
+                name: "Pregnancy Care",
+                brief: "Pregnancy care involves regular checkups, healthy lifestyle, and monitoring for complications to ensure the well-being of mother and baby.",
+                symptoms: [
+                    "Missed period",
+                    "Nausea or vomiting (morning sickness)",
+                    "Breast tenderness",
+                    "Fatigue",
+                    "Frequent urination",
+                    "Mild abdominal cramps",
+                    "Mood changes",
+                    "Food cravings or aversions"
+                ],
+                warnings: [
+                    "Severe abdominal pain or bleeding",
+                    "Persistent vomiting (cannot keep fluids down)",
+                    "Severe headache or vision changes",
+                    "Swelling of hands, face, or feet",
+                    "Decreased fetal movements",
+                    "High fever",
+                    "Signs of preterm labor (contractions, leaking fluid)",
+                    "Shortness of breath or chest pain"
+                ],
+                precautions: [
+                    "Attend regular antenatal checkups",
+                    "Take prenatal vitamins (folic acid, iron, calcium)",
+                    "Eat a balanced, nutritious diet",
+                    "Stay hydrated",
+                    "Avoid alcohol, smoking, and certain medications",
+                    "Get adequate rest",
+                    "Practice safe physical activity (as advised)",
+                    "Monitor for warning signs"
+                ],
+                medicines: [
+                    "Prenatal vitamins (folic acid, iron, calcium)",
+                    "Antacids for heartburn (as advised)",
+                    "Paracetamol for mild pain/fever (doctor approved)",
+                    "Anti-nausea medicines (if prescribed)",
+                    "Vaccinations (as per schedule)",
+                    "Avoid self-medication",
+                    "Consult doctor before taking any medicine",
+                    "Treat infections promptly"
+                ],
+                prevention: [
+                    "Plan pregnancy with preconception counseling",
+                    "Maintain healthy weight",
+                    "Avoid harmful substances",
+                    "Get vaccinated before/during pregnancy (as advised)",
+                    "Eat a balanced diet",
+                    "Manage chronic conditions (diabetes, hypertension)",
+                    "Practice good hygiene",
+                    "Regular antenatal visits"
+                ],
+                supportTipsForPartners: [
+                    "Attend prenatal appointments together when possible",
+                    "Help with household chores as pregnancy progresses",
+                    "Be patient with mood swings and physical discomfort",
+                    "Learn about pregnancy stages and what to expect",
+                    "Support healthy eating and lifestyle choices",
+                    "Help prepare for baby's arrival (nursery, supplies)",
+                    "Be understanding of fatigue and need for rest",
+                    "Offer emotional support and reassurance",
+                    "Help monitor for warning signs and symptoms",
+                    "Participate in parenting classes and preparation",
+                    "Be supportive during labor and delivery",
+                    "Create a calm, stress-free environment at home"
+                ]
+            }
+        ]; // <-- CLOSE THE ARRAY HERE
+
+        function openModal(index) {
+            const modal = document.getElementById('diseaseModal');
+            const mainContent = document.getElementById('mainContent');
+
+            mainContent.style.filter = 'blur(3px)';
+
+            const disease = diseases[index];
+            document.getElementById('modalTitle').textContent = disease.name;
+
+            if (disease.brief) {
+                document.getElementById('modalBrief').textContent = disease.brief;
+                document.getElementById('modalBrief').classList.remove('hidden');
+            } else {
+                document.getElementById('modalBrief').classList.add('hidden');
+            }
+
+            document.getElementById('modalSymptoms').innerHTML = disease.symptoms.map(s => `<li>${s}</li>`).join('');
+            document.getElementById('modalWarnings').innerHTML = disease.warnings.map(w => `<li>${w}</li>`).join('');
+            document.getElementById('modalPrecautions').innerHTML = disease.precautions.map(p => `<li>${p}</li>`).join('');
+            document.getElementById('modalMedicines').innerHTML = disease.medicines.map(m => `<li>${m}</li>`).join('');
+            document.getElementById('modalPrevention').innerHTML = disease.prevention.map(p => `<li>${p}</li>`).join('');
+            // Special handling for supportTipsForPartners (only present for "Menstrual Issues")
+            const tipsSection = document.getElementById('modalSupportTipsForPartners');
+            if (disease.supportTipsForPartners) {
+                tipsSection.innerHTML = `
+                    <h3 class="modal-section-title font-semibold mb-3 text-lg">💡 Support Tips for Partners (Menstrual Support):</h3>
+                    <ul class="list-disc list-inside text-gray-700 space-y-1">
+                        ${disease.supportTipsForPartners.map(t => `<li>${t}</li>`).join('')}
+                    </ul>
+                `;
+                tipsSection.style.display = '';
+            } else {
+                tipsSection.innerHTML = '';
+                tipsSection.style.display = 'none';
+            }
+
+            modal.classList.remove('hidden');
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('diseaseModal');
+            const mainContent = document.getElementById('mainContent');
+            modal.classList.add('hidden');
+            mainContent.style.filter = '';
+        }
+
+        // Modal click-to-close and Escape key handler
+        document.addEventListener('DOMContentLoaded', function () {
+            const modal = document.getElementById('diseaseModal');
+            if (modal) {
+                modal.onclick = function (event) {
+                    if (event.target === modal) {
+                        closeModal();
+                    }
+                };
+            }
+        });
+
+        document.addEventListener('keydown', function (event) {
+            if (event.key === 'Escape') {
+                const modal = document.getElementById('diseaseModal');
+                if (modal && !modal.classList.contains('hidden')) {
+                    closeModal();
+                }
+            }
+        });
+    </script>
+
+</body>
+
+</html>

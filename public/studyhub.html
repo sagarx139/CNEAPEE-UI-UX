@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Learning+ (Classes 7-12) | Powered by Cneapee+</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --bg-color: #f8f9fa;
+            --text-primary: #111827;
+            --text-secondary: #6b7280;
+            --border-color: #e5e7eb;
+            --card-bg: #ffffff;
+            --accent-color: #3b82f6; /* Blue-500 */
+            --accent-hover: #f0f5ff;
+            --shadow-color-rgb: 0, 0, 0;
+        }
+
+        html.dark {
+            --bg-color: #0d1117;
+            --text-primary: #f9fafb;
+            --text-secondary: #9ca3af;
+            --border-color: #30363d;
+            --card-bg: #161b22;
+            --accent-color: #60a5fa; /* Blue-400 */
+            --accent-hover: #1f2937;
+            --shadow-color-rgb: 0, 0, 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .accordion-card .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .accordion-card.is-open .accordion-content {
+            max-height: 2000px; /* Set a generous max-height */
+        }
+        
+        .accordion-card.is-open .accordion-header-icon {
+            transform: rotate(180deg);
+        }
+        
+        .section-divider {
+            border-top: 1px solid var(--border-color);
+            margin-top: 5rem;
+            margin-bottom: 5rem;
+        }
+    </style>
+</head>
+
+<body class="antialiased">
+
+    <!-- Header -->
+    <header class="sticky top-0 z-50 bg-[var(--bg-color)]/80 backdrop-blur-lg border-b border-[var(--border-color)] transition-colors duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <div class="flex items-center">
+                    <h1 class="text-3xl font-extrabold text-[var(--text-primary)]">
+                        Learning<span class="text-[var(--accent-color)]">+</span>
+                    </h1>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <p class="hidden sm:block text-sm font-medium text-[var(--text-secondary)]">Powered by CNEAPEE+</p>
+                    <button id="theme-toggle" class="p-2 rounded-full text-[var(--text-secondary)] hover:bg-[var(--accent-hover)] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--accent-color)] focus:ring-offset-[var(--bg-color)] transition-all duration-300">
+                        <svg id="theme-icon-light" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                        </svg>
+                        <svg id="theme-icon-dark" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                        </svg>
+                        <span class="sr-only">Toggle theme</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-24">
+        <div class="text-center mb-20">
+            <h2 class="text-5xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-teal-400 sm:text-6xl md:text-7xl">
+                Learning Simplified.
+            </h2>
+            <p class="mt-6 max-w-2xl mx-auto text-lg leading-relaxed text-[var(--text-secondary)]">
+                A curated collection of essential topics in Science, Mathematics, and Social Science. Click any subject to explore detailed learning resources from Wikipedia.
+            </p>
+        </div>
+        
+        <div id="sections-container" class="space-y-20">
+            <!-- Sections will be generated here -->
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-[var(--border-color)] mt-24">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0">
+                 <p class="text-center sm:text-left text-sm text-[var(--text-secondary)]">
+                    &copy; 2025 Learning+. All Rights Reserved.
+                 </p>
+                 <p class="text-center sm:text-right text-sm font-medium text-[var(--text-secondary)]">
+                    Powered by Cneapee+
+                 </p>
+            </div>
+        </div>
+    </footer>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- Theme Management ---
+            const themeToggle = document.getElementById('theme-toggle');
+            const lightIcon = document.getElementById('theme-icon-light');
+            const darkIcon = document.getElementById('theme-icon-dark');
+
+            const setTheme = (isDark) => {
+                document.documentElement.classList.toggle('dark', isDark);
+                lightIcon.classList.toggle('hidden', !isDark);
+                darkIcon.classList.toggle('hidden', isDark);
+                localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            };
+
+            const savedTheme = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            setTheme(savedTheme ? savedTheme === 'dark' : prefersDark);
+
+            themeToggle.addEventListener('click', () => setTheme(!document.documentElement.classList.contains('dark')));
+
+            // --- Data Store ---
+            const studyHubData = {
+                "mostCommon": {
+                    "Science": [{
+                        "chapterName": "Fundamental Concepts",
+                        "chapterUrl": "https://en.wikipedia.org/wiki/Science",
+                        "topics": [
+                            { "name": "The Scientific Method", "url": "https://en.wikipedia.org/wiki/Scientific_method" },
+                            { "name": "The Cell", "url": "https://en.wikipedia.org/wiki/Cell_(biology)" },
+                            { "name": "Photosynthesis", "url": "https://en.wikipedia.org/wiki/Photosynthesis" },
+                            { "name": "Newton's Laws of Motion", "url": "https://en.wikipedia.org/wiki/Newton%27s_laws_of_motion" },
+                            { "name": "Periodic Table", "url": "https://en.wikipedia.org/wiki/Periodic_table" },
+                            { "name": "Chemical Reaction", "url": "https://en.wikipedia.org/wiki/Chemical_reaction" },
+                            { "name": "DNA", "url": "https://en.wikipedia.org/wiki/DNA" },
+                            { "name": "Theory of Relativity", "url": "https://en.wikipedia.org/wiki/Theory_of_relativity" }
+                        ]
+                    }],
+                    "Mathematics": [{
+                        "chapterName": "Core Principles",
+                        "chapterUrl": "https://en.wikipedia.org/wiki/Mathematics",
+                        "topics": [
+                            { "name": "Pythagorean Theorem", "url": "https://en.wikipedia.org/wiki/Pythagorean_theorem" },
+                            { "name": "Algebraic Expressions", "url": "https://en.wikipedia.org/wiki/Algebraic_expression" },
+                            { "name": "Linear Equations", "url": "https://en.wikipedia.org/wiki/Linear_equation" },
+                            { "name": "Calculus", "url": "https://en.wikipedia.org/wiki/Calculus" },
+                            { "name": "Statistics", "url": "https://en.wikipedia.org/wiki/Statistics" },
+                            { "name": "Probability", "url": "https://en.wikipedia.org/wiki/Probability" }
+                        ]
+                    }],
+                    "Social Science": [{
+                        "chapterName": "Pivotal Ideas & Events",
+                        "chapterUrl": "https://en.wikipedia.org/wiki/Social_science",
+                        "topics": [
+                            { "name": "Democracy", "url": "https://en.wikipedia.org/wiki/Democracy" },
+                            { "name": "The Indian Constitution", "url": "https://en.wikipedia.org/wiki/Constitution_of_India" },
+                            { "name": "The French Revolution", "url": "https://en.wikipedia.org/wiki/French_Revolution" },
+                            { "name": "World War I", "url": "https://en.wikipedia.org/wiki/World_War_I" },
+                            { "name": "Globalization", "url": "https://en.wikipedia.org/wiki/Globalization" },
+                            { "name": "Supply and Demand", "url": "https://en.wikipedia.org/wiki/Supply_and_demand" }
+                        ]
+                    }]
+                },
+                "grade7": {
+                    "Science": [
+                        { "chapterName": "Nutrition in Plants", "chapterUrl": "https://en.wikipedia.org/wiki/Plant_nutrition", "topics": [{ "name": "Modes of Nutrition", "url": "https://en.wikipedia.org/wiki/Nutrition" }, { "name": "Photosynthesis", "url": "https://en.wikipedia.org/wiki/Photosynthesis" }] },
+                        { "chapterName": "Nutrition in Animals", "chapterUrl": "https://en.wikipedia.org/wiki/Animal_nutrition", "topics": [{ "name": "Human Digestive System", "url": "https://en.wikipedia.org/wiki/Human_digestive_system" }, { "name": "Digestion in Ruminants", "url": "https://en.wikipedia.org/wiki/Ruminant" }] },
+                        { "chapterName": "Fibre to Fabric", "chapterUrl": "https://en.wikipedia.org/wiki/Textile", "topics": [{ "name": "Wool", "url": "https://en.wikipedia.org/wiki/Wool" }, { "name": "Silk", "url": "https://en.wikipedia.org/wiki/Silk" }] },
+                        { "chapterName": "Heat", "chapterUrl": "https://en.wikipedia.org/wiki/Heat", "topics": [{ "name": "Conduction, Convection, Radiation", "url": "https://en.wikipedia.org/wiki/Heat_transfer" }] },
+                        { "chapterName": "Acids, Bases and Salts", "chapterUrl": "https://en.wikipedia.org/wiki/Acid%E2%80%93base_reaction", "topics": [{ "name": "Indicators", "url": "https://en.wikipedia.org/wiki/PH_indicator" }, { "name": "Neutralisation", "url": "https://en.wikipedia.org/wiki/Neutralization_(chemistry)" }] },
+                        { "chapterName": "Physical and Chemical Changes", "chapterUrl": "https://en.wikipedia.org/wiki/Chemical_property", "topics": [{ "name": "Physical Change", "url": "https://en.wikipedia.org/wiki/Physical_change" }, { "name": "Chemical Change", "url": "https://en.wikipedia.org/wiki/Chemical_change" }] },
+                        { "chapterName": "Respiration in Organisms", "chapterUrl": "https://en.wikipedia.org/wiki/Cellular_respiration", "topics": [{ "name": "Aerobic Respiration", "url": "https://en.wikipedia.org/wiki/Aerobic_respiration" }, { "name": "Anaerobic Respiration", "url": "https://en.wikipedia.org/wiki/Anaerobic_respiration" }] },
+                        { "chapterName": "Transportation in Animals and Plants", "chapterUrl": "https://en.wikipedia.org/wiki/Vascular_plant", "topics": [{ "name": "Circulatory System", "url": "https://en.wikipedia.org/wiki/Circulatory_system" }, { "name": "Xylem and Phloem", "url": "https://en.wikipedia.org/wiki/Vascular_tissue" }] },
+                        { "chapterName": "Reproduction in Plants", "chapterUrl": "https://en.wikipedia.org/wiki/Plant_reproduction", "topics": [{ "name": "Sexual Reproduction", "url": "https://en.wikipedia.org/wiki/Sexual_reproduction" }, { "name": "Asexual Reproduction", "url": "https://en.wikipedia.org/wiki/Asexual_reproduction" }] },
+                        { "chapterName": "Motion and Time", "chapterUrl": "https://en.wikipedia.org/wiki/Motion", "topics": [{ "name": "Speed", "url": "https://en.wikipedia.org/wiki/Speed" }, { "name": "Simple Pendulum", "url": "https://en.wikipedia.org/wiki/Pendulum" }] },
+                        { "chapterName": "Electric Current and its Effects", "chapterUrl": "https://en.wikipedia.org/wiki/Electric_current", "topics": [{ "name": "Heating Effect", "url": "https://en.wikipedia.org/wiki/Joule_heating" }, { "name": "Magnetic Effect", "url": "https://en.wikipedia.org/wiki/Electromagnetism" }] }
+                    ],
+                    "Mathematics": [
+                        { "chapterName": "Integers", "chapterUrl": "https://en.wikipedia.org/wiki/Integer", "topics": [{ "name": "Properties of Integers", "url": "https://en.wikipedia.org/wiki/Integer" }] },
+                        { "chapterName": "Fractions and Decimals", "chapterUrl": "https://en.wikipedia.org/wiki/Fraction", "topics": [{ "name": "Operations on Fractions", "url": "https://en.wikipedia.org/wiki/Fraction" }] },
+                        { "chapterName": "Data Handling", "chapterUrl": "https://en.wikipedia.org/wiki/Statistics", "topics": [{ "name": "Mean, Median, Mode", "url": "https://en.wikipedia.org/wiki/Central_tendency" }] },
+                        { "chapterName": "Simple Equations", "chapterUrl": "https://en.wikipedia.org/wiki/Equation", "topics": [{ "name": "Solving Equations", "url": "https://en.wikipedia.org/wiki/Solving_equations" }] },
+                        { "chapterName": "Lines and Angles", "chapterUrl": "https://en.wikipedia.org/wiki/Angle", "topics": [{ "name": "Parallel Lines", "url": "https://en.wikipedia.org/wiki/Parallel_(geometry)" }, { "name": "Transversal", "url": "https://en.wikipedia.org/wiki/Transversal_(geometry)" }] },
+                        { "chapterName": "The Triangle and its Properties", "chapterUrl": "https://en.wikipedia.org/wiki/Triangle", "topics": [{ "name": "Pythagoras Property", "url": "https://en.wikipedia.org/wiki/Pythagorean_theorem" }] },
+                        { "chapterName": "Congruence of Triangles", "chapterUrl": "https://en.wikipedia.org/wiki/Congruence_(geometry)", "topics": [{ "name": "Criteria for Congruence", "url": "https://en.wikipedia.org/wiki/Congruence_(geometry)" }] },
+                        { "chapterName": "Comparing Quantities", "chapterUrl": "https://en.wikipedia.org/wiki/Ratio", "topics": [{ "name": "Percentage", "url": "https://en.wikipedia.org/wiki/Percentage" }, { "name": "Simple Interest", "url": "https://en.wikipedia.org/wiki/Interest" }] },
+                        { "chapterName": "Rational Numbers", "chapterUrl": "https://en.wikipedia.org/wiki/Rational_number", "topics": [{ "name": "Operations", "url": "https://en.wikipedia.org/wiki/Rational_number" }] },
+                        { "chapterName": "Perimeter and Area", "chapterUrl": "https://en.wikipedia.org/wiki/Area", "topics": [{ "name": "Area of Parallelogram", "url": "https://en.wikipedia.org/wiki/Parallelogram" }, { "name": "Area of Circle", "url": "https://en.wikipedia.org/wiki/Area_of_a_circle" }] }
+                    ],
+                    "Social Science": [
+                        { "chapterName": "Tracing Changes Through A Thousand Years", "chapterUrl": "https://en.wikipedia.org/wiki/History_of_India", "topics": [{ "name": "Medieval India", "url": "https://en.wikipedia.org/wiki/Medieval_India" }] },
+                        { "chapterName": "The Delhi Sultanate", "chapterUrl": "https://en.wikipedia.org/wiki/Delhi_Sultanate", "topics": [{ "name": "Expansion of the Sultanate", "url": "https://en.wikipedia.org/wiki/Delhi_Sultanate" }] },
+                        { "chapterName": "The Mughal Empire", "chapterUrl": "https://en.wikipedia.org/wiki/Mughal_Empire", "topics": [{ "name": "Mughal Emperors", "url": "https://en.wikipedia.org/wiki/Mughal_emperors" }] },
+                        { "chapterName": "Environment", "chapterUrl": "https://en.wikipedia.org/wiki/Natural_environment", "topics": [{ "name": "Ecosystem", "url": "https://en.wikipedia.org/wiki/Ecosystem" }] },
+                        { "chapterName": "On Equality", "chapterUrl": "https://en.wikipedia.org/wiki/Social_equality", "topics": [{ "name": "Universal Adult Franchise", "url": "https://en.wikipedia.org/wiki/Universal_suffrage" }] },
+                        { "chapterName": "Role of the Government in Health", "chapterUrl": "https://en.wikipedia.org/wiki/Health_care_in_India", "topics": [{ "name": "Public and Private Healthcare", "url": "https://en.wikipedia.org/wiki/Health_care" }] }
+                    ]
+                },
+                "grade8": {
+                    "Science": [
+                        { "chapterName": "Crop Production and Management", "chapterUrl": "https://en.wikipedia.org/wiki/Agronomy", "topics": [{ "name": "Agricultural Practices", "url": "https://en.wikipedia.org/wiki/Agriculture" }] },
+                        { "chapterName": "Microorganisms: Friend and Foe", "chapterUrl": "https://en.wikipedia.org/wiki/Microorganism", "topics": [{ "name": "Bacteria, Fungi, Viruses", "url": "https://en.wikipedia.org/wiki/Microorganism" }, { "name": "Food Preservation", "url": "https://en.wikipedia.org/wiki/Food_preservation" }] },
+                        { "chapterName": "Coal and Petroleum", "chapterUrl": "https://en.wikipedia.org/wiki/Fossil_fuel", "topics": [{ "name": "Fossil Fuels", "url": "https://en.wikipedia.org/wiki/Fossil_fuel" }] },
+                        { "chapterName": "Combustion and Flame", "chapterUrl": "https://en.wikipedia.org/wiki/Combustion", "topics": [{ "name": "Types of Combustion", "url": "https://en.wikipedia.org/wiki/Combustion" }] },
+                        { "chapterName": "Cell — Structure and Functions", "chapterUrl": "https://en.wikipedia.org/wiki/Cell_(biology)", "topics": [{ "name": "Organelles", "url": "https://en.wikipedia.org/wiki/Organelle" }] },
+                        { "chapterName": "Reproduction in Animals", "chapterUrl": "https://en.wikipedia.org/wiki/Animal_reproduction", "topics": [{ "name": "Sexual Reproduction in Humans", "url": "https://en.wikipedia.org/wiki/Human_reproduction" }] },
+                        { "chapterName": "Force and Pressure", "chapterUrl": "https://en.wikipedia.org/wiki/Force", "topics": [{ "name": "Contact & Non-Contact Forces", "url": "https://en.wikipedia.org/wiki/Force" }] },
+                        { "chapterName": "Friction", "chapterUrl": "https://en.wikipedia.org/wiki/Friction", "topics": [{ "name": "Types of Friction", "url": "https://en.wikipedia.org/wiki/Friction" }] },
+                        { "chapterName": "Sound", "chapterUrl": "https://en.wikipedia.org/wiki/Sound", "topics": [{ "name": "Propagation of Sound", "url": "https://en.wikipedia.org/wiki/Sound" }] },
+                        { "chapterName": "Light", "chapterUrl": "https://en.wikipedia.org/wiki/Light", "topics": [{ "name": "Laws of Reflection", "url": "https://en.wikipedia.org/wiki/Reflection_(physics)" }, { "name": "Human Eye", "url": "https://en.wikipedia.org/wiki/Human_eye" }] }
+                    ],
+                    "Mathematics": [
+                        { "chapterName": "Rational Numbers", "chapterUrl": "https://en.wikipedia.org/wiki/Rational_number", "topics": [{ "name": "Properties", "url": "https://en.wikipedia.org/wiki/Rational_number" }] },
+                        { "chapterName": "Linear Equations in One Variable", "chapterUrl": "https://en.wikipedia.org/wiki/Linear_equation", "topics": [{ "name": "Solving Equations", "url": "https://en.wikipedia.org/wiki/Linear_equation" }] },
+                        { "chapterName": "Understanding Quadrilaterals", "chapterUrl": "https://en.wikipedia.org/wiki/Quadrilateral", "topics": [{ "name": "Types of Quadrilaterals", "url": "https://en.wikipedia.org/wiki/Quadrilateral" }] },
+                        { "chapterName": "Data Handling", "chapterUrl": "https://en.wikipedia.org/wiki/Data_handling", "topics": [{ "name": "Pie Chart", "url": "https://en.wikipedia.org/wiki/Pie_chart" }, { "name": "Probability", "url": "https://en.wikipedia.org/wiki/Probability" }] },
+                        { "chapterName": "Squares and Square Roots", "chapterUrl": "https://en.wikipedia.org/wiki/Square_root", "topics": [{ "name": "Finding Square Roots", "url": "https://en.wikipedia.org/wiki/Square_root" }] },
+                        { "chapterName": "Cubes and Cube Roots", "chapterUrl": "https://en.wikipedia.org/wiki/Cube_root", "topics": [{ "name": "Finding Cube Roots", "url": "https://en.wikipedia.org/wiki/Cube_root" }] },
+                        { "chapterName": "Comparing Quantities", "chapterUrl": "https://en.wikipedia.org/wiki/Ratio", "topics": [{ "name": "Compound Interest", "url": "https://en.wikipedia.org/wiki/Compound_interest" }] },
+                        { "chapterName": "Algebraic Expressions and Identities", "chapterUrl": "https://en.wikipedia.org/wiki/Algebraic_expression", "topics": [{ "name": "Standard Identities", "url": "https://en.wikipedia.org/wiki/Algebraic_identity" }] },
+                        { "chapterName": "Mensuration", "chapterUrl": "https://en.wikipedia.org/wiki/Mensuration", "topics": [{ "name": "Area of Trapezium", "url": "https://en.wikipedia.org/wiki/Trapezoid" }, { "name": "Volume of Cube, Cuboid", "url": "https://en.wikipedia.org/wiki/Volume" }] },
+                        { "chapterName": "Factorisation", "chapterUrl": "https://en.wikipedia.org/wiki/Factorization", "topics": [{ "name": "Factorization Methods", "url": "https://en.wikipedia.org/wiki/Factorization" }] }
+                    ],
+                    "Social Science": [
+                        { "chapterName": "From Trade to Territory", "chapterUrl": "https://en.wikipedia.org/wiki/Company_rule_in_India", "topics": [{ "name": "East India Company", "url": "https://en.wikipedia.org/wiki/East_India_Company" }] },
+                        { "chapterName": "When People Rebel: 1857 and After", "chapterUrl": "https://en.wikipedia.org/wiki/Indian_Rebellion_of_1857", "topics": [{ "name": "Indian Rebellion of 1857", "url": "https://en.wikipedia.org/wiki/Indian_Rebellion_of_1857" }] },
+                        { "chapterName": "The Making of the National Movement", "chapterUrl": "https://en.wikipedia.org/wiki/Indian_independence_movement", "topics": [{ "name": "Indian National Congress", "url": "https://en.wikipedia.org/wiki/Indian_National_Congress" }] },
+                        { "chapterName": "The Indian Constitution", "chapterUrl": "https://en.wikipedia.org/wiki/Constitution_of_India", "topics": [{ "name": "Fundamental Rights", "url": "https://en.wikipedia.org/wiki/Fundamental_Rights_in_India" }] },
+                        { "chapterName": "Why Do We Need a Parliament?", "chapterUrl": "https://en.wikipedia.org/wiki/Parliament_of_India", "topics": [{ "name": "Lok Sabha", "url": "https://en.wikipedia.org/wiki/Lok_Sabha" }, { "name": "Rajya Sabha", "url": "https://en.wikipedia.org/wiki/Rajya_Sabha" }] },
+                        { "chapterName": "Understanding Marginalisation", "chapterUrl": "https://en.wikipedia.org/wiki/Social_exclusion", "topics": [{ "name": "Social exclusion", "url": "https://en.wikipedia.org/wiki/Social_exclusion" }] }
+                    ]
+                },
+                "grade9": {
+                    "Science": [
+                        { "chapterName": "Matter in Our Surroundings", "chapterUrl": "https://en.wikipedia.org/wiki/Matter", "topics": [{ "name": "States of Matter", "url": "https://en.wikipedia.org/wiki/State_of_matter" }] },
+                        { "chapterName": "Is Matter Around Us Pure?", "chapterUrl": "https://en.wikipedia.org/wiki/Chemical_substance", "topics": [{ "name": "Mixtures and Solutions", "url": "https://en.wikipedia.org/wiki/Mixture" }] },
+                        { "chapterName": "Atoms and Molecules", "chapterUrl": "https://en.wikipedia.org/wiki/Atom", "topics": [{ "name": "Dalton's Atomic Theory", "url": "https://en.wikipedia.org/wiki/Atomic_theory" }, { "name": "Mole Concept", "url": "https://en.wikipedia.org/wiki/Mole_(unit)" }] },
+                        { "chapterName": "Structure of the Atom", "chapterUrl": "https://en.wikipedia.org/wiki/Atomic_structure", "topics": [{ "name": "Thomson's, Rutherford's, Bohr's models", "url": "https://en.wikipedia.org/wiki/Atomic_model" }] },
+                        { "chapterName": "The Fundamental Unit of Life", "chapterUrl": "https://en.wikipedia.org/wiki/Cell_(biology)", "topics": [{ "name": "Cell Organelles", "url": "https://en.wikipedia.org/wiki/Organelle" }] },
+                        { "chapterName": "Tissues", "chapterUrl": "https://en.wikipedia.org/wiki/Tissue_(biology)", "topics": [{ "name": "Plant Tissues", "url": "https://en.wikipedia.org/wiki/Plant_tissue" }, { "name": "Animal Tissues", "url": "https://en.wikipedia.org/wiki/Tissue_(biology)" }] },
+                        { "chapterName": "Motion", "chapterUrl": "https://en.wikipedia.org/wiki/Motion", "topics": [{ "name": "Equations of Motion", "url": "https://en.wikipedia.org/wiki/Equations_of_motion" }] },
+                        { "chapterName": "Force and Laws of Motion", "chapterUrl": "https://en.wikipedia.org/wiki/Newton%27s_laws_of_motion", "topics": [{ "name": "Newton's Laws", "url": "https://en.wikipedia.org/wiki/Newton%27s_laws_of_motion" }] },
+                        { "chapterName": "Gravitation", "chapterUrl": "https://en.wikipedia.org/wiki/Gravitation", "topics": [{ "name": "Universal Law of Gravitation", "url": "https://en.wikipedia.org/wiki/Newton%27s_law_of_universal_gravitation" }] },
+                        { "chapterName": "Work and Energy", "chapterUrl": "https://en.wikipedia.org/wiki/Work_(physics)", "topics": [{ "name": "Kinetic & Potential Energy", "url": "https://en.wikipedia.org/wiki/Energy" }] }
+                    ],
+                    "Mathematics": [
+                        { "chapterName": "Number Systems", "chapterUrl": "https://en.wikipedia.org/wiki/Number_system", "topics": [{ "name": "Real Numbers", "url": "https://en.wikipedia.org/wiki/Real_number" }] },
+                        { "chapterName": "Polynomials", "chapterUrl": "https://en.wikipedia.org/wiki/Polynomial", "topics": [{ "name": "Factorization of Polynomials", "url": "https://en.wikipedia.org/wiki/Factorization_of_polynomials" }] },
+                        { "chapterName": "Coordinate Geometry", "chapterUrl": "https://en.wikipedia.org/wiki/Coordinate_geometry", "topics": [{ "name": "Cartesian System", "url": "https://en.wikipedia.org/wiki/Cartesian_coordinate_system" }] },
+                        { "chapterName": "Linear Equations in Two Variables", "chapterUrl": "https://en.wikipedia.org/wiki/Linear_equation", "topics": [{ "name": "Graph of Linear Equation", "url": "https://en.wikipedia.org/wiki/Linear_equation" }] },
+                        { "chapterName": "Introduction to Euclid's Geometry", "chapterUrl": "https://en.wikipedia.org/wiki/Euclidean_geometry", "topics": [{ "name": "Euclid's Postulates", "url": "https://en.wikipedia.org/wiki/Euclidean_geometry" }] },
+                        { "chapterName": "Lines and Angles", "chapterUrl": "https://en.wikipedia.org/wiki/Line_(geometry)", "topics": [{ "name": "Angle Sum Property of Triangle", "url": "https://en.wikipedia.org/wiki/Triangle" }] },
+                        { "chapterName": "Triangles", "chapterUrl": "https://en.wikipedia.org/wiki/Triangle", "topics": [{ "name": "Congruence Rules", "url": "https://en.wikipedia.org/wiki/Congruence_(geometry)" }] },
+                        { "chapterName": "Quadrilaterals", "chapterUrl": "https://en.wikipedia.org/wiki/Quadrilateral", "topics": [{ "name": "Properties of a Parallelogram", "url": "https://en.wikipedia.org/wiki/Parallelogram" }] },
+                        { "chapterName": "Circles", "chapterUrl": "https://en.wikipedia.org/wiki/Circle", "topics": [{ "name": "Theorems on Circles", "url": "https://en.wikipedia.org/wiki/Circle" }] },
+                        { "chapterName": "Surface Areas and Volumes", "chapterUrl": "https://en.wikipedia.org/wiki/Surface_area", "topics": [{ "name": "Cone, Sphere, Hemisphere", "url": "https://en.wikipedia.org/wiki/Volume" }] }
+                    ],
+                    "Social Science": [
+                        { "chapterName": "The French Revolution", "chapterUrl": "https://en.wikipedia.org/wiki/French_Revolution", "topics": [{ "name": "Causes and Effects", "url": "https://en.wikipedia.org/wiki/French_Revolution" }] },
+                        { "chapterName": "Socialism in Europe & the Russian Revolution", "chapterUrl": "https://en.wikipedia.org/wiki/Russian_Revolution", "topics": [{ "name": "Bolsheviks and Mensheviks", "url": "https://en.wikipedia.org/wiki/Russian_Revolution" }] },
+                        { "chapterName": "Nazism and the Rise of Hitler", "chapterUrl": "https://en.wikipedia.org/wiki/Nazism", "topics": [{ "name": "Adolf Hitler", "url": "https://en.wikipedia.org/wiki/Adolf_Hitler" }, { "name": "The Holocaust", "url": "https://en.wikipedia.org/wiki/The_Holocaust" }] },
+                        { "chapterName": "India - Size and Location", "chapterUrl": "https://en.wikipedia.org/wiki/Geography_of_India", "topics": [{ "name": "Geography of India", "url": "https://en.wikipedia.org/wiki/Geography_of_India" }] },
+                        { "chapterName": "Physical Features of India", "chapterUrl": "https://en.wikipedia.org/wiki/Geography_of_India", "topics": [{ "name": "Himalayas, Northern Plains", "url": "https://en.wikipedia.org/wiki/Geography_of_India" }] },
+                        { "chapterName": "Drainage", "chapterUrl": "https://en.wikipedia.org/wiki/Drainage_system_(geomorphology)", "topics": [{ "name": "River Systems of India", "url": "https://en.wikipedia.org/wiki/List_of_rivers_of_India" }] },
+                        { "chapterName": "What is Democracy? Why Democracy?", "chapterUrl": "https://en.wikipedia.org/wiki/Democracy", "topics": [{ "name": "Features of Democracy", "url": "https://en.wikipedia.org/wiki/Democracy" }] },
+                        { "chapterName": "Constitutional Design", "chapterUrl": "https://en.wikipedia.org/wiki/Constitutional_law", "topics": [{ "name": "Making of the Indian Constitution", "url": "https://en.wikipedia.org/wiki/Constitution_of_India" }] },
+                        { "chapterName": "The Story of Village Palampur", "chapterUrl": "https://en.wikipedia.org/wiki/Economics", "topics": [{ "name": "Factors of Production", "url": "https://en.wikipedia.org/wiki/Factors_of_production" }] },
+                        { "chapterName": "Poverty as a Challenge", "chapterUrl": "https://en.wikipedia.org/wiki/Poverty", "topics": [{ "name": "Poverty Line", "url": "https://en.wikipedia.org/wiki/Poverty_threshold" }] }
+                    ]
+                },
+                "grade10": {
+                    "Science": [
+                        { "chapterName": "Chemical Reactions and Equations", "chapterUrl": "https://en.wikipedia.org/wiki/Chemical_equation", "topics": [{ "name": "Types of Chemical Reactions", "url": "https://en.wikipedia.org/wiki/Chemical_reaction" }] },
+                        { "chapterName": "Acids, Bases and Salts", "chapterUrl": "https://en.wikipedia.org/wiki/Acid%E2%80%93base_reaction", "topics": [{ "name": "pH Scale", "url": "https://en.wikipedia.org/wiki/PH" }] },
+                        { "chapterName": "Metals and Non-metals", "chapterUrl": "https://en.wikipedia.org/wiki/Metal", "topics": [{ "name": "Reactivity Series", "url": "https://en.wikipedia.org/wiki/Reactivity_series" }] },
+                        { "chapterName": "Carbon and its Compounds", "chapterUrl": "https://en.wikipedia.org/wiki/Organic_compound", "topics": [{ "name": "Homologous Series", "url": "https://en.wikipedia.org/wiki/Homologous_series" }] },
+                        { "chapterName": "Life Processes", "chapterUrl": "https://en.wikipedia.org/wiki/Biological_process", "topics": [{ "name": "Human Nutrition, Respiration, Circulation, Excretion", "url": "https://en.wikipedia.org/wiki/Human_physiology" }] },
+                        { "chapterName": "Control and Coordination", "chapterUrl": "https://en.wikipedia.org/wiki/Control_theory", "topics": [{ "name": "Human Brain", "url": "https://en.wikipedia.org/wiki/Human_brain" }, { "name": "Plant Hormones", "url": "https://en.wikipedia.org/wiki/Plant_hormone" }] },
+                        { "chapterName": "How do Organisms Reproduce?", "chapterUrl": "https://en.wikipedia.org/wiki/Reproduction", "topics": [{ "name": "Human Reproductive System", "url": "https://en.wikipedia.org/wiki/Human_reproductive_system" }] },
+                        { "chapterName": "Heredity and Evolution", "chapterUrl": "https://en.wikipedia.org/wiki/Heredity", "topics": [{ "name": "Mendel's Laws", "url": "https://en.wikipedia.org/wiki/Mendelian_inheritance" }] },
+                        { "chapterName": "Light – Reflection and Refraction", "chapterUrl": "https://en.wikipedia.org/wiki/Optics", "topics": [{ "name": "Spherical Mirrors and Lenses", "url": "https://en.wikipedia.org/wiki/Lens_(optics)" }] },
+                        { "chapterName": "The Human Eye and the Colourful World", "chapterUrl": "https://en.wikipedia.org/wiki/Human_eye", "topics": [{ "name": "Dispersion of Light", "url": "https://en.wikipedia.org/wiki/Dispersion_(optics)" }] },
+                        { "chapterName": "Electricity", "chapterUrl": "https://en.wikipedia.org/wiki/Electricity", "topics": [{ "name": "Ohm's Law", "url": "https://en.wikipedia.org/wiki/Ohm%27s_law" }] },
+                        { "chapterName": "Magnetic Effects of Electric Current", "chapterUrl": "https://en.wikipedia.org/wiki/Electromagnetism", "topics": [{ "name": "Electric Motor", "url": "https://en.wikipedia.org/wiki/Electric_motor" }, { "name": "Electric Generator", "url": "https://en.wikipedia.org/wiki/Electric_generator" }] }
+                    ],
+                    "Mathematics": [
+                        { "chapterName": "Real Numbers", "chapterUrl": "https://en.wikipedia.org/wiki/Real_number", "topics": [{ "name": "Euclid's Division Lemma", "url": "https://en.wikipedia.org/wiki/Euclidean_algorithm" }] },
+                        { "chapterName": "Polynomials", "chapterUrl": "https://en.wikipedia.org/wiki/Polynomial", "topics": [{ "name": "Division Algorithm", "url": "https://en.wikipedia.org/wiki/Polynomial_long_division" }] },
+                        { "chapterName": "Pair of Linear Equations in Two Variables", "chapterUrl": "https://en.wikipedia.org/wiki/System_of_linear_equations", "topics": [{ "name": "Graphical Method of Solution", "url": "https://en.wikipedia.org/wiki/System_of_linear_equations" }] },
+                        { "chapterName": "Quadratic Equations", "chapterUrl": "https://en.wikipedia.org/wiki/Quadratic_equation", "topics": [{ "name": "Quadratic Formula", "url": "https://en.wikipedia.org/wiki/Quadratic_formula" }] },
+                        { "chapterName": "Arithmetic Progressions", "chapterUrl": "https://en.wikipedia.org/wiki/Arithmetic_progression", "topics": [{ "name": "Nth Term, Sum of N terms", "url": "https://en.wikipedia.org/wiki/Arithmetic_progression" }] },
+                        { "chapterName": "Triangles", "chapterUrl": "https://en.wikipedia.org/wiki/Triangle", "topics": [{ "name": "Similarity of Triangles", "url": "https://en.wikipedia.org/wiki/Similarity_(geometry)" }] },
+                        { "chapterName": "Coordinate Geometry", "chapterUrl": "https://en.wikipedia.org/wiki/Coordinate_geometry", "topics": [{ "name": "Distance Formula", "url": "https://en.wikipedia.org/wiki/Distance" }, { "name": "Section Formula", "url": "https://en.wikipedia.org/wiki/Section_formula" }] },
+                        { "chapterName": "Introduction to Trigonometry", "chapterUrl": "https://en.wikipedia.org/wiki/Trigonometry", "topics": [{ "name": "Trigonometric Ratios & Identities", "url": "https://en.wikipedia.org/wiki/Trigonometry" }] },
+                        { "chapterName": "Circles", "chapterUrl": "https://en.wikipedia.org/wiki/Circle", "topics": [{ "name": "Tangent to a Circle", "url": "https://en.wikipedia.org/wiki/Tangent" }] },
+                        { "chapterName": "Statistics", "chapterUrl": "https://en.wikipedia.org/wiki/Statistics", "topics": [{ "name": "Mean, Median, Mode of Grouped Data", "url": "https://en.wikipedia.org/wiki/Statistics" }] }
+                    ],
+                    "Social Science": [
+                        { "chapterName": "The Rise of Nationalism in Europe", "chapterUrl": "https://en.wikipedia.org/wiki/The_Rise_of_Nationalism_in_Europe", "topics": [{ "name": "Unification of Italy and Germany", "url": "https://en.wikipedia.org/wiki/Unification_of_Germany" }] },
+                        { "chapterName": "Nationalism in India", "chapterUrl": "https://en.wikipedia.org/wiki/Indian_nationalism", "topics": [{ "name": "Non-cooperation Movement", "url": "https://en.wikipedia.org/wiki/Non-cooperation_movement" }, { "name": "Civil Disobedience Movement", "url": "https://en.wikipedia.org/wiki/Civil_disobedience" }] },
+                        { "chapterName": "Resources and Development", "chapterUrl": "https://en.wikipedia.org/wiki/Resource", "topics": [{ "name": "Land Resources", "url": "https://en.wikipedia.org/wiki/Land_resource" }] },
+                        { "chapterName": "Agriculture", "chapterUrl": "https://en.wikipedia.org/wiki/Agriculture_in_India", "topics": [{ "name": "Major Crops in India", "url": "https://en.wikipedia.org/wiki/Agriculture_in_India" }] },
+                        { "chapterName": "Power-sharing", "chapterUrl": "https://en.wikipedia.org/wiki/Power-sharing", "topics": [{ "name": "Forms of Power-sharing", "url": "https://en.wikipedia.org/wiki/Power-sharing" }] },
+                        { "chapterName": "Federalism", "chapterUrl": "https://en.wikipedia.org/wiki/Federalism", "topics": [{ "name": "Features of Federalism", "url": "https://en.wikipedia.org/wiki/Federalism" }] },
+                        { "chapterName": "Political Parties", "chapterUrl": "https://en.wikipedia.org/wiki/Political_party", "topics": [{ "name": "National Parties in India", "url": "https://en.wikipedia.org/wiki/List_of_political_parties_in_India" }] },
+                        { "chapterName": "Sectors of the Indian Economy", "chapterUrl": "https://en.wikipedia.org/wiki/Economy_of_India", "topics": [{ "name": "Primary, Secondary, Tertiary Sectors", "url": "https://en.wikipedia.org/wiki/Economic_sector" }] },
+                        { "chapterName": "Money and Credit", "chapterUrl": "https://en.wikipedia.org/wiki/Money", "topics": [{ "name": "Functions of Money", "url": "https://en.wikipedia.org/wiki/Money" }, { "name": "Reserve Bank of India", "url": "https://en.wikipedia.org/wiki/Reserve_Bank_of_India" }] }
+                    ]
+                },
+                "grade11": {
+                    "Physics": [
+                        { "chapterName": "Units and Measurements", "chapterUrl": "https://en.wikipedia.org/wiki/Units_of_measurement", "topics": [{ "name": "Dimensional Analysis", "url": "https://en.wikipedia.org/wiki/Dimensional_analysis" }] },
+                        { "chapterName": "Motion in a Straight Line", "chapterUrl": "https://en.wikipedia.org/wiki/Rectilinear_motion", "topics": [{ "name": "Kinematics", "url": "https://en.wikipedia.org/wiki/Kinematics" }] },
+                        { "chapterName": "Motion in a Plane", "chapterUrl": "https://en.wikipedia.org/wiki/Planar_motion", "topics": [{ "name": "Vectors", "url": "https://en.wikipedia.org/wiki/Vector_(mathematics_and_physics)" }, { "name": "Projectile Motion", "url": "https://en.wikipedia.org/wiki/Projectile_motion" }] },
+                        { "chapterName": "Laws of Motion", "chapterUrl": "https://en.wikipedia.org/wiki/Newton%27s_laws_of_motion", "topics": [{ "name": "Newton's Laws", "url": "https://en.wikipedia.org/wiki/Newton%27s_laws_of_motion" }] },
+                        { "chapterName": "Work, Energy and Power", "chapterUrl": "https://en.wikipedia.org/wiki/Work_(physics)", "topics": [{ "name": "Conservation of Energy", "url": "https://en.wikipedia.org/wiki/Conservation_of_energy" }] },
+                        { "chapterName": "System of Particles and Rotational Motion", "chapterUrl": "https://en.wikipedia.org/wiki/Rotational_motion", "topics": [{ "name": "Moment of Inertia", "url": "https://en.wikipedia.org/wiki/Moment_of_inertia" }] },
+                        { "chapterName": "Gravitation", "chapterUrl": "https://en.wikipedia.org/wiki/Gravitation", "topics": [{ "name": "Kepler's Laws", "url": "https://en.wikipedia.org/wiki/Kepler%27s_laws_of_planetary_motion" }] },
+                        { "chapterName": "Thermodynamics", "chapterUrl": "https://en.wikipedia.org/wiki/Thermodynamics", "topics": [{ "name": "Laws of Thermodynamics", "url": "https://en.wikipedia.org/wiki/Laws_of_thermodynamics" }] },
+                        { "chapterName": "Waves", "chapterUrl": "https://en.wikipedia.org/wiki/Wave", "topics": [{ "name": "Doppler Effect", "url": "https://en.wikipedia.org/wiki/Doppler_effect" }] }
+                    ],
+                    "Chemistry": [
+                        { "chapterName": "Some Basic Concepts of Chemistry", "chapterUrl": "https://en.wikipedia.org/wiki/Chemistry", "topics": [{ "name": "Mole Concept", "url": "https://en.wikipedia.org/wiki/Mole_(unit)" }, { "name": "Stoichiometry", "url": "https://en.wikipedia.org/wiki/Stoichiometry" }] },
+                        { "chapterName": "Structure of Atom", "chapterUrl": "https://en.wikipedia.org/wiki/Atomic_structure", "topics": [{ "name": "Quantum Mechanical Model", "url": "https://en.wikipedia.org/wiki/Quantum_mechanics" }] },
+                        { "chapterName": "Classification of Elements and Periodicity", "chapterUrl": "https://en.wikipedia.org/wiki/Periodic_table", "topics": [{ "name": "Periodic Trends", "url": "https://en.wikipedia.org/wiki/Periodic_table" }] },
+                        { "chapterName": "Chemical Bonding and Molecular Structure", "chapterUrl": "https://en.wikipedia.org/wiki/Chemical_bond", "topics": [{ "name": "VSEPR Theory", "url": "https://en.wikipedia.org/wiki/VSEPR_theory" }, { "name": "Hybridisation", "url": "https://en.wikipedia.org/wiki/Orbital_hybridisation" }] },
+                        { "chapterName": "States of Matter", "chapterUrl": "https://en.wikipedia.org/wiki/State_of_matter", "topics": [{ "name": "Gas Laws", "url": "https://en.wikipedia.org/wiki/Gas_laws" }] },
+                        { "chapterName": "Thermodynamics", "chapterUrl": "https://en.wikipedia.org/wiki/Thermodynamics", "topics": [{ "name": "Enthalpy, Entropy, Gibbs Energy", "url": "https://en.wikipedia.org/wiki/Thermodynamics" }] },
+                        { "chapterName": "Equilibrium", "chapterUrl": "https://en.wikipedia.org/wiki/Chemical_equilibrium", "topics": [{ "name": "Chemical Equilibrium", "url": "https://en.wikipedia.org/wiki/Chemical_equilibrium" }, { "name": "Ionic Equilibrium", "url": "https://en.wikipedia.org/wiki/Ionic_equilibrium" }] },
+                        { "chapterName": "Redox Reactions", "chapterUrl": "https://en.wikipedia.org/wiki/Redox", "topics": [{ "name": "Oxidation Number", "url": "https://en.wikipedia.org/wiki/Oxidation_state" }] },
+                        { "chapterName": "Organic Chemistry – Some Basic Principles", "chapterUrl": "https://en.wikipedia.org/wiki/Organic_chemistry", "topics": [{ "name": "IUPAC Nomenclature", "url": "https://en.wikipedia.org/wiki/IUPAC_nomenclature_of_organic_chemistry" }] },
+                        { "chapterName": "Hydrocarbons", "chapterUrl": "https://en.wikipedia.org/wiki/Hydrocarbon", "topics": [{ "name": "Alkanes, Alkenes, Alkynes", "url": "https://en.wikipedia.org/wiki/Hydrocarbon" }] }
+                    ],
+                    "Biology": [
+                        { "chapterName": "The Living World", "chapterUrl": "https://en.wikipedia.org/wiki/Life", "topics": [{ "name": "Taxonomy", "url": "https://en.wikipedia.org/wiki/Taxonomy_(biology)" }] },
+                        { "chapterName": "Biological Classification", "chapterUrl": "https://en.wikipedia.org/wiki/Biological_classification", "topics": [{ "name": "Five Kingdom Classification", "url": "https://en.wikipedia.org/wiki/Kingdom_(biology)" }] },
+                        { "chapterName": "Plant Kingdom", "chapterUrl": "https://en.wikipedia.org/wiki/Plant", "topics": [{ "name": "Algae, Bryophytes, Pteridophytes", "url": "https://en.wikipedia.org/wiki/Plant" }] },
+                        { "chapterName": "Animal Kingdom", "chapterUrl": "https://en.wikipedia.org/wiki/Animal", "topics": [{ "name": "Phylum classifications", "url": "https://en.wikipedia.org/wiki/Animal" }] },
+                        { "chapterName": "Cell: The Unit of Life", "chapterUrl": "https://en.wikipedia.org/wiki/Cell_(biology)", "topics": [{ "name": "Prokaryotic & Eukaryotic Cells", "url": "https://en.wikipedia.org/wiki/Cell_(biology)" }] },
+                        { "chapterName": "Biomolecules", "chapterUrl": "https://en.wikipedia.org/wiki/Biomolecule", "topics": [{ "name": "Proteins, Carbohydrates, Lipids", "url": "https://en.wikipedia.org/wiki/Biomolecule" }] },
+                        { "chapterName": "Plant Physiology", "chapterUrl": "https://en.wikipedia.org/wiki/Plant_physiology", "topics": [{ "name": "Photosynthesis", "url": "https://en.wikipedia.org/wiki/Photosynthesis" }, { "name": "Respiration", "url": "https://en.wikipedia.org/wiki/Cellular_respiration" }] },
+                        { "chapterName": "Human Physiology", "chapterUrl": "https://en.wikipedia.org/wiki/Human_physiology", "topics": [{ "name": "Digestion, Breathing, Circulation, etc.", "url": "https://en.wikipedia.org/wiki/Human_physiology" }] }
+                    ],
+                    "Mathematics": [
+                        { "chapterName": "Sets", "chapterUrl": "https://en.wikipedia.org/wiki/Set_(mathematics)", "topics": [{ "name": "Set Theory", "url": "https://en.wikipedia.org/wiki/Set_theory" }] },
+                        { "chapterName": "Relations and Functions", "chapterUrl": "https://en.wikipedia.org/wiki/Relation_(mathematics)", "topics": [{ "name": "Functions", "url": "https://en.wikipedia.org/wiki/Function_(mathematics)" }] },
+                        { "chapterName": "Trigonometric Functions", "chapterUrl": "https://en.wikipedia.org/wiki/Trigonometric_functions", "topics": [{ "name": "Trigonometry", "url": "https://en.wikipedia.org/wiki/Trigonometry" }] },
+                        { "chapterName": "Complex Numbers and Quadratic Equations", "chapterUrl": "https://en.wikipedia.org/wiki/Complex_number", "topics": [{ "name": "Complex Number", "url": "https://en.wikipedia.org/wiki/Complex_number" }] },
+                        { "chapterName": "Linear Inequalities", "chapterUrl": "https://en.wikipedia.org/wiki/Inequality_(mathematics)", "topics": [{ "name": "Inequality", "url": "https://en.wikipedia.org/wiki/Inequality_(mathematics)" }] },
+                        { "chapterName": "Permutations and Combinations", "chapterUrl": "https://en.wikipedia.org/wiki/Permutation", "topics": [{ "name": "Combinatorics", "url": "https://en.wikipedia.org/wiki/Combinatorics" }] },
+                        { "chapterName": "Sequences and Series", "chapterUrl": "https://en.wikipedia.org/wiki/Sequence", "topics": [{ "name": "Arithmetic & Geometric Progression", "url": "https://en.wikipedia.org/wiki/Sequence" }] },
+                        { "chapterName": "Conic Sections", "chapterUrl": "https://en.wikipedia.org/wiki/Conic_section", "topics": [{ "name": "Parabola, Ellipse, Hyperbola", "url": "https://en.wikipedia.org/wiki/Conic_section" }] },
+                        { "chapterName": "Introduction to Three dimensional Geometry", "chapterUrl": "https://en.wikipedia.org/wiki/Three-dimensional_space", "topics": [{ "name": "3D coordinate system", "url": "https://en.wikipedia.org/wiki/Three-dimensional_space" }] },
+                        { "chapterName": "Limits and Derivatives", "chapterUrl": "https://en.wikipedia.org/wiki/Limit_(mathematics)", "topics": [{ "name": "Calculus", "url": "https://en.wikipedia.org/wiki/Calculus" }] }
+                    ],
+                    "Social Science (Arts)": [
+                        { "chapterName": "History: Early Societies", "chapterUrl": "https://en.wikipedia.org/wiki/Early_history", "topics": [{ "name": "From the Beginning of Time", "url": "https://en.wikipedia.org/wiki/Human_evolution" }, { "name": "Writing and City Life", "url": "https://en.wikipedia.org/wiki/History_of_writing" }] },
+                        { "chapterName": "Political Science: Constitution", "chapterUrl": "https://en.wikipedia.org/wiki/Constitution", "topics": [{ "name": "Constitution: Why and How?", "url": "https://en.wikipedia.org/wiki/Constitution" }, { "name": "Rights in the Indian Constitution", "url": "https://en.wikipedia.org/wiki/Fundamental_Rights_in_India" }] },
+                        { "chapterName": "Economics: Indian Economic Development", "chapterUrl": "https://en.wikipedia.org/wiki/Economy_of_India", "topics": [{ "name": "Indian Economy on the Eve of Independence", "url": "https://en.wikipedia.org/wiki/Economy_of_India" }, { "name": "Liberalisation, Privatisation and Globalisation", "url": "https://en.wikipedia.org/wiki/Liberalisation_in_India" }] },
+                        { "chapterName": "Geography: Fundamentals of Physical Geography", "chapterUrl": "https://en.wikipedia.org/wiki/Physical_geography", "topics": [{ "name": "The Origin and Evolution of the Earth", "url": "https://en.wikipedia.org/wiki/History_of_Earth" }, { "name": "Landforms and their Evolution", "url": "https://en.wikipedia.org/wiki/Landform" }] }
+                    ]
+                },
+                "grade12": {
+                    "Physics": [
+                        { "chapterName": "Electric Charges and Fields", "chapterUrl": "https://en.wikipedia.org/wiki/Electric_field", "topics": [{ "name": "Coulomb's Law", "url": "https://en.wikipedia.org/wiki/Coulomb%27s_law" }, { "name": "Gauss's Law", "url": "https://en.wikipedia.org/wiki/Gauss%27s_law" }] },
+                        { "chapterName": "Electrostatic Potential and Capacitance", "chapterUrl": "https://en.wikipedia.org/wiki/Electrostatics", "topics": [{ "name": "Capacitor", "url": "https://en.wikipedia.org/wiki/Capacitor" }] },
+                        { "chapterName": "Current Electricity", "chapterUrl": "https://en.wikipedia.org/wiki/Electric_current", "topics": [{ "name": "Kirchhoff's Laws", "url": "https://en.wikipedia.org/wiki/Kirchhoff%27s_circuit_laws" }] },
+                        { "chapterName": "Moving Charges and Magnetism", "chapterUrl": "https://en.wikipedia.org/wiki/Magnetism", "topics": [{ "name": "Biot–Savart law", "url": "https://en.wikipedia.org/wiki/Biot%E2%80%93Savart_law" }] },
+                        { "chapterName": "Electromagnetic Induction", "chapterUrl": "https://en.wikipedia.org/wiki/Electromagnetic_induction", "topics": [{ "name": "Faraday's law of induction", "url": "https://en.wikipedia.org/wiki/Faraday%27s_law_of_induction" }] },
+                        { "chapterName": "Alternating Current", "chapterUrl": "https://en.wikipedia.org/wiki/Alternating_current", "topics": [{ "name": "AC circuits", "url": "https://en.wikipedia.org/wiki/Alternating_current" }] },
+                        { "chapterName": "Ray Optics and Optical Instruments", "chapterUrl": "https://en.wikipedia.org/wiki/Optics", "topics": [{ "name": "Refraction", "url": "https://en.wikipedia.org/wiki/Refraction" }, { "name": "Telescope, Microscope", "url": "https://en.wikipedia.org/wiki/Optical_instrument" }] },
+                        { "chapterName": "Wave Optics", "chapterUrl": "https://en.wikipedia.org/wiki/Wave_optics", "topics": [{ "name": "Interference", "url": "https://en.wikipedia.org/wiki/Interference_(wave_propagation)" }, { "name": "Diffraction", "url": "https://en.wikipedia.org/wiki/Diffraction" }] },
+                        { "chapterName": "Dual Nature of Radiation and Matter", "chapterUrl": "https://en.wikipedia.org/wiki/Wave%E2%80%93particle_duality", "topics": [{ "name": "Photoelectric effect", "url": "https://en.wikipedia.org/wiki/Photoelectric_effect" }] },
+                        { "chapterName": "Atoms and Nuclei", "chapterUrl": "https://en.wikipedia.org/wiki/Atomic_nucleus", "topics": [{ "name": "Bohr model", "url": "https://en.wikipedia.org/wiki/Bohr_model" }, { "name": "Nuclear Fission & Fusion", "url": "https://en.wikipedia.org/wiki/Nuclear_fusion" }] },
+                        { "chapterName": "Semiconductor Electronics", "chapterUrl": "https://en.wikipedia.org/wiki/Semiconductor", "topics": [{ "name": "Transistors", "url": "https://en.wikipedia.org/wiki/Transistor" }, { "name": "Logic gates", "url": "https://en.wikipedia.org/wiki/Logic_gate" }] }
+                    ],
+                    "Chemistry": [
+                        { "chapterName": "The Solid State", "chapterUrl": "https://en.wikipedia.org/wiki/Solid-state_chemistry", "topics": [{ "name": "Crystal lattice", "url": "https://en.wikipedia.org/wiki/Crystal_structure" }] },
+                        { "chapterName": "Solutions", "chapterUrl": "https://en.wikipedia.org/wiki/Solution", "topics": [{ "name": "Colligative Properties", "url": "https://en.wikipedia.org/wiki/Colligative_properties" }] },
+                        { "chapterName": "Electrochemistry", "chapterUrl": "https://en.wikipedia.org/wiki/Electrochemistry", "topics": [{ "name": "Electrochemical cell", "url": "https://en.wikipedia.org/wiki/Electrochemical_cell" }, { "name": "Nernst equation", "url": "https://en.wikipedia.org/wiki/Nernst_equation" }] },
+                        { "chapterName": "Chemical Kinetics", "chapterUrl": "https://en.wikipedia.org/wiki/Chemical_kinetics", "topics": [{ "name": "Rate of Reaction", "url": "https://en.wikipedia.org/wiki/Reaction_rate" }] },
+                        { "chapterName": "d and f Block Elements", "chapterUrl": "https://en.wikipedia.org/wiki/Transition_metal", "topics": [{ "name": "Transition metal", "url": "https://en.wikipedia.org/wiki/Transition_metal" }] },
+                        { "chapterName": "Coordination Compounds", "chapterUrl": "https://en.wikipedia.org/wiki/Coordination_complex", "topics": [{ "name": "Crystal Field Theory", "url": "https://en.wikipedia.org/wiki/Crystal_field_theory" }] },
+                        { "chapterName": "Haloalkanes and Haloarenes", "chapterUrl": "https://en.wikipedia.org/wiki/Haloalkane", "topics": [{ "name": "SN1/SN2 reactions", "url": "https://en.wikipedia.org/wiki/SN1_reaction" }] },
+                        { "chapterName": "Alcohols, Phenols and Ethers", "chapterUrl": "https://en.wikipedia.org/wiki/Alcohol", "topics": [{ "name": "Preparation and Properties", "url": "https://en.wikipedia.org/wiki/Alcohol" }] },
+                        { "chapterName": "Biomolecules", "chapterUrl": "https://en.wikipedia.org/wiki/Biomolecule", "topics": [{ "name": "Carbohydrates, Proteins, Vitamins", "url": "https://en.wikipedia.org/wiki/Biomolecule" }] },
+                        { "chapterName": "Polymers", "chapterUrl": "https://en.wikipedia.org/wiki/Polymer", "topics": [{ "name": "Polymerization", "url": "https://en.wikipedia.org/wiki/Polymerization" }] }
+                    ],
+                    "Biology": [
+                        { "chapterName": "Reproduction in Organisms", "chapterUrl": "https://en.wikipedia.org/wiki/Reproduction", "topics": [{ "name": "Asexual & Sexual Reproduction", "url": "https://en.wikipedia.org/wiki/Reproduction" }] },
+                        { "chapterName": "Sexual Reproduction in Flowering Plants", "chapterUrl": "https://en.wikipedia.org/wiki/Plant_reproduction", "topics": [{ "name": "Pollination", "url": "https://en.wikipedia.org/wiki/Pollination" }] },
+                        { "chapterName": "Human Reproduction", "chapterUrl": "https://en.wikipedia.org/wiki/Human_reproduction", "topics": [{ "name": "Male & Female Reproductive Systems", "url": "https://en.wikipedia.org/wiki/Human_reproduction" }] },
+                        { "chapterName": "Principles of Inheritance and Variation", "chapterUrl": "https://en.wikipedia.org/wiki/Heredity", "topics": [{ "name": "Mendelian & Chromosomal disorders", "url": "https://en.wikipedia.org/wiki/Genetic_disorder" }] },
+                        { "chapterName": "Molecular Basis of Inheritance", "chapterUrl": "https://en.wikipedia.org/wiki/Molecular_genetics", "topics": [{ "name": "DNA Replication, Transcription, Translation", "url": "https://en.wikipedia.org/wiki/Molecular_biology" }] },
+                        { "chapterName": "Evolution", "chapterUrl": "https://en.wikipedia.org/wiki/Evolution", "topics": [{ "name": "Theory of Evolution", "url": "https://en.wikipedia.org/wiki/Evolution" }] },
+                        { "chapterName": "Human Health and Disease", "chapterUrl": "https://en.wikipedia.org/wiki/Human_health", "topics": [{ "name": "Immunity", "url": "https://en.wikipedia.org/wiki/Immunity_(medical)" }, { "name": "Common Diseases", "url": "https://en.wikipedia.org/wiki/List_of_common_human_diseases" }] },
+                        { "chapterName": "Biotechnology: Principles and Processes", "chapterUrl": "https://en.wikipedia.org/wiki/Biotechnology", "topics": [{ "name": "Recombinant DNA technology", "url": "https://en.wikipedia.org/wiki/Recombinant_DNA" }] },
+                        { "chapterName": "Ecosystem", "chapterUrl": "https://en.wikipedia.org/wiki/Ecosystem", "topics": [{ "name": "Ecological Pyramids", "url": "https://en.wikipedia.org/wiki/Ecological_pyramid" }] },
+                        { "chapterName": "Biodiversity and Conservation", "chapterUrl": "https://en.wikipedia.org/wiki/Biodiversity", "topics": [{ "name": "Conservation", "url": "https://en.wikipedia.org/wiki/Conservation_biology" }] }
+                    ],
+                    "Mathematics": [
+                        { "chapterName": "Relations and Functions", "chapterUrl": "https://en.wikipedia.org/wiki/Relation_(mathematics)", "topics": [{ "name": "Types of Functions", "url": "https://en.wikipedia.org/wiki/Function_(mathematics)" }] },
+                        { "chapterName": "Inverse Trigonometric Functions", "chapterUrl": "https://en.wikipedia.org/wiki/Inverse_trigonometric_functions", "topics": [{ "name": "Inverse trigonometric functions", "url": "https://en.wikipedia.org/wiki/Inverse_trigonometric_functions" }] },
+                        { "chapterName": "Matrices", "chapterUrl": "https://en.wikipedia.org/wiki/Matrix_(mathematics)", "topics": [{ "name": "Matrix operations", "url": "https://en.wikipedia.org/wiki/Matrix_(mathematics)" }] },
+                        { "chapterName": "Determinants", "chapterUrl": "https://en.wikipedia.org/wiki/Determinant", "topics": [{ "name": "Properties of determinants", "url": "https://en.wikipedia.org/wiki/Determinant" }] },
+                        { "chapterName": "Continuity and Differentiability", "chapterUrl": "https://en.wikipedia.org/wiki/Continuous_function", "topics": [{ "name": "Derivatives", "url": "https://en.wikipedia.org/wiki/Derivative" }] },
+                        { "chapterName": "Application of Derivatives", "chapterUrl": "https://en.wikipedia.org/wiki/Applications_of_integration", "topics": [{ "name": "Maxima and Minima", "url": "https://en.wikipedia.org/wiki/Maxima_and_minima" }] },
+                        { "chapterName": "Integrals", "chapterUrl": "https://en.wikipedia.org/wiki/Integral", "topics": [{ "name": "Integration", "url": "https://en.wikipedia.org/wiki/Integral" }] },
+                        { "chapterName": "Differential Equations", "chapterUrl": "https://en.wikipedia.org/wiki/Differential_equation", "topics": [{ "name": "Solving differential equations", "url": "https://en.wikipedia.org/wiki/Differential_equation" }] },
+                        { "chapterName": "Vector Algebra", "chapterUrl": "https://en.wikipedia.org/wiki/Vector_algebra", "topics": [{ "name": "Dot & Cross Product", "url": "https://en.wikipedia.org/wiki/Vector_algebra" }] },
+                        { "chapterName": "Three Dimensional Geometry", "chapterUrl": "https://en.wikipedia.org/wiki/Three-dimensional_space", "topics": [{ "name": "Lines and Planes in 3D", "url": "https://en.wikipedia.org/wiki/Three-dimensional_space" }] },
+                        { "chapterName": "Probability", "chapterUrl": "https://en.wikipedia.org/wiki/Probability", "topics": [{ "name": "Conditional Probability, Bayes' theorem", "url": "https://en.wikipedia.org/wiki/Probability_theory" }] }
+                    ],
+                    "Social Science (Arts)": [
+                        { "chapterName": "History: Themes in Indian History", "chapterUrl": "https://en.wikipedia.org/wiki/History_of_India", "topics": [{ "name": "The Harappan Civilisation", "url": "https://en.wikipedia.org/wiki/Indus_Valley_Civilisation" }, { "name": "The Mughal Court", "url": "https://en.wikipedia.org/wiki/Mughal_Empire" }, { "name": "Mahatma Gandhi and the Nationalist Movement", "url": "https://en.wikipedia.org/wiki/Indian_independence_movement" }] },
+                        { "chapterName": "Political Science: Contemporary World Politics", "chapterUrl": "https://en.wikipedia.org/wiki/International_relations", "topics": [{ "name": "The Cold War Era", "url": "https://en.wikipedia.org/wiki/Cold_War" }, { "name": "United Nations and its Organizations", "url": "https://en.wikipedia.org/wiki/United_Nations" }] },
+                        { "chapterName": "Economics: Macroeconomics", "chapterUrl": "https://en.wikipedia.org/wiki/Macroeconomics", "topics": [{ "name": "National Income Accounting", "url": "https://en.wikipedia.org/wiki/National_accounts" }, { "name": "Money and Banking", "url": "https://en.wikipedia.org/wiki/Financial_system" }, { "name": "Balance of Payments", "url": "https://en.wikipedia.org/wiki/Balance_of_payments" }] },
+                        { "chapterName": "Geography: Fundamentals of Human Geography", "chapterUrl": "https://en.wikipedia.org/wiki/Human_geography", "topics": [{ "name": "Population Distribution, Density, Growth", "url": "https://en.wikipedia.org/wiki/World_population" }, { "name": "Primary, Secondary, Tertiary Activities", "url": "https://en.wikipedia.org/wiki/Economic_sector" }] }
+                    ]
+                }
+            };
+            
+            // --- Dynamic Content Generation ---
+            const sectionsContainer = document.getElementById('sections-container');
+            const data = studyHubData;
+            
+            const gradeMapping = {
+                mostCommon: "Most Common Topics",
+                grade7: "Grade 7 Curriculum",
+                grade8: "Grade 8 Curriculum",
+                grade9: "Grade 9 Curriculum",
+                grade10: "Grade 10 Curriculum",
+                grade11: "Grade 11 Curriculum",
+                grade12: "Grade 12 Curriculum",
+            };
+
+            const createAccordionItem = (subject, chapters) => {
+                let chapterContent = chapters.map(chapter => {
+                    let topicLinks = chapter.topics.map(topic => `
+                        <a href="${topic.url}" target="_blank" rel="noopener noreferrer" class="group flex items-center justify-between text-base p-3 text-[var(--text-secondary)] rounded-lg hover:bg-[var(--accent-hover)] hover:text-[var(--accent-color)] transition-all duration-200">
+                            <span>${topic.name}</span>
+                            <svg class="h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                        </a>
+                    `).join('');
+
+                    return `
+                        <div class="py-4">
+                            <a href="${chapter.chapterUrl}" target="_blank" rel="noopener noreferrer" class="inline-block hover:text-[var(--accent-color)] transition-colors duration-200">
+                                <h5 class="text-lg font-semibold text-[var(--text-primary)] mb-3">${chapter.chapterName}</h5>
+                            </a>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-1">
+                                ${topicLinks}
+                            </div>
+                        </div>
+                    `;
+                }).join('<hr class="border-t border-dashed border-[var(--border-color)] my-2">');
+
+                return `
+                    <div class="accordion-card bg-[var(--card-bg)] border border-[var(--border-color)] rounded-xl shadow-sm hover:shadow-lg hover:border-[var(--accent-color)] transition-all duration-300">
+                        <div class="accordion-header cursor-pointer p-6 flex justify-between items-center">
+                            <h4 class="text-2xl font-bold text-[var(--text-primary)]">${subject}</h4>
+                            <div class="accordion-header-icon text-[var(--text-secondary)] transition-transform duration-300">
+                                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+                            </div>
+                        </div>
+                        <div class="accordion-content px-6">
+                            <div class="border-t border-[var(--border-color)] pb-4">
+                                ${chapterContent}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            };
+
+            Object.keys(gradeMapping).forEach((gradeKey, index) => {
+                const gradeTitle = gradeMapping[gradeKey];
+                const subjects = data[gradeKey];
+                
+                const section = document.createElement('section');
+                section.id = gradeKey;
+                
+                let subjectAccordions = Object.keys(subjects).map(subject => 
+                    createAccordionItem(subject, subjects[subject])
+                ).join('');
+
+                section.innerHTML = `
+                    <h3 class="text-4xl font-extrabold tracking-tight text-[var(--text-primary)] mb-8">${gradeTitle}</h3>
+                    <div class="space-y-6">
+                        ${subjectAccordions}
+                    </div>
+                `;
+                sectionsContainer.appendChild(section);
+
+                if (index < Object.keys(gradeMapping).length - 1) {
+                    const divider = document.createElement('div');
+                    divider.className = 'section-divider';
+                    sectionsContainer.appendChild(divider);
+                }
+            });
+
+            // --- Accordion Functionality ---
+            document.querySelectorAll('.accordion-header').forEach(header => {
+                header.addEventListener('click', () => {
+                    const card = header.closest('.accordion-card');
+                    card.classList.toggle('is-open');
+                });
+            });
+        });
+    </script>
+</body>
+</html>

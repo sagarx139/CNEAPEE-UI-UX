@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CNEAPEE AI - Sign in</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        /* Black and White Professional Google-Inspired Base Styles */
+        body {
+            background: linear-gradient(180deg, #ffffff 0%, #000000 50%, #ffffff 100%);
+            font-family: 'Inter', sans-serif, 'Roboto', sans-serif;
+            color: #202124; /* Dark gray/black text */
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        /* Black and White Professional Google Card Style */
+        .bw-professional-card {
+            background: #ffffff; /* White card */
+            border-radius: 8px;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06); /* Very subtle shadow */
+            padding: 40px;
+        }
+
+        /* Black and White Professional Google Input Field Style */
+        .bw-professional-input {
+            width: 100%;
+            padding: 12px 14px;
+            font-size: 0.9375rem;
+            border: 1px solid #dadce0; /* Light gray border */
+            border-radius: 4px;
+            color: #202124;
+            background-color: #ffffff;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        .bw-professional-input:focus {
+            outline: none;
+            border-color: #202124; /* Dark gray focus */
+            box-shadow: 0 0 0 1px #202124; /* Dark gray focus glow */
+        }
+        .bw-professional-input::placeholder {
+            color: #80868b; /* Medium gray placeholder */
+        }
+
+        /* Black and White Primary Button Style */
+        .btn-bw-professional-primary {
+            background: #202124; /* Dark gray/black button */
+            color: #ffffff; /* White text */
+            border-radius: 4px;
+            padding: 10px 24px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: background-color 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 1px 2px 0 rgba(0,0,0,0.1);
+        }
+        .btn-bw-professional-primary:hover {
+            background: #000000; /* Pure black on hover */
+            box-shadow: 0 2px 4px 0 rgba(0,0,0,0.15);
+        }
+        .btn-bw-professional-primary:active {
+            background: #424242; /* Slightly lighter dark gray on active */
+        }
+
+        /* Black and White Text Link/Button Style */
+        .btn-bw-professional-text {
+            color: #202124; /* Dark gray/black text */
+            font-weight: 500;
+            padding: 6px 8px;
+            border-radius: 4px;
+            transition: background-color 0.2s ease;
+        }
+        .btn-bw-professional-text:hover {
+            background: rgba(0, 0, 0, 0.04); /* Light black (gray) hover effect */
+        }
+
+        /* Black and White Outlined Button Style */
+        .btn-bw-professional-outlined {
+            background: transparent;
+            border: 1px solid #dadce0; /* Light gray border */
+            color: #202124; /* Dark gray/black text */
+            border-radius: 4px;
+            padding: 10px 24px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: border-color 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+        }
+        .btn-bw-professional-outlined:hover {
+            border-color: #202124; /* Dark gray border on hover */
+            background: rgba(0, 0, 0, 0.02); /* Very light black (gray) background on hover */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bw-professional-card w-full max-w-sm mx-auto">
+        <div class="text-center mb-8">
+            <img src="assets/cneapeelogo-removebg-preview.png" alt="CNEAPEE AI Logo" class="mx-auto h-9 mb-4 opacity-90 filter grayscale">
+            <h1 class="text-2xl font-semibold text-[#202124] mb-2">Sign in</h1>
+            <p class="text-base text-gray-700">Sign in Using Google Account</p>
+        </div>
+
+        <form action="#" method="POST">
+            <div class="mb-5">
+                <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    placeholder="Email or phone"
+                    class="bw-professional-input"
+                    required
+                />
+            </div>
+            <div class="mb-8">
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    placeholder="Password"
+                    class="bw-professional-input"
+                    required
+                />
+            </div>
+
+            <div class="flex justify-between items-center mb-8">
+                <a href="#" class="btn-bw-professional-text">Forgot password?</a>
+            </div>
+
+            <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+                <a href="#" class="btn-bw-professional-outlined order-2 md:order-1">Create account</a>
+                <button type="submit" class="btn-bw-professional-primary order-1 md:order-2">
+                    Next
+                </button>
+            </div>
+        </form>
+
+        <div class="mt-8 border-t border-gray-200 pt-6 text-center">
+            <p class="text-sm text-gray-700 mb-4">
+                Not your computer? Use Guest mode to sign in privately.
+            </p>
+            <a href="#" class="btn-bw-professional-text">Currently in Beta Phase</a>
+        </div>
+
+        </div>
+
+</body>
+</html>
