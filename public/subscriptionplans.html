@@ -1,457 +1,303 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth dark">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Convo+ | Premium Subscription Plans</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Subscription Plans</title>
+    
+    <!-- Preconnect -->
+    <link rel="preconnect" href="https://cdn.tailwindcss.com">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- Tailwind & Fonts -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = { 
+            darkMode: 'class', 
+            theme: { 
+                extend: { 
+                    colors: { dark: '#030305' },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-out',
+                        'scale-in': 'scaleIn 0.3s ease-out'
+                    },
+                    keyframes: {
+                        fadeIn: { '0%': { opacity: '0', transform: 'translateY(10px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } },
+                        scaleIn: { '0%': { opacity: '0', transform: 'scale(0.95)' }, '100%': { opacity: '1', transform: 'scale(1)' } }
+                    }
+                } 
+            } 
+        }
+
+        function toggleTheme() { 
+            document.documentElement.classList.toggle('dark'); 
+            updateThemeIcon();
+        }
+
+        function updateThemeIcon() {
+            const isDark = document.documentElement.classList.contains('dark');
+            const icon = document.getElementById('theme-icon');
+            if(icon) {
+                icon.className = isDark ? "fas fa-moon" : "fas fa-sun";
+            }
+        }
+
+        // Toggle Dropdown
+        function toggleDropdown() {
+            const menu = document.getElementById('plan-menu');
+            menu.classList.toggle('hidden');
+            menu.classList.toggle('opacity-0');
+            menu.classList.toggle('-translate-y-2');
+        }
+
+        // Close dropdown when clicking outside
+        window.onclick = function(event) {
+            if (!event.target.closest('#plan-selector-btn')) {
+                const menu = document.getElementById('plan-menu');
+                if (!menu.classList.contains('hidden')) {
+                    menu.classList.add('hidden');
+                    menu.classList.add('opacity-0');
+                    menu.classList.add('-translate-y-2');
+                }
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', updateThemeIcon);
+    </script>
+    
     <style>
-        /* --- Professional Black & White Theme --- */
-        :root {
-            --background-color: #0d0d0d;
-            --card-background-color: #171717;
-            --border-color: #2e2e2e;
-            --text-primary: #f5f5f5;
-            --text-secondary: #a3a3a3;
-            --accent-color: #ffffff;
-            --shadow-color-light: rgba(255, 255, 255, 0.05);
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        
+        .grid-bg { 
+            background-image: linear-gradient(rgba(120,120,120,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(120,120,120,0.03) 1px, transparent 1px); 
+            background-size: 40px 40px; 
+            mask-image: linear-gradient(black 40%, transparent); 
+            -webkit-mask-image: linear-gradient(black 40%, transparent);
         }
-
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
-            background-color: var(--background-color);
-            color: var(--text-primary);
-            line-height: 1.6;
-            overflow-x: hidden;
-            padding: 64px 24px;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-        }
-
-        /* --- Pricing Card Base Style --- */
-        .pricing-card {
-            background: var(--card-background-color);
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-        }
-        .pricing-card:hover {
-            transform: translateY(-8px);
-            border-color: #4d4d4d;
-            box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.3);
-        }
-        .card-content {
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-        }
-        .card-features {
-            flex-grow: 1;
-        }
-
-        /* --- Buttons --- */
-        .plan-btn {
-            width: 100%;
-            padding: 14px 24px;
-            border: 2px solid transparent;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-        .plan-btn.primary {
-            background-color: var(--accent-color);
-            color: #0d0d0d;
-        }
-        .plan-btn.primary:hover {
-            background-color: transparent;
-            border-color: var(--accent-color);
-            color: var(--accent-color);
-        }
-        .plan-btn.secondary {
-            background-color: transparent;
-            border-color: var(--accent-color);
-            color: var(--accent-color);
-        }
-        .plan-btn.secondary:hover {
-            background: var(--accent-color);
-            color: #0d0d0d;
-        }
-        .plan-btn.tertiary {
-            background: #2e2e2e;
-            color: var(--text-primary);
-        }
-        .plan-btn.tertiary:hover {
-            background: #444444;
-        }
-
-        /* --- Pricing Specifics --- */
-        .plan-name {
-            font-size: 1.5rem;
-            font-weight: 800;
-        }
-        .plan-price {
-            font-size: 4rem;
-            font-weight: 900;
-            letter-spacing: -3px;
-        }
-        .plan-currency, .plan-period {
-            font-weight: 600;
-            color: var(--text-secondary);
-        }
-        .feature-icon {
-            width: 22px;
-            height: 22px;
-            border-radius: 50%;
-            background: var(--border-color);
-            color: var(--text-primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.8rem;
-            font-weight: bold;
-            flex-shrink: 0;
-        }
-        .feature-icon.unavailable {
-            background: #2e2e2e;
-            color: #555555;
-        }
-
-        /* --- Special Cards --- */
-        .pricing-card.popular {
-            border-color: var(--accent-color);
-            box-shadow: 0 0 25px var(--shadow-color-light);
-        }
-        .popular-badge {
-            background: var(--accent-color);
-            color: #0d0d0d;
-            font-weight: 700;
-            padding: 6px 16px;
-            border-radius: 20px;
-            font-size: 0.875rem;
-            text-transform: uppercase;
-            position: absolute;
-            top: -16px;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-
-        /* --- Pricing Toggle --- */
-        .toggle-wrapper {
-            background: #1f1f1f;
-            border: 1px solid var(--border-color);
-            border-radius: 9999px;
-            position: relative;
-            display: inline-flex;
-            padding: 4px;
-        }
-        .toggle-btn {
-            padding: 8px 16px;
-            border-radius: 9999px;
-            font-weight: 600;
-            cursor: pointer;
-            z-index: 10;
-            transition: color 0.3s ease;
-            color: var(--text-secondary);
-            font-size: 0.875rem;
-        }
-        .toggle-btn.active {
-            color: #0d0d0d;
-        }
-        .toggle-bg {
-            position: absolute;
-            top: 4px;
-            left: 4px;
-            width: calc(25% - 4.5px); /* Adjusted for 4 options */
-            height: calc(100% - 8px);
-            background: var(--accent-color);
-            border-radius: 9999px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-        }
-
-        /* --- Animation --- */
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .animated-element {
-            animation: slideUp 0.6s ease-out forwards;
-            opacity: 0;
-        }
-
-        /* --- Special Features --- */
-        .special-feature {
-            background: var(--background-color);
-            border: 1px solid var(--border-color);
-            color: var(--text-primary);
-            padding: 12px;
-            border-radius: 8px;
-            font-weight: 600;
-            text-align: center;
-        }
-        .price-note {
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-            min-height: 40px;
-            margin-top: -1rem;
-            margin-bottom: 1rem;
-        }
+        
+        .spotlight { background: radial-gradient(500px circle at var(--x) var(--y), rgba(255,255,255,0.06), transparent 40%); }
+        html.dark .spotlight { background: radial-gradient(500px circle at var(--x) var(--y), rgba(255,255,255,0.04), transparent 40%); }
+        
+        /* Smooth transition for numbers */
+        .plan-price { transition: all 0.3s ease; }
     </style>
 </head>
-<body>
-    <section class="pricing" id="pricing">
-        <div class="container mx-auto px-4">
-            <div class="text-center mb-16">
-                <h1 class="text-5xl lg:text-6xl font-black mb-4">Choose Your Edge</h1>
-                <p class="text-xl text-gray-400 max-w-3xl mx-auto">
-                    Flexible plans designed for every ambition. From foundational tools to enterprise-grade power, unlock your potential with CNEAPEE+.
-                </p>
-            </div>
+<body class="overflow-x-hidden bg-zinc-50 text-zinc-900 dark:bg-[#030305] dark:text-zinc-300 min-h-screen transition-colors duration-300"
+      onmousemove="requestAnimationFrame(() => document.querySelectorAll('.card').forEach(c=>{const r=c.getBoundingClientRect();c.style.setProperty('--x',(event.clientX-r.left)+'px');c.style.setProperty('--y',(event.clientY-r.top)+'px')}))">
+
+    <!-- Backgrounds -->
+    <div class="fixed inset-0 grid-bg pointer-events-none -z-10"></div>
+    <div class="fixed top-0 left-1/2 -translate-x-1/2 w-[80vw] h-[50vh] bg-indigo-500/5 blur-[120px] rounded-full pointer-events-none -z-10"></div>
+
+    <!-- Minimal Header -->
+    <header class="fixed top-6 left-0 right-0 z-50 flex justify-center px-4">
+        <div class="bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl border border-zinc-200 dark:border-white/10 rounded-full p-1.5 flex items-center gap-1 shadow-2xl">
             
-            <div class="flex justify-center items-center gap-2 mb-16 flex-wrap">
-                <div class="toggle-wrapper">
-                    <div class="toggle-bg" id="toggleBg"></div>
-                    <div class="toggle-btn active" data-period="monthly" data-index="0">Monthly</div>
-                    <div class="toggle-btn" data-period="3-month" data-index="1">3 Months <span class="bg-gray-700 text-green-300 text-xs font-bold px-2 py-1 rounded-full">10% Off</span></div>
-                    <div class="toggle-btn" data-period="6-month" data-index="2">6 Months <span class="bg-gray-700 text-green-300 text-xs font-bold px-2 py-1 rounded-full">15% Off</span></div>
-                    <div class="toggle-btn" data-period="12-month" data-index="3">12 Months <span class="bg-gray-700 text-green-300 text-xs font-bold px-2 py-1 rounded-full">25% Off</span></div>
+            <!-- Home Button -->
+            <a href="index.html" class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-zinc-100 dark:hover:bg-white/10 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition" title="Home">
+                <i class="fas fa-home"></i>
+            </a>
+
+            <div class="w-px h-4 bg-zinc-300 dark:bg-white/10 mx-1"></div>
+
+            <!-- Plan Selector -->
+            <div class="relative">
+                <button id="plan-selector-btn" onclick="toggleDropdown()" class="flex items-center gap-2 px-4 py-2 rounded-full bg-zinc-100 dark:bg-white/5 hover:bg-zinc-200 dark:hover:bg-white/10 text-sm font-semibold text-zinc-900 dark:text-white transition w-40 justify-between">
+                    <span id="current-plan-label">Monthly</span>
+                    <i class="fas fa-chevron-down text-xs opacity-60"></i>
+                </button>
+                
+                <!-- Dropdown Menu -->
+                <div id="plan-menu" class="absolute top-full left-0 mt-2 w-48 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/10 rounded-2xl shadow-xl p-1.5 hidden opacity-0 -translate-y-2 transition-all duration-200 z-50">
+                    <button class="w-full text-left px-3 py-2 rounded-xl text-sm font-medium text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-white/5 hover:text-zinc-900 dark:hover:text-white transition flex justify-between" onclick="setPeriod('monthly', 'Monthly')">
+                        Monthly <span></span>
+                    </button>
+                    <button class="w-full text-left px-3 py-2 rounded-xl text-sm font-medium text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-white/5 hover:text-zinc-900 dark:hover:text-white transition flex justify-between" onclick="setPeriod('3-month', '3 Months')">
+                        3 Months <span class="text-green-500 text-xs">-10%</span>
+                    </button>
+                    <button class="w-full text-left px-3 py-2 rounded-xl text-sm font-medium text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-white/5 hover:text-zinc-900 dark:hover:text-white transition flex justify-between" onclick="setPeriod('6-month', '6 Months')">
+                        6 Months <span class="text-green-500 text-xs">-15%</span>
+                    </button>
+                    <button class="w-full text-left px-3 py-2 rounded-xl text-sm font-medium text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-white/5 hover:text-zinc-900 dark:hover:text-white transition flex justify-between" onclick="setPeriod('12-month', 'Yearly')">
+                        Yearly <span class="text-green-500 text-xs">-30%</span>
+                    </button>
                 </div>
             </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto items-stretch">
-                
-                <!-- Plan 1: Free -->
-                <div class="pricing-card p-8 animated-element" style="animation-delay: 0.1s;">
-                    <div class="card-content">
-                        <h3 class="plan-name mb-2">Free</h3>
-                        <p class="text-gray-400 mb-6">For individuals getting started</p>
-                        <div class="flex items-baseline gap-1">
-                            <span class="plan-currency text-2xl">₹</span>
-                            <span class="plan-price" data-monthly="0">0</span>
-                        </div>
-                        <p class="plan-period mb-8">/month</p>
-                        <div class="price-note"></div>
-                        <ul class="space-y-4 mb-8 text-gray-300 card-features">
-                            <li class="flex items-center gap-3"><span class="feature-icon">✓</span>Standard Model Access</li>
-                            <li class="flex items-center gap-3"><span class="feature-icon">✓</span>Limited Queries</li>
-                            <li class="flex items-center gap-3"><span class="feature-icon">✓</span>Community Support</li>
-                        </ul>
-                        <button class="plan-btn tertiary mt-auto">Get Started Free</button>
-                    </div>
-                </div>
 
-                <!-- Plan 2: Plus -->
-                <div class="pricing-card p-8 animated-element popular" style="animation-delay: 0.2s;">
-                    <div class="card-content">
-                        <div class="popular-badge">Most Popular</div>
-                        <h3 class="plan-name mb-2">Plus</h3>
-                        <p class="text-gray-400 mb-6">Perfect for students & enthusiasts</p>
-                        <div class="flex items-baseline gap-1">
-                            <span class="plan-currency text-2xl">₹</span>
-                            <span class="plan-price" data-monthly="249">249</span>
-                        </div>
-                        <p class="plan-period mb-8">/month</p>
-                         <div class="price-note"></div>
-                        <ul class="space-y-4 mb-8 text-gray-300 card-features">
-                            <li class="flex items-center gap-3"><span class="feature-icon">✓</span>Enhanced Model Access</li>
-                            <li class="flex items-center gap-3"><span class="feature-icon">✓</span>Higher Queries Limit</li>
-                            <li class="flex items-center gap-3"><span class="feature-icon">✓</span>Ad-Free Experience</li>
-                            <li class="flex items-center gap-3 opacity-50"><span class="feature-icon unavailable">✗</span>Priority Support</li>
-                        </ul>
-                        <button class="plan-btn primary mt-auto">Choose Plus</button>
-                    </div>
-                </div>
-                
-                <!-- Plan 3: Neo -->
-                <div class="pricing-card p-8 animated-element" style="animation-delay: 0.3s;">
-                    <div class="card-content">
-                        <h3 class="plan-name mb-2">Neo</h3>
-                        <p class="text-gray-400 mb-6">For professionals and power users</p>
-                        <div class="flex items-baseline gap-1">
-                            <span class="plan-currency text-2xl">₹</span>
-                            <span class="plan-price" data-monthly="499">499</span>
-                        </div>
-                        <p class="plan-period mb-8">/month</p>
-                        <div class="price-note"></div>
-                        <ul class="space-y-4 mb-8 text-gray-300 card-features">
-                            <li class="flex items-center gap-3"><span class="feature-icon">✓</span>Advanced Model Access</li>
-                            <li class="flex items-center gap-3"><span class="feature-icon">✓</span>Higher Queries Limit than Plus</li>
-                            <li class="flex items-center gap-3"><span class="feature-icon">✓</span>Fast Response Time</li>
-                            <li class="flex items-center gap-3"><span class="feature-icon">✓</span>Priority Support</li>
-                        </ul>
-                        <button class="plan-btn secondary mt-auto">Upgrade to Neo</button>
-                    </div>
-                </div>
+            <div class="w-px h-4 bg-zinc-300 dark:bg-white/10 mx-1"></div>
 
-                <!-- Plan 4: Health+ -->
-                <div class="pricing-card p-8 animated-element" style="animation-delay: 0.4s;">
-                    <div class="card-content">
-                        <h3 class="plan-name mb-2">Health+</h3>
-                        <p class="text-gray-400 mb-6">For personalized wellness tracking</p>
-                        <div class="flex items-baseline gap-1">
-                            <span class="plan-currency text-2xl">₹</span>
-                            <span class="plan-price" data-monthly="699" data-first-month="7999">699</span>
-                        </div>
-                        <p class="plan-period mb-8">/month</p>
-                        <div class="price-note">First month at ₹7999, then ₹699/mo.</div>
-                        <ul class="space-y-4 mb-8 text-gray-300 card-features">
-                            <li class="flex items-center gap-3"><span class="feature-icon">✓</span>Everything in Plus</li>
-                            <li class="flex items-center gap-3"><span class="feature-icon">✓</span>Personalised Health Analytics</li>
-                            <li class="flex items-center gap-3"><span class="feature-icon">✓</span>Full Body Checkup at no extra costs.</li>
-                            <li class="flex items-center gap-3"><span class="feature-icon">✓</span>Priority Support to Health Specialist.</li>
-                            <li class="special-feature mt-2">✨ Includes a FREE Fitness Watch!</li>
-                        </ul>
-                        <button class="plan-btn secondary mt-auto">Go Health+</button>
-                    </div>
-                </div>
-
-                <!-- Plan 5: Learning+ -->
-                <div class="pricing-card p-8 animated-element" style="animation-delay: 0.5s;">
-                    <div class="card-content">
-                        <h3 class="plan-name mb-2">Learning+</h3>
-                        <p class="text-gray-400 mb-6">For dedicated students & learners</p>
-                        <div class="flex items-baseline gap-1">
-                            <span class="plan-currency text-2xl">₹</span>
-                            <span class="plan-price" data-monthly="899" data-first-month="3499">899</span>
-                        </div>
-                        <p class="plan-period mb-8">/month</p>
-                        <div class="price-note">First month at ₹3499, then ₹899/mo.</div>
-                        <ul class="space-y-4 mb-8 text-gray-300 card-features">
-                            <li class="flex items-center gap-3"><span class="feature-icon">✓</span>Everything in Plus</li>
-                            <li class="flex items-center gap-3"><span class="feature-icon">✓</span>Special Doubt Session</li>
-                            <li class="flex items-center gap-3"><span class="feature-icon">✓</span>Pro Learning Hub Access</li>
-                            <li class="flex items-center gap-3"><span class="feature-icon">✓</span>Study Materials, Notes & Batch Access</li>
-                        </ul>
-                        <button class="plan-btn secondary mt-auto">Go Learning+</button>
-                    </div>
-                </div>
-
-                <!-- Plan 6: Enterprise -->
-                <div class="pricing-card p-8 animated-element popular" style="animation-delay: 0.6s;">
-                    <div class="card-content">
-                        <div class="popular-badge">Enterprise</div>
-                        <h3 class="plan-name mb-2">Enterprise</h3>
-                        <p class="text-gray-400 mb-6">The ultimate solution for business</p>
-                        <div class="flex items-baseline gap-1">
-                            <span class="plan-currency text-2xl">₹</span>
-                            <span class="plan-price" data-monthly="9999">9999</span>
-                        </div>
-                        <p class="plan-period mb-8">/month</p>
-                        <div class="price-note"></div>
-                        <ul class="space-y-4 mb-8 text-gray-300 card-features">
-                            <li class="flex items-center gap-3"><span class="feature-icon">✓</span>Custom Model Training</li>
-                            <li class="flex items-center gap-3"><span class="feature-icon">✓</span>VIP Support & Consultation</li>
-                            <li class="flex items-center gap-3"><span class="feature-icon">✓</span>Team Management Tools</li>
-                            <li class="flex items-center gap-3"><span class="feature-icon">✓</span>API Access</li>
-                        </ul>
-                        <button class="plan-btn primary mt-auto">Contact Sales</button>
-                    </div>
-                </div>
-            </div>
+            <!-- Theme Toggle -->
+            <button onclick="toggleTheme()" class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-zinc-100 dark:hover:bg-white/10 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition" title="Toggle Theme">
+                <i id="theme-icon" class="fas fa-moon"></i>
+            </button>
         </div>
-    </section>
+    </header>
 
-    <footer class="text-center mt-20 text-gray-600">
-        <p>Powered by CNEAPEE</p>
-    </footer>
+    <main class="pt-32 pb-20 px-4 max-w-7xl mx-auto">
+        <!-- Pricing Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in">
+            
+            <!-- 1. Free -->
+            <div class="card group relative p-6 rounded-3xl bg-white dark:bg-zinc-900/40 border border-zinc-200 dark:border-white/5 hover:border-zinc-300 dark:hover:border-white/20 transition-all duration-300 flex flex-col h-full">
+                <div class="absolute inset-0 spotlight opacity-0 group-hover:opacity-100 transition pointer-events-none"></div>
+                <div class="relative z-10 flex flex-col h-full">
+                    <h3 class="text-lg font-bold text-zinc-900 dark:text-white mb-1">Free</h3>
+                    <p class="text-xs text-zinc-500 mb-6">Essential access.</p>
+                    <div class="mb-6">
+                        <span class="text-4xl font-bold text-zinc-900 dark:text-white">₹0</span>
+                    </div>
+                    <ul class="space-y-3 mb-8 text-sm text-zinc-600 dark:text-zinc-400 flex-grow">
+                        <li class="flex items-center gap-2"><i class="fas fa-check text-zinc-400"></i> Standard Model</li>
+                        <li class="flex items-center gap-2"><i class="fas fa-check text-zinc-400"></i> Limited Queries</li>
+                    </ul>
+                    <button class="w-full py-2.5 rounded-xl border border-zinc-200 dark:border-white/10 text-zinc-900 dark:text-white font-medium hover:bg-zinc-50 dark:hover:bg-white/5 transition text-sm">Get Started</button>
+                </div>
+            </div>
+
+            <!-- 2. Health+ -->
+            <div class="card group relative p-6 rounded-3xl bg-white dark:bg-zinc-900/40 border border-emerald-500/20 dark:border-emerald-500/20 hover:border-emerald-500/50 transition-all duration-300 flex flex-col h-full">
+                <div class="absolute inset-0 spotlight opacity-0 group-hover:opacity-100 transition pointer-events-none"></div>
+                <div class="relative z-10 flex flex-col h-full">
+                    <h3 class="text-lg font-bold text-zinc-900 dark:text-white mb-1">Health+</h3>
+                    <p class="text-xs text-zinc-500 mb-6">Wellness & Analytics.</p>
+                    <div class="mb-2">
+                        <span class="text-4xl font-bold text-zinc-900 dark:text-white plan-price" data-monthly="29">29</span>
+                        <span class="text-sm text-zinc-500 plan-period">/mo</span>
+                    </div>
+                    <div class="mb-6">
+                        <span class="text-[10px] uppercase font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2 py-1 rounded">+ ₹2999 Joining Fee</span>
+                    </div>
+                    <ul class="space-y-3 mb-8 text-sm text-zinc-600 dark:text-zinc-400 flex-grow">
+                        <li class="flex items-center gap-2"><i class="fas fa-check text-emerald-500"></i> Health Watch Included</li>
+                        <li class="flex items-center gap-2"><i class="fas fa-check text-emerald-500"></i> Deep Analytics</li>
+                    </ul>
+                    <button class="w-full py-2.5 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/20 font-medium transition text-sm">Select Health+</button>
+                </div>
+            </div>
+
+            <!-- 3. Plus (Ads) -->
+            <div class="card group relative p-6 rounded-3xl bg-white dark:bg-zinc-900/40 border border-blue-500/20 dark:border-blue-500/20 hover:border-blue-500/50 transition-all duration-300 flex flex-col h-full">
+                <div class="absolute inset-0 spotlight opacity-0 group-hover:opacity-100 transition pointer-events-none"></div>
+                <div class="relative z-10 flex flex-col h-full">
+                    <h3 class="text-lg font-bold text-zinc-900 dark:text-white mb-1">Plus (Ads)</h3>
+                    <p class="text-xs text-zinc-500 mb-6">Enhanced, ad-supported.</p>
+                    <div class="mb-6">
+                        <span class="text-4xl font-bold text-zinc-900 dark:text-white plan-price" data-monthly="59">59</span>
+                        <span class="text-sm text-zinc-500 plan-period">/mo</span>
+                    </div>
+                    <ul class="space-y-3 mb-8 text-sm text-zinc-600 dark:text-zinc-400 flex-grow">
+                        <li class="flex items-center gap-2"><i class="fas fa-check text-blue-500"></i> Enhanced Access</li>
+                        <li class="flex items-center gap-2"><i class="fas fa-minus text-zinc-400"></i> Ad-Supported</li>
+                    </ul>
+                    <button class="w-full py-2.5 rounded-xl border border-blue-500/30 text-blue-600 dark:text-blue-400 hover:bg-blue-500/10 font-medium transition text-sm">Select Plus (Ads)</button>
+                </div>
+            </div>
+
+            <!-- 4. Plus (Standard) -->
+            <div class="card group relative p-6 rounded-3xl bg-white dark:bg-zinc-900/40 border border-indigo-500/30 dark:border-indigo-500/30 hover:border-indigo-500/60 shadow-lg shadow-indigo-500/5 transition-all duration-300 flex flex-col h-full transform hover:-translate-y-1">
+                <div class="absolute inset-0 spotlight opacity-0 group-hover:opacity-100 transition pointer-events-none"></div>
+                <div class="relative z-10 flex flex-col h-full">
+                    <div class="flex justify-between items-start mb-1">
+                        <h3 class="text-lg font-bold text-zinc-900 dark:text-white">Plus</h3>
+                        <span class="bg-indigo-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">HOT</span>
+                    </div>
+                    <p class="text-xs text-zinc-500 mb-6">Ad-free standard.</p>
+                    <div class="mb-6">
+                        <span class="text-4xl font-bold text-zinc-900 dark:text-white plan-price" data-monthly="99">99</span>
+                        <span class="text-sm text-zinc-500 plan-period">/mo</span>
+                    </div>
+                    <ul class="space-y-3 mb-8 text-sm text-zinc-600 dark:text-zinc-400 flex-grow">
+                        <li class="flex items-center gap-2"><i class="fas fa-check text-indigo-500"></i> Ad-Free</li>
+                        <li class="flex items-center gap-2"><i class="fas fa-check text-indigo-500"></i> High Limits</li>
+                        <li class="flex items-center gap-2"><i class="fas fa-check text-indigo-500"></i> Fast Response</li>
+                    </ul>
+                    <button class="w-full py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-medium transition text-sm shadow-lg shadow-indigo-500/20">Go Plus</button>
+                </div>
+            </div>
+
+            <!-- 5. Plus Max -->
+            <div class="card group relative p-6 rounded-3xl bg-white dark:bg-zinc-900/40 border border-purple-500/20 dark:border-purple-500/20 hover:border-purple-500/50 transition-all duration-300 flex flex-col h-full">
+                <div class="absolute inset-0 spotlight opacity-0 group-hover:opacity-100 transition pointer-events-none"></div>
+                <div class="relative z-10 flex flex-col h-full">
+                    <h3 class="text-lg font-bold text-zinc-900 dark:text-white mb-1">Plus Max</h3>
+                    <p class="text-xs text-zinc-500 mb-6">Ultimate power.</p>
+                    <div class="mb-6">
+                        <span class="text-4xl font-bold text-zinc-900 dark:text-white plan-price" data-monthly="299">299</span>
+                        <span class="text-sm text-zinc-500 plan-period">/mo</span>
+                    </div>
+                    <ul class="space-y-3 mb-8 text-sm text-zinc-600 dark:text-zinc-400 flex-grow">
+                        <li class="flex items-center gap-2"><i class="fas fa-check text-purple-500"></i> Advanced Models</li>
+                        <li class="flex items-center gap-2"><i class="fas fa-check text-purple-500"></i> Priority SLA</li>
+                        <li class="flex items-center gap-2"><i class="fas fa-check text-purple-500"></i> Early Access</li>
+                    </ul>
+                    <button class="w-full py-2.5 rounded-xl border border-purple-500/30 text-purple-600 dark:text-purple-400 hover:bg-purple-500/10 font-medium transition text-sm">Max Out</button>
+                </div>
+            </div>
+
+            <!-- 6. Enterprise -->
+            <div class="card group relative p-6 rounded-3xl bg-zinc-900 dark:bg-white border border-transparent hover:border-zinc-700 transition-all duration-300 flex flex-col h-full">
+                <div class="relative z-10 flex flex-col h-full text-white dark:text-black">
+                    <h3 class="text-lg font-bold mb-1">Enterprise</h3>
+                    <p class="text-xs opacity-70 mb-6">Custom scale.</p>
+                    <div class="mb-6">
+                        <span class="text-3xl font-bold">Custom</span>
+                    </div>
+                    <ul class="space-y-3 mb-8 text-sm opacity-80 flex-grow">
+                        <li class="flex items-center gap-2"><i class="fas fa-check"></i> Custom Models</li>
+                        <li class="flex items-center gap-2"><i class="fas fa-check"></i> API Access</li>
+                    </ul>
+                    <button class="w-full py-2.5 rounded-xl bg-white dark:bg-zinc-900 text-black dark:text-white font-medium hover:scale-105 transition text-sm">Contact Sales</button>
+                </div>
+            </div>
+
+        </div>
+        
+        <p class="text-center text-xs text-zinc-400 mt-12">Prices in INR. Taxes may apply. © 2025 CNEAPEE.</p>
+    </main>
 
     <script>
-        const toggleButtons = document.querySelectorAll('.toggle-btn');
-        const toggleBg = document.getElementById('toggleBg');
-        const pricingCards = document.querySelectorAll('.pricing-card');
-
         const periods = {
-            'monthly': { months: 1, discount: 0, suffix: '/month' },
-            '3-month': { months: 3, discount: 0.10, suffix: '/3 months' },
-            '6-month': { months: 6, discount: 0.15, suffix: '/6 months' },
-            '12-month': { months: 12, discount: 0.25, suffix: '/year' }
+            'monthly': { months: 1, discount: 0, suffix: '/mo' },
+            '3-month': { months: 3, discount: 0.10, suffix: '/3mo' },
+            '6-month': { months: 6, discount: 0.15, suffix: '/6mo' },
+            '12-month': { months: 12, discount: 0.30, suffix: '/yr' }
         };
 
-        function updatePrices(activePeriod) {
-            const periodInfo = periods[activePeriod];
+        let currentPeriod = 'monthly';
+
+        function setPeriod(period, label) {
+            currentPeriod = period;
+            document.getElementById('current-plan-label').textContent = label;
             
-            pricingCards.forEach(card => {
-                const priceEl = card.querySelector('.plan-price');
-                const periodEl = card.querySelector('.plan-period');
-                const noteEl = card.querySelector('.price-note');
-                const monthlyPrice = parseFloat(priceEl.getAttribute('data-monthly'));
-                const firstMonthPrice = parseFloat(priceEl.getAttribute('data-first-month'));
+            // Close menu
+            const menu = document.getElementById('plan-menu');
+            menu.classList.add('hidden');
+            menu.classList.add('opacity-0');
+            menu.classList.add('-translate-y-2');
 
-                if (isNaN(monthlyPrice)) return;
-
-                if (activePeriod === 'monthly') {
-                    priceEl.textContent = monthlyPrice;
-                    periodEl.textContent = periodInfo.suffix;
-                    if (firstMonthPrice) {
-                        noteEl.textContent = `First month at ₹${firstMonthPrice}, then ₹${monthlyPrice}/mo.`;
+            // Update Prices
+            const periodInfo = periods[period];
+            document.querySelectorAll('.plan-price').forEach(el => {
+                const monthlyPrice = parseFloat(el.getAttribute('data-monthly'));
+                if (!isNaN(monthlyPrice)) {
+                    if (period === 'monthly') {
+                        el.textContent = monthlyPrice;
                     } else {
-                        noteEl.textContent = '';
-                    }
-                } else {
-                    const total = monthlyPrice * periodInfo.months;
-                    const discountedTotal = Math.round(total * (1 - periodInfo.discount));
-                    priceEl.textContent = discountedTotal;
-                    periodEl.textContent = periodInfo.suffix;
-
-                    if (firstMonthPrice) {
-                        const subsequentMonths = periodInfo.months - 1;
-                        const subsequentTotal = subsequentMonths * monthlyPrice;
-                        const totalWithFirst = firstMonthPrice + subsequentTotal;
-                        const discountedTotalWithFirst = Math.round(totalWithFirst * (1 - periodInfo.discount));
-                         priceEl.textContent = discountedTotalWithFirst;
-                        noteEl.textContent = `Billed every ${periodInfo.months} months. Includes first month charge.`;
-                    } else {
-                         if (monthlyPrice > 0) {
-                            noteEl.textContent = `Billed as one payment of ₹${discountedTotal}.`;
-                         } else {
-                            noteEl.textContent = '';
-                         }
+                        const total = monthlyPrice * periodInfo.months;
+                        const discounted = Math.round(total * (1 - periodInfo.discount));
+                        el.textContent = discounted;
                     }
                 }
+            });
+
+            document.querySelectorAll('.plan-period').forEach(el => {
+                el.textContent = periodInfo.suffix;
             });
         }
-
-        toggleButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                const activePeriod = button.getAttribute('data-period');
-                const activeIndex = button.getAttribute('data-index');
-
-                toggleButtons.forEach(btn => btn.classList.remove('active'));
-                button.classList.add('active');
-
-                toggleBg.style.transform = `translateX(${activeIndex * 100}%)`;
-                updatePrices(activePeriod);
-            });
-        });
-        
-        // Initial Price Set
-        updatePrices('monthly');
-
-        // --- Animation Observer ---
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('animation-visible');
-                }
-            });
-        }, { threshold: 0.1 });
-
-        document.querySelectorAll('.animated-element').forEach(el => {
-            observer.observe(el);
-        });
     </script>
 </body>
 </html>
-
