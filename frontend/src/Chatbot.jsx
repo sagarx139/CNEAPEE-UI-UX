@@ -1,136 +1,226 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { ArrowRight, Cpu, Send, User, Sparkles } from 'lucide-react';
+import { 
+  Home as HomeIcon, ChevronDown, Send, Sparkles, 
+  Paperclip, Mic, Bot, Trash2, Check, History, X, 
+  MessageSquare, Search, Zap
+} from 'lucide-react';
 
-export default function Chatbot({ onBack }) {
+export default function Chatbot({ onNavigate }) {
+  // --- STATE ---
   const [messages, setMessages] = useState([
-    { role: 'assistant', text: 'Hello! I am Neuro+. How can I help you today?' }
+    { id: 1, role: 'assistant', text: "Hello! I'm Flare+. The dark mode is now permanent. I'm ready to assist." }
   ]);
   const [input, setInput] = useState('');
+  const [isTyping, setIsTyping] = useState(false);
+  const [model, setModel] = useState('Flare 0.5');
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  
+  // --- REFS ---
   const messagesEndRef = useRef(null);
+  const containerRef = useRef(null);
+  const dropdownRef = useRef(null);
 
-  // Auto-scroll to bottom
-  const scrollToBottom = () => {
+  // --- SCROLL LOGIC ---
+  useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages, isTyping]);
+
+  // --- SPOTLIGHT EFFECT ---
+  const handleMouseMove = (e) => {
+    if (containerRef.current) {
+      const rect = containerRef.current.getBoundingClientRect();
+      containerRef.current.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
+      containerRef.current.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
+    }
   };
 
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
-
+  // --- HANDLERS ---
   const handleSend = () => {
     if (!input.trim()) return;
-
-    // Add User Message
-    const userMsg = { role: 'user', text: input };
+    const userMsg = { id: Date.now(), role: 'user', text: input };
     setMessages(prev => [...prev, userMsg]);
     setInput('');
+    setIsTyping(true); // Triggers the Wave Animation
 
-    // Simulate AI Response (Placeholder)
+    // Simulate AI Response
     setTimeout(() => {
-      const aiMsg = { role: 'assistant', text: "I'm currently in demo mode. Connect me to a backend to get real responses!" };
-      setMessages(prev => [...prev, aiMsg]);
-    }, 1000);
+      setIsTyping(false); // Stops the Wave Animation
+      setMessages(prev => [...prev, { 
+        id: Date.now() + 1, 
+        role: 'assistant', 
+        text: "I am processing your request with the new neural interface." 
+      }]);
+    }, 2000);
   };
 
   const handleKeyDown = (e) => {
-    if (e.key === 'Enter') handleSend();
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); }
   };
 
   return (
-    <div className="flex h-screen bg-zinc-50 dark:bg-[#030305] text-zinc-800 dark:text-zinc-200 animate-fade-in font-sans">
-      
-      {/* Sidebar (Desktop Only) */}
-      <aside className="w-64 border-r border-zinc-200 dark:border-white/10 p-4 hidden md:flex flex-col bg-white dark:bg-[#050507]">
-        <button onClick={onBack} className="flex items-center gap-2 mb-8 hover:text-indigo-500 font-bold transition-colors">
-          <ArrowRight className="rotate-180" size={18} /> Back to Home
-        </button>
+    <div 
+      ref={containerRef}
+      onMouseMove={handleMouseMove}
+      className="flex flex-col h-screen bg-[#050507] text-zinc-300 font-sans overflow-hidden relative selection:bg-indigo-500/30"
+    >
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+        .font-sans { font-family: 'Plus Jakarta Sans', sans-serif; }
         
-        <button 
-          onClick={() => setMessages([{ role: 'assistant', text: 'Hello! I am Neuro+. How can I help you today?' }])}
-          className="bg-indigo-600 hover:bg-indigo-700 text-white p-3 rounded-xl text-sm mb-6 font-medium shadow-md transition-all flex items-center justify-center gap-2"
-        >
-          <Cpu size={16} /> New Chat
-        </button>
-        
-        <div className="text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-3">Recent History</div>
-        <div className="space-y-1 flex-1 overflow-y-auto">
-          {['Project Planning', 'Health tips & Diet', 'React Code Debug'].map((t, i) => (
-            <div key={i} className="text-sm p-3 rounded-lg hover:bg-zinc-100 dark:hover:bg-white/5 cursor-pointer truncate transition-colors text-zinc-600 dark:text-zinc-400">
-              {t}
+        /* Spotlight Background */
+        .spotlight-bg {
+          background: radial-gradient(600px circle at var(--mouse-x) var(--mouse-y), rgba(99, 102, 241, 0.08), transparent 40%);
+        }
+
+        /* Neural Wave Animation */
+        .neural-wave {
+          position: fixed;
+          bottom: -100px;
+          left: 0;
+          right: 0;
+          height: 300px;
+          background: linear-gradient(180deg, transparent, rgba(79, 70, 229, 0.15), rgba(168, 85, 247, 0.2));
+          filter: blur(60px);
+          opacity: 0;
+          transition: opacity 1s ease, transform 1s ease;
+          transform: translateY(100px) scaleY(0.5);
+          z-index: 10;
+          pointer-events: none;
+        }
+
+        .neural-wave.active {
+          opacity: 1;
+          transform: translateY(0) scaleY(1);
+          animation: pulseWave 4s infinite alternate;
+        }
+
+        @keyframes pulseWave {
+          0% { filter: blur(60px) hue-rotate(0deg); }
+          100% { filter: blur(80px) hue-rotate(40deg); }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+      `}</style>
+
+      {/* --- BACKGROUNDS --- */}
+      <div className="absolute inset-0 pointer-events-none spotlight-bg z-0" />
+      <div className="fixed inset-0 opacity-[0.03] z-0 pointer-events-none" 
+           style={{ backgroundImage: `linear-gradient(#333 1px, transparent 1px), linear-gradient(90deg, #333 1px, transparent 1px)`, backgroundSize: '40px 40px' }} />
+
+      {/* --- THE NEURAL WAVE (Activates when isTyping is true) --- */}
+      <div className={`neural-wave ${isTyping ? 'active' : ''}`} />
+
+      {/* --- NAVBAR --- */}
+      <nav className="fixed top-6 left-0 right-0 z-50 flex justify-center px-4">
+        <div className="backdrop-blur-xl bg-zinc-900/80 border border-white/10 rounded-full p-1.5 flex items-center gap-1 shadow-2xl">
+          <button onClick={() => onNavigate('home')} className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/10 text-zinc-400 hover:text-white transition">
+            <HomeIcon size={18} />
+          </button>
+
+          <div className="w-px h-4 mx-1 bg-white/10" />
+
+          {/* Model Selector */}
+          <div className="relative" ref={dropdownRef}>
+            <button 
+              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+              className="flex items-center gap-2 px-4 py-2 rounded-full hover:bg-white/5 text-white transition min-w-[140px] justify-between text-sm font-semibold"
+            >
+              <span className="flex items-center gap-2"><Sparkles size={14} className="text-indigo-500" />{model}</span>
+              <ChevronDown size={14} className="opacity-60" />
+            </button>
+            {isDropdownOpen && (
+              <div className="absolute top-full left-0 mt-2 w-48 bg-zinc-900 border border-white/10 rounded-2xl shadow-xl p-1.5 z-50 animate-in fade-in zoom-in duration-200">
+                {['Flare 0.5', 'Flare 0.5 Ace'].map((m) => (
+                  <button key={m} onClick={() => { setModel(m); setIsDropdownOpen(false); }} className="w-full text-left px-3 py-2 rounded-xl text-sm font-medium text-zinc-400 hover:bg-white/5 hover:text-white transition flex justify-between">
+                    {m} {model === m && <Check size={14} className="text-indigo-500" />}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div className="w-px h-4 mx-1 bg-white/10" />
+          <button onClick={() => setMessages([])} className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/10 text-zinc-400 hover:text-red-400 transition">
+            <Trash2 size={16} />
+          </button>
+        </div>
+      </nav>
+
+      {/* --- CHAT AREA --- */}
+      <main className="flex-1 overflow-y-auto pt-28 pb-4 px-4 z-20">
+        <div className="max-w-3xl mx-auto space-y-6">
+          {messages.length === 0 && (
+            <div className="text-center py-20 opacity-50">
+              <div className="w-16 h-16 mx-auto bg-indigo-500/10 rounded-2xl flex items-center justify-center mb-4 border border-indigo-500/20">
+                <Bot size={32} className="text-indigo-400" />
+              </div>
+              <p className="text-lg font-medium text-zinc-400">System Ready.</p>
             </div>
-          ))}
-        </div>
-        
-        <div className="text-xs text-zinc-500 mt-auto pt-4 border-t border-zinc-200 dark:border-white/10">
-          Neuro 1.1 Model • Stable
-        </div>
-      </aside>
+          )}
 
-      {/* Main Chat Area */}
-      <main className="flex-1 flex flex-col relative bg-white/50 dark:bg-[#030305]">
-        
-        {/* Mobile Header */}
-        <div className="md:hidden p-4 border-b border-zinc-200 dark:border-white/10 flex items-center gap-3 bg-white dark:bg-[#030305] sticky top-0 z-10">
-          <button onClick={onBack} className="p-1"><ArrowRight className="rotate-180" size={20} /></button>
-          <span className="font-bold">Neuro+ AI</span>
-        </div>
-
-        {/* Chat Messages */}
-        <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-6">
-          {messages.map((msg, idx) => (
-            <div key={idx} className={`flex gap-4 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-              
-              {/* Avatar for AI */}
-              {msg.role === 'assistant' && (
-                <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center shrink-0 mt-1">
-                  <Sparkles size={16} className="text-white" />
-                </div>
-              )}
-
-              {/* Message Bubble */}
-              <div className={`max-w-[80%] p-4 rounded-2xl text-sm leading-relaxed ${
-                msg.role === 'user' 
-                  ? 'bg-zinc-900 dark:bg-white text-white dark:text-black rounded-tr-none' 
-                  : 'bg-white dark:bg-white/10 border border-zinc-200 dark:border-white/5 rounded-tl-none'
-              }`}>
+          {messages.map((msg) => (
+            <div key={msg.id} className={`flex gap-4 animate-in fade-in slide-in-from-bottom-2 duration-300 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+              <div className={`max-w-[85%] px-5 py-3.5 rounded-2xl text-[15px] leading-relaxed shadow-sm backdrop-blur-sm
+                ${msg.role === 'user' 
+                  ? 'bg-indigo-600 text-white rounded-tr-none shadow-indigo-500/10' 
+                  : 'bg-zinc-800/80 border border-white/5 text-zinc-200 rounded-tl-none'
+                }`}>
                 {msg.text}
               </div>
-
-              {/* Avatar for User */}
-              {msg.role === 'user' && (
-                <div className="w-8 h-8 rounded-lg bg-zinc-200 dark:bg-zinc-800 flex items-center justify-center shrink-0 mt-1">
-                  <User size={16} className="text-zinc-500" />
-                </div>
-              )}
             </div>
           ))}
-          <div ref={messagesEndRef} />
-        </div>
 
-        {/* Input Area */}
-        <div className="p-4 md:p-6 bg-white dark:bg-[#030305] border-t border-zinc-200 dark:border-white/5">
-          <div className="max-w-3xl mx-auto relative">
-            <input 
-              type="text" 
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={handleKeyDown}
-              placeholder="Message Neuro..." 
-              className="w-full bg-zinc-50 dark:bg-[#0A0A0C] border border-zinc-200 dark:border-white/10 rounded-full py-4 pl-6 pr-14 focus:ring-2 ring-indigo-500/50 outline-none shadow-sm dark:text-white transition-all placeholder:text-zinc-400" 
-            />
-            <button 
-              onClick={handleSend}
-              className="absolute right-2 top-2 bottom-2 aspect-square bg-indigo-600 rounded-full text-white hover:bg-indigo-700 transition flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
-              disabled={!input.trim()}
-            >
-              <Send size={18} />
-            </button>
-          </div>
-          <div className="text-center text-[10px] text-zinc-400 mt-3">
-            Neuro can make mistakes. Consider checking important information.
-          </div>
+          {isTyping && (
+            <div className="flex gap-4 justify-start animate-pulse">
+              <div className="bg-zinc-800/80 border border-white/5 px-4 py-3 rounded-2xl rounded-tl-none flex items-center gap-1.5">
+                <div className="w-1.5 h-1.5 bg-indigo-400 rounded-full animate-bounce delay-0" />
+                <div className="w-1.5 h-1.5 bg-indigo-400 rounded-full animate-bounce delay-150" />
+                <div className="w-1.5 h-1.5 bg-indigo-400 rounded-full animate-bounce delay-300" />
+              </div>
+            </div>
+          )}
+          <div ref={messagesEndRef} className="h-4" />
         </div>
       </main>
+
+      {/* --- INPUT AREA --- */}
+      <footer className="p-4 z-30">
+        <div className="max-w-3xl mx-auto">
+          <div className="relative flex items-end gap-2 p-2 rounded-[28px] border border-white/10 bg-zinc-900/90 shadow-2xl backdrop-blur-xl focus-within:border-indigo-500/50 transition-colors">
+            
+            <button className="p-3 rounded-full text-zinc-400 hover:text-white hover:bg-white/10 transition shrink-0">
+              <Paperclip size={20} />
+            </button>
+
+            <textarea
+              value={input}
+              onChange={(e) => {
+                setInput(e.target.value);
+                e.target.style.height = 'auto';
+                e.target.style.height = Math.min(e.target.scrollHeight, 120) + 'px';
+              }}
+              onKeyDown={handleKeyDown}
+              placeholder="Message Flare..."
+              className="w-full bg-transparent border-none outline-none resize-none py-3.5 max-h-[120px] text-[15px] placeholder:text-zinc-600 text-white"
+              rows={1}
+            />
+
+            {input.trim() ? (
+              <button onClick={handleSend} className="p-3 rounded-full bg-indigo-600 text-white hover:bg-indigo-500 transition shrink-0 shadow-lg shadow-indigo-500/20">
+                <Send size={18} />
+              </button>
+            ) : (
+              <button className="p-3 rounded-full text-zinc-400 hover:text-white hover:bg-white/10 transition shrink-0">
+                <Mic size={20} />
+              </button>
+            )}
+          </div>
+          <p className="text-center text-[10px] text-zinc-600 mt-3">Flare can make mistakes. Check important info.</p>
+        </div>
+      </footer>
     </div>
   );
 }

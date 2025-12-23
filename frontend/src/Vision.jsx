@@ -1,12 +1,27 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { 
-  Brain, BookOpen, HeartPulse, Newspaper, 
-  Palette, Terminal, MessageCircle, ShoppingBag, 
-  Cpu, Zap, Layers, Globe 
+  Brain, 
+  BookOpen, 
+  HeartPulse, 
+  Newspaper, 
+  Palette, 
+  Terminal, 
+  MessageCircle, 
+  ShoppingBag, 
+  Video, 
+  Home, // Corrected from HomeIcon
+  ChevronDown, 
+  Sun, 
+  Moon, 
+  Zap, 
+  Layers, 
+  Globe, 
+  Cpu 
 } from 'lucide-react';
 
-export default function Vision() {
-  // Initialize theme from localStorage to prevent flashing wrong theme
+// --- VISION COMPONENT ---
+const Vision = ({ onNavigate }) => {
+  // Initialize theme from localStorage
   const [theme, setTheme] = useState(() => {
     if (typeof window !== 'undefined') {
       return localStorage.getItem('theme') || 'dark';
@@ -16,7 +31,7 @@ export default function Vision() {
 
   const containerRef = useRef(null);
 
-  // Apply theme to body/html just in case, but mainly control local styles
+  // Apply theme
   useEffect(() => {
     localStorage.setItem('theme', theme);
     if (theme === 'dark') {
@@ -69,7 +84,7 @@ export default function Vision() {
     },
     {
       id: 5,
-      title: "Creative AI Studio",
+      title: "AI Image Generator",
       icon: <Palette className="text-pink-500" size={32} />,
       desc: "Generate visuals from text prompts. Perfect for creators, marketers, and designers to experiment with styles.",
       tag: "Creativity"
@@ -94,6 +109,13 @@ export default function Vision() {
       icon: <ShoppingBag className="text-yellow-500" size={32} />,
       desc: "An upcoming curated marketplace for digital and physical products aligned with the CNEAPEE ecosystem.",
       tag: "Commerce • Coming Soon"
+    },
+    {
+      id: 9,
+      title: "Creator Studio",
+      icon: <Video className="text-indigo-500" size={32} />,
+      desc: "A comprehensive production suite. Edit images, apply cinematic effects to videos, and refine your visual storytelling.",
+      tag: "Production"
     }
   ];
 
@@ -132,30 +154,47 @@ export default function Vision() {
       <div className="fixed inset-0 grid-bg pointer-events-none -z-10"></div>
       <div className="fixed top-0 left-1/2 -translate-x-1/2 w-[80vw] h-[50vh] bg-purple-600/10 blur-[120px] rounded-full pointer-events-none -z-10"></div>
 
-      {/* --- Navbar (Minimal) --- */}
-      <nav className={`fixed top-0 w-full z-50 border-b ${theme === 'dark' ? 'border-white/5 bg-[#030305]/80' : 'border-zinc-200 bg-white/80'} backdrop-blur-md transition-colors duration-300`}>
-        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-          <div className={`text-xl font-bold tracking-tight flex items-center gap-2 ${theme === 'dark' ? 'text-white' : 'text-zinc-900'}`}>
-            <span className="w-2 h-2 rounded-full bg-purple-500 animate-pulse"></span>
-            CNEAPEE
-          </div>
-          <button 
-            onClick={() => setTheme(prev => prev === 'dark' ? 'light' : 'dark')}
-            className={`text-xs font-medium px-4 py-2 rounded-full border transition ${theme === 'dark' ? 'border-white/10 hover:bg-white/5 text-white' : 'border-zinc-200 hover:bg-zinc-100 text-zinc-900'}`}
-          >
-            {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
-          </button>
-        </div>
+      {/* --- Floating Navbar --- */}
+      <nav className={`fixed top-8 left-1/2 -translate-x-1/2 z-50 flex items-center p-1.5 rounded-full border shadow-2xl backdrop-blur-xl transition-all duration-300 
+        ${theme === 'dark' ? 'bg-zinc-900/80 border-white/10 shadow-black/50' : 'bg-white/80 border-zinc-200 shadow-zinc-200/50'}`}>
+        
+        {/* Home Button (Navigates back to App) */}
+        <button 
+          onClick={() => onNavigate('home')}
+          className={`p-2.5 rounded-full transition-colors ${theme === 'dark' ? 'text-zinc-400 hover:text-white hover:bg-white/10' : 'text-zinc-500 hover:text-zinc-900 hover:bg-zinc-100'}`}
+          title="Go to App Home"
+        >
+          <Home size={20} />
+        </button>
+
+        {/* Divider */}
+        <div className={`w-[1px] h-5 mx-1 ${theme === 'dark' ? 'bg-white/10' : 'bg-zinc-200'}`}></div>
+
+        {/* Context Selector (Renamed to Vision) */}
+        <button className={`flex items-center gap-2 px-4 py-2 rounded-full transition-colors text-sm font-semibold tracking-tight
+          ${theme === 'dark' ? 'text-zinc-200 hover:bg-white/5' : 'text-zinc-800 hover:bg-zinc-50 bg-zinc-50/50'}`}>
+          <span>Vision</span>
+          <ChevronDown size={14} className="opacity-60" />
+        </button>
+
+        {/* Divider */}
+        <div className={`w-[1px] h-5 mx-1 ${theme === 'dark' ? 'bg-white/10' : 'bg-zinc-200'}`}></div>
+
+        {/* Theme Toggle (Sun/Moon Icon) */}
+        <button 
+          onClick={() => setTheme(prev => prev === 'dark' ? 'light' : 'dark')}
+          className={`p-2.5 rounded-full transition-colors ${theme === 'dark' ? 'text-zinc-400 hover:text-white hover:bg-white/10' : 'text-zinc-500 hover:text-zinc-900 hover:bg-zinc-100'}`}
+          title="Toggle Theme"
+        >
+          {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
+        </button>
       </nav>
 
       {/* --- Main Content --- */}
-      <main className="pt-32 pb-20 px-4 max-w-7xl mx-auto">
+      <main className="pt-40 pb-20 px-4 max-w-7xl mx-auto">
         
         {/* 1. Hero Section */}
         <div className="text-center max-w-4xl mx-auto mb-24 animate-fade-in">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-purple-500/30 bg-purple-500/10 text-purple-400 text-xs font-mono tracking-wider mb-6">
-            UNIFIED AI & DIGITAL EXPERIENCE PLATFORM
-          </div>
           <h1 className={`text-5xl md:text-7xl font-bold tracking-tight mb-6 ${theme === 'dark' ? 'text-white' : 'text-zinc-900'}`}>
             One Ecosystem.<br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-blue-400 to-teal-300">
@@ -168,7 +207,7 @@ export default function Vision() {
           </p>
         </div>
 
-        {/* 2. Core Capabilities Grid (Bento Style) */}
+        {/* 2. Core Capabilities Grid */}
         <div className="mb-32">
           <h2 className={`text-2xl font-bold mb-8 pl-2 border-l-4 border-purple-500 ${theme === 'dark' ? 'text-white' : 'text-zinc-900'}`}>
             Core Capabilities
@@ -208,31 +247,28 @@ export default function Vision() {
 
         {/* 3. Gemini Integration Section */}
         <div className={`mb-32 relative rounded-3xl overflow-hidden border p-8 md:p-12 ${theme === 'dark' ? 'border-white/10 glass-panel' : 'border-zinc-200 bg-white shadow-lg'}`}>
-          <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-blue-500/20 blur-[100px] rounded-full pointer-events-none"></div>
+          <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-blue-500/10 blur-[120px] rounded-full pointer-events-none"></div>
           
-          <div className="relative z-10 grid md:grid-cols-2 gap-12 items-center">
-            <div>
-              <div className="flex items-center gap-2 mb-4 text-blue-500 font-bold">
-                <Zap size={20} /> POWERED BY GEMINI
-              </div>
-              <h2 className={`text-3xl md:text-4xl font-bold mb-6 ${theme === 'dark' ? 'text-white' : 'text-zinc-900'}`}>
-                Enhanced Intelligence.<br/>Future-Ready Reasoning.
-              </h2>
-              <p className={`mb-8 text-lg ${theme === 'dark' ? 'text-zinc-400' : 'text-zinc-600'}`}>
-                By integrating Gemini-class AI models, CNEAPEE strengthens its capabilities across complex query handling, multimodal understanding, and context-rich responses.
-              </p>
-              <ul className="space-y-3">
-                {['Advanced Reasoning', 'Context-Aware Responses', 'Multimodal Capabilities', 'Scalable Architecture'].map((item, i) => (
-                  <li key={i} className={`flex items-center gap-3 ${theme === 'dark' ? 'text-zinc-300' : 'text-zinc-700'}`}>
-                    <span className="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
-                    {item}
-                  </li>
-                ))}
-              </ul>
+          <div className="relative z-10 text-center max-w-3xl mx-auto">
+            <div className="inline-flex items-center gap-2 mb-6 text-blue-500 font-bold justify-center">
+              <Zap size={20} /> POWERED BY GEMINI
             </div>
-            <div className={`relative h-64 md:h-full min-h-[300px] rounded-2xl border flex items-center justify-center ${theme === 'dark' ? 'bg-gradient-to-br from-blue-500/10 to-purple-500/10 border-white/10' : 'bg-gradient-to-br from-blue-100 to-purple-100 border-white'}`}>
-              <Cpu size={80} className={`animate-pulse ${theme === 'dark' ? 'text-white/20' : 'text-black/20'}`} />
-              <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20"></div>
+            
+            <h2 className={`text-3xl md:text-5xl font-bold mb-8 ${theme === 'dark' ? 'text-white' : 'text-zinc-900'}`}>
+              Enhanced Intelligence.<br/>Future-Ready Reasoning.
+            </h2>
+            
+            <p className={`mb-10 text-lg md:text-xl leading-relaxed ${theme === 'dark' ? 'text-zinc-400' : 'text-zinc-600'}`}>
+              By integrating Gemini-class AI models, CNEAPEE strengthens its capabilities across complex query handling, multimodal understanding, and context-rich responses.
+            </p>
+            
+            <div className="flex flex-wrap justify-center gap-3 md:gap-6">
+              {['Advanced Reasoning', 'Context-Aware Responses', 'Multimodal Capabilities', 'Scalable Architecture'].map((item, i) => (
+                <div key={i} className={`flex items-center gap-2 px-4 py-2 rounded-full border ${theme === 'dark' ? 'bg-white/5 border-white/10 text-zinc-300' : 'bg-zinc-50 border-zinc-200 text-zinc-700'}`}>
+                  <span className="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
+                  <span className="text-sm font-medium">{item}</span>
+                </div>
+              ))}
             </div>
           </div>
         </div>
@@ -283,4 +319,6 @@ export default function Vision() {
       </footer>
     </div>
   );
-}
+};
+
+export default Vision;
