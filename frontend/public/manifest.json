@@ -1,17 +1,23 @@
 {
-  "name": "CNEAPEE AI INTELLIGENGE",
-  "short_name": "CNEAPEE",
-  "description": "CNEAPEE AI INTELLIGENGE — AI tools and apps for learning, health, news, and more.",
-  "start_url": "/",
-  "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#06b6d4",
-  "icons": [
-    {
-      "src": "/vite.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
-      "purpose": "any"
-    }
-  ]
+    "name": "CNEAPEE AI INTELLIGENGE",
+    "short_name": "CNEAPEE AI",
+    "description": "CNEAPEE AI INTELLIGENGE — AI tools and apps for learning, health, news, and more.",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#06b6d4",
+    "icons": [
+        {
+            "src": "/logo.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "/logo.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ]
 }
