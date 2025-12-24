@@ -1,18 +1,44 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { 
   Home as HomeIcon, ChevronDown, Send, Sparkles, 
-  Paperclip, Mic, Bot, Trash2, Check, History, X, 
-  MessageSquare, Search, Zap
+  Paperclip, Mic, Trash2, Check, X, 
+  Gift, Snowflake, Trees
 } from 'lucide-react';
+
+// --- SNOW COMPONENT (Simplified for Chat) ---
+const ChatSnow = () => (
+  <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
+    {[...Array(20)].map((_, i) => (
+      <div 
+        key={i}
+        className="absolute bg-white rounded-full opacity-30 animate-fall"
+        style={{
+          left: `${Math.random() * 100}%`,
+          top: -10,
+          width: `${Math.random() * 4 + 2}px`,
+          height: `${Math.random() * 4 + 2}px`,
+          animationDuration: `${Math.random() * 10 + 5}s`,
+          animationDelay: `-${Math.random() * 5}s`
+        }}
+      />
+    ))}
+    <style>{`
+      @keyframes fall {
+        to { transform: translateY(100vh); }
+      }
+      .animate-fall { animation: fall linear infinite; }
+    `}</style>
+  </div>
+);
 
 export default function Chatbot({ onNavigate }) {
   // --- STATE ---
   const [messages, setMessages] = useState([
-    { id: 1, role: 'assistant', text: "Hello! I'm Flare+. The dark mode is now permanent. I'm ready to assist." }
+    { id: 1, role: 'assistant', text: "Ho ho ho! I'm Flare+ (Holiday Edition). I'm ready to help you wrap up your tasks." }
   ]);
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
-  const [model, setModel] = useState('Flare 0.5');
+  const [model, setModel] = useState('Flare 0.5 Holiday');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   
   // --- REFS ---
@@ -40,15 +66,15 @@ export default function Chatbot({ onNavigate }) {
     const userMsg = { id: Date.now(), role: 'user', text: input };
     setMessages(prev => [...prev, userMsg]);
     setInput('');
-    setIsTyping(true); // Triggers the Wave Animation
+    setIsTyping(true); 
 
     // Simulate AI Response
     setTimeout(() => {
-      setIsTyping(false); // Stops the Wave Animation
+      setIsTyping(false);
       setMessages(prev => [...prev, { 
         id: Date.now() + 1, 
         role: 'assistant', 
-        text: "I am processing your request with the new neural interface." 
+        text: "Checking my list twice... here is the information you requested." 
       }]);
     }, 2000);
   };
@@ -61,25 +87,26 @@ export default function Chatbot({ onNavigate }) {
     <div 
       ref={containerRef}
       onMouseMove={handleMouseMove}
-      className="flex flex-col h-screen bg-[#050507] text-zinc-300 font-sans overflow-hidden relative selection:bg-indigo-500/30"
+      className="flex flex-col h-screen bg-[#050507] text-zinc-300 font-sans overflow-hidden relative selection:bg-red-500/30"
     >
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
         .font-sans { font-family: 'Plus Jakarta Sans', sans-serif; }
         
-        /* Spotlight Background */
+        /* Festive Spotlight */
         .spotlight-bg {
-          background: radial-gradient(600px circle at var(--mouse-x) var(--mouse-y), rgba(99, 102, 241, 0.08), transparent 40%);
+          background: radial-gradient(600px circle at var(--mouse-x) var(--mouse-y), rgba(220, 38, 38, 0.08), transparent 40%);
         }
 
-        /* Neural Wave Animation */
+        /* Holiday Aurora Wave Animation */
         .neural-wave {
           position: fixed;
           bottom: -100px;
           left: 0;
           right: 0;
           height: 300px;
-          background: linear-gradient(180deg, transparent, rgba(79, 70, 229, 0.15), rgba(168, 85, 247, 0.2));
+          /* Red and Green Gradient */
+          background: linear-gradient(180deg, transparent, rgba(220, 38, 38, 0.15), rgba(22, 163, 74, 0.2));
           filter: blur(60px);
           opacity: 0;
           transition: opacity 1s ease, transform 1s ease;
@@ -96,10 +123,10 @@ export default function Chatbot({ onNavigate }) {
 
         @keyframes pulseWave {
           0% { filter: blur(60px) hue-rotate(0deg); }
-          100% { filter: blur(80px) hue-rotate(40deg); }
+          50% { filter: blur(70px) hue-rotate(20deg); } 
+          100% { filter: blur(80px) hue-rotate(-20deg); }
         }
 
-        /* Scrollbar */
         ::-webkit-scrollbar { width: 5px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
@@ -109,8 +136,11 @@ export default function Chatbot({ onNavigate }) {
       <div className="absolute inset-0 pointer-events-none spotlight-bg z-0" />
       <div className="fixed inset-0 opacity-[0.03] z-0 pointer-events-none" 
            style={{ backgroundImage: `linear-gradient(#333 1px, transparent 1px), linear-gradient(90deg, #333 1px, transparent 1px)`, backgroundSize: '40px 40px' }} />
+      
+      {/* Background Snow for Chat */}
+      <ChatSnow />
 
-      {/* --- THE NEURAL WAVE (Activates when isTyping is true) --- */}
+      {/* --- THE AURORA WAVE (Activates when isTyping is true) --- */}
       <div className={`neural-wave ${isTyping ? 'active' : ''}`} />
 
       {/* --- NAVBAR --- */}
@@ -128,14 +158,16 @@ export default function Chatbot({ onNavigate }) {
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
               className="flex items-center gap-2 px-4 py-2 rounded-full hover:bg-white/5 text-white transition min-w-[140px] justify-between text-sm font-semibold"
             >
-              <span className="flex items-center gap-2"><Sparkles size={14} className="text-indigo-500" />{model}</span>
+              <span className="flex items-center gap-2 text-red-400">
+                <Gift size={14} className="animate-bounce" /> {model}
+              </span>
               <ChevronDown size={14} className="opacity-60" />
             </button>
             {isDropdownOpen && (
-              <div className="absolute top-full left-0 mt-2 w-48 bg-zinc-900 border border-white/10 rounded-2xl shadow-xl p-1.5 z-50 animate-in fade-in zoom-in duration-200">
-                {['Flare 0.5', 'Flare 0.5 Ace'].map((m) => (
+              <div className="absolute top-full left-0 mt-2 w-52 bg-zinc-900 border border-white/10 rounded-2xl shadow-xl p-1.5 z-50 animate-in fade-in zoom-in duration-200">
+                {['Flare 0.5 Holiday', 'Flare Frost Ace'].map((m) => (
                   <button key={m} onClick={() => { setModel(m); setIsDropdownOpen(false); }} className="w-full text-left px-3 py-2 rounded-xl text-sm font-medium text-zinc-400 hover:bg-white/5 hover:text-white transition flex justify-between">
-                    {m} {model === m && <Check size={14} className="text-indigo-500" />}
+                    {m} {model === m && <Check size={14} className="text-red-500" />}
                   </button>
                 ))}
               </div>
@@ -154,10 +186,10 @@ export default function Chatbot({ onNavigate }) {
         <div className="max-w-3xl mx-auto space-y-6">
           {messages.length === 0 && (
             <div className="text-center py-20 opacity-50">
-              <div className="w-16 h-16 mx-auto bg-indigo-500/10 rounded-2xl flex items-center justify-center mb-4 border border-indigo-500/20">
-                <Bot size={32} className="text-indigo-400" />
+              <div className="w-16 h-16 mx-auto bg-red-500/10 rounded-2xl flex items-center justify-center mb-4 border border-red-500/20">
+                <Snowflake size={32} className="text-red-400 animate-spin-slow" />
               </div>
-              <p className="text-lg font-medium text-zinc-400">System Ready.</p>
+              <p className="text-lg font-medium text-zinc-400">Holiday System Ready.</p>
             </div>
           )}
 
@@ -165,7 +197,7 @@ export default function Chatbot({ onNavigate }) {
             <div key={msg.id} className={`flex gap-4 animate-in fade-in slide-in-from-bottom-2 duration-300 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
               <div className={`max-w-[85%] px-5 py-3.5 rounded-2xl text-[15px] leading-relaxed shadow-sm backdrop-blur-sm
                 ${msg.role === 'user' 
-                  ? 'bg-indigo-600 text-white rounded-tr-none shadow-indigo-500/10' 
+                  ? 'bg-red-600 text-white rounded-tr-none shadow-red-500/20' 
                   : 'bg-zinc-800/80 border border-white/5 text-zinc-200 rounded-tl-none'
                 }`}>
                 {msg.text}
@@ -176,9 +208,9 @@ export default function Chatbot({ onNavigate }) {
           {isTyping && (
             <div className="flex gap-4 justify-start animate-pulse">
               <div className="bg-zinc-800/80 border border-white/5 px-4 py-3 rounded-2xl rounded-tl-none flex items-center gap-1.5">
-                <div className="w-1.5 h-1.5 bg-indigo-400 rounded-full animate-bounce delay-0" />
-                <div className="w-1.5 h-1.5 bg-indigo-400 rounded-full animate-bounce delay-150" />
-                <div className="w-1.5 h-1.5 bg-indigo-400 rounded-full animate-bounce delay-300" />
+                <div className="w-1.5 h-1.5 bg-red-500 rounded-full animate-bounce delay-0" />
+                <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-bounce delay-150" />
+                <div className="w-1.5 h-1.5 bg-white rounded-full animate-bounce delay-300" />
               </div>
             </div>
           )}
@@ -189,7 +221,7 @@ export default function Chatbot({ onNavigate }) {
       {/* --- INPUT AREA --- */}
       <footer className="p-4 z-30">
         <div className="max-w-3xl mx-auto">
-          <div className="relative flex items-end gap-2 p-2 rounded-[28px] border border-white/10 bg-zinc-900/90 shadow-2xl backdrop-blur-xl focus-within:border-indigo-500/50 transition-colors">
+          <div className="relative flex items-end gap-2 p-2 rounded-[28px] border border-white/10 bg-zinc-900/90 shadow-2xl backdrop-blur-xl focus-within:border-red-500/50 transition-colors">
             
             <button className="p-3 rounded-full text-zinc-400 hover:text-white hover:bg-white/10 transition shrink-0">
               <Paperclip size={20} />
@@ -203,13 +235,13 @@ export default function Chatbot({ onNavigate }) {
                 e.target.style.height = Math.min(e.target.scrollHeight, 120) + 'px';
               }}
               onKeyDown={handleKeyDown}
-              placeholder="Message Flare..."
-              className="w-full bg-transparent border-none outline-none resize-none py-3.5 max-h-[120px] text-[15px] placeholder:text-zinc-600 text-white"
+              placeholder="Ask Cneapee for holiday plans..."
+              className="w-full bg-transparent border-none outline-none resize-none py-3.5 max-h-[120px] text-[15px] placeholder:text-zinc-500 text-white"
               rows={1}
             />
 
             {input.trim() ? (
-              <button onClick={handleSend} className="p-3 rounded-full bg-indigo-600 text-white hover:bg-indigo-500 transition shrink-0 shadow-lg shadow-indigo-500/20">
+              <button onClick={handleSend} className="p-3 rounded-full bg-red-600 text-white hover:bg-red-500 transition shrink-0 shadow-lg shadow-red-500/20">
                 <Send size={18} />
               </button>
             ) : (
@@ -218,9 +250,16 @@ export default function Chatbot({ onNavigate }) {
               </button>
             )}
           </div>
-          <p className="text-center text-[10px] text-zinc-600 mt-3">Flare can make mistakes. Check important info.</p>
+          <p className="text-center text-[10px] text-zinc-600 mt-3 flex items-center justify-center gap-1">
+             Flare can make mistakes. <Trees size={10} /> Happy Holidays.
+          </p>
         </div>
       </footer>
+
+      <style>{`
+        .animate-spin-slow { animation: spin 8s linear infinite; }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+      `}</style>
     </div>
   );
 }
