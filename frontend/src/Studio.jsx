@@ -1,208 +1,215 @@
-import React, { useState } from 'react';
-import { 
-  Sliders, 
-  Layers, 
-  Type, 
-  Image as ImageIcon, 
-  Download, 
-  Undo, 
-  Redo, 
-  ZoomIn, 
-  ZoomOut,
-  Sun,
-  Contrast,
-  Droplet,
-  Aperture,
-  RotateCcw,
-  // New icons for the floating nav
+import React, { useState } from "react";
+import {
   Home,
-  Settings,
-  ChevronDown
-} from 'lucide-react';
+  DollarSign,
+  X,
+  Sparkles,
+  Layers,
+  Cloud,
+  Image,
+} from "lucide-react";
 
-// Accept the onBack prop here
+// 1. Accepted onBack prop
 const Studio = ({ onBack }) => {
-  const [activeTab, setActiveTab] = useState('adjust');
-  
-  const [adjustments, setAdjustments] = useState({
-    brightness: 100,
-    contrast: 100,
-    saturation: 100,
-    blur: 0,
-    grayscale: 0,
-    sepia: 0,
-  });
+  const [showPlans, setShowPlans] = useState(false);
+  const [floatPositions] = useState(() =>
+    Array.from({ length: 18 }).map(() => ({
+      top: Math.random() * 95,
+      left: Math.random() * 95,
+    }))
+  );
 
-  const [zoom, _setZoom] = useState(100);
-
-  const handleAdjustmentChange = (key, value) => {
-    setAdjustments(prev => ({ ...prev, [key]: value }));
-  };
-
-  const resetAdjustments = () => {
-    setAdjustments({
-      brightness: 100,
-      contrast: 100,
-      saturation: 100,
-      blur: 0,
-      grayscale: 0,
-      sepia: 0,
-    });
-  };
-
-  const getImageFilter = () => {
-    return `
-      brightness(${adjustments.brightness}%) 
-      contrast(${adjustments.contrast}%) 
-      saturate(${adjustments.saturation}%) 
-      blur(${adjustments.blur}px)
-      grayscale(${adjustments.grayscale}%)
-      sepia(${adjustments.sepia}%)
-    `;
-  };
+  // initial floatPositions are set via lazy useState initializer above
 
   return (
-    <div className="flex h-screen w-full bg-[#0f0f12] text-white overflow-hidden font-sans relative">
+    <div className="min-h-screen bg-[#eef4fb] relative overflow-hidden font-sans">
       
-      {/* 1. LEFT SIDEBAR */}
-      <aside className="w-20 border-r border-white/10 flex flex-col items-center py-6 gap-6 bg-[#18181b] z-20">
-        <div className="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center mb-4 shadow-lg shadow-indigo-500/20">
-            <Aperture size={24} className="text-white" />
-        </div>
-        
-        <NavButton icon={<Sliders size={20} />} label="Adjust" isActive={activeTab === 'adjust'} onClick={() => setActiveTab('adjust')} />
-        <NavButton icon={<Layers size={20} />} label="Filters" isActive={activeTab === 'filters'} onClick={() => setActiveTab('filters')} />
-        <NavButton icon={<Type size={20} />} label="Text" isActive={activeTab === 'text'} onClick={() => setActiveTab('text')} />
-        <NavButton icon={<ImageIcon size={20} />} label="Overlays" isActive={activeTab === 'overlays'} onClick={() => setActiveTab('overlays')} />
-      </aside>
-
-      {/* 2. SECONDARY SIDEBAR */}
-      <div className="w-80 border-r border-white/10 bg-[#121215] flex flex-col z-10">
-        <div className="h-16 border-b border-white/10 flex items-center px-6">
-            <h2 className="text-lg font-medium tracking-wide capitalize">{activeTab} Tools</h2>
-        </div>
-        
-        <div className="flex-1 overflow-y-auto p-6 space-y-8 custom-scrollbar">
-          {activeTab === 'adjust' && (
-            <>
-              <SliderGroup icon={<Sun size={16} />} label="Brightness" value={adjustments.brightness} min={0} max={200} onChange={(e) => handleAdjustmentChange('brightness', e.target.value)} />
-              <SliderGroup icon={<Contrast size={16} />} label="Contrast" value={adjustments.contrast} min={0} max={200} onChange={(e) => handleAdjustmentChange('contrast', e.target.value)} />
-              <SliderGroup icon={<Droplet size={16} />} label="Saturation" value={adjustments.saturation} min={0} max={200} onChange={(e) => handleAdjustmentChange('saturation', e.target.value)} />
-              <SliderGroup label="Blur" value={adjustments.blur} min={0} max={20} onChange={(e) => handleAdjustmentChange('blur', e.target.value)} />
-              <SliderGroup label="Grayscale" value={adjustments.grayscale} min={0} max={100} onChange={(e) => handleAdjustmentChange('grayscale', e.target.value)} />
-              
-              <button onClick={resetAdjustments} className="flex items-center gap-2 text-xs text-gray-400 hover:text-white transition-colors mt-4">
-                <RotateCcw size={12} /> Reset to defaults
-              </button>
-            </>
-          )}
-
-          {activeTab === 'filters' && (
-             <div className="grid grid-cols-2 gap-3">
-                {['Vivid', 'Noir', 'Warm', 'Cool', 'Vintage', 'Dramatic'].map(filter => (
-                    <div key={filter} className="aspect-square bg-gray-800 rounded-lg hover:ring-2 ring-indigo-500 cursor-pointer transition-all flex items-center justify-center group overflow-hidden relative">
-                        <div className="absolute inset-0 bg-cover bg-center opacity-60 group-hover:scale-110 transition-transform duration-500" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1492633423870-43d1cd2775eb?&w=200&h=200&q=80)'}}></div>
-                        <span className="relative z-10 font-medium text-sm drop-shadow-md">{filter}</span>
-                    </div>
-                ))}
-             </div>
-          )}
-          
-          {(activeTab === 'text' || activeTab === 'overlays') && (
-              <div className="flex flex-col items-center justify-center h-40 text-gray-500 text-sm text-center">
-                  <p>Tool features coming soon.</p>
-              </div>
-          )}
-        </div>
+      {/* Floating background shapes */}
+      <div className="absolute inset-0 pointer-events-none">
+        {floatPositions.map((p, i) => (
+          <div
+            key={i}
+            className="absolute w-10 h-10 rounded-xl border border-white/40 bg-white/10"
+            style={{
+              top: `${p.top}%`,
+              left: `${p.left}%`,
+            }}
+          />
+        ))}
       </div>
 
-      {/* 3. MAIN WORKSPACE */}
-      <main className="flex-1 flex flex-col bg-[#09090b] relative">
-        <header className="h-16 flex items-center justify-between px-6 border-b border-white/5">
-            <div className="flex items-center gap-4 text-gray-400">
-                <button className="hover:text-white"><Undo size={18} /></button>
-                <button className="hover:text-white"><Redo size={18} /></button>
-                <span className="h-4 w-px bg-white/10"></span>
-                <span className="text-sm">Project_Untitled_01.jpg</span>
-            </div>
-            <div className="flex items-center gap-3">
-                 <button className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-1.5 rounded-md text-sm font-medium flex items-center gap-2 transition-colors">
-                    <Download size={16} /> Export
-                </button>
-            </div>
-        </header>
+      {/* NAVBAR */}
+      <nav className="absolute top-6 left-1/2 -translate-x-1/2 z-30">
+        <div className="flex items-center gap-3 bg-white/90 backdrop-blur-md shadow-lg rounded-full px-4 py-2">
+          
+          {/* 2. Added onClick handler for Back */}
+          <button 
+            onClick={onBack}
+            className="p-2 rounded-full hover:bg-slate-100 transition text-slate-600 hover:text-slate-900"
+          >
+            <Home size={18} />
+          </button>
 
-        <div className="flex-1 flex items-center justify-center overflow-hidden p-8 relative">
-            <div 
-                className="relative shadow-2xl transition-all duration-200 ease-out"
-                style={{ transform: `scale(${zoom / 100})`, transition: 'filter 0.1s ease' }}
-            >
-                <img 
-                    src="https://images.unsplash.com/photo-1492633423870-43d1cd2775eb?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" 
-                    alt="Editing Canvas" 
-                    className="max-w-full max-h-[80vh] object-contain rounded-sm"
-                    style={{ filter: getImageFilter() }}
-                />
-            </div>
+          <div className="w-px h-6 bg-slate-200" />
+
+          <span className="text-sm font-semibold text-slate-900 px-2">
+            Creative Studio
+          </span>
+
+          <div className="w-px h-6 bg-slate-200" />
+
+          <button
+            onClick={() => setShowPlans(true)}
+            className="p-2 rounded-full hover:bg-slate-100 transition text-slate-600 hover:text-slate-900"
+          >
+            <DollarSign size={18} />
+          </button>
         </div>
+      </nav>
 
-        {/* --- FLOATING NAVIGATION BAR (Inspired by your image) --- */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-50">
-          <div className="bg-white rounded-full shadow-2xl shadow-black/50 p-1.5 flex items-center gap-1 ring-1 ring-white/10">
-            
-            {/* Home Button -> Calls onBack */}
-            <button 
-              onClick={onBack}
-              className="p-2.5 text-slate-600 hover:text-black hover:bg-slate-100 rounded-full transition-colors"
-              title="Back to Home"
-            >
-              <Home size={20} strokeWidth={2.5} />
-            </button>
-            
-            {/* Divider */}
-            <div className="w-px h-6 bg-slate-200 mx-1"></div>
+      {/* MAIN CONTENT */}
+      <div className="flex flex-col items-center justify-center min-h-screen text-center px-6 relative z-10">
 
-            {/* Center Selector */}
-            <button className="flex items-center gap-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 rounded-full text-slate-800 text-sm font-bold transition-colors">
-              <span>Studio Pro</span>
-              <ChevronDown size={16} className="text-slate-500" />
-            </button>
-
-            {/* Divider */}
-            <div className="w-px h-6 bg-slate-200 mx-1"></div>
-
-            {/* Settings Button */}
-            <button className="p-2.5 text-slate-600 hover:text-black hover:bg-slate-100 rounded-full transition-colors">
-              <Settings size={20} strokeWidth={2.5} />
-            </button>
-
+        {/* 3. Feature Card - Moved into flow with margin-bottom (mb-8) */}
+        <div className="bg-white rounded-2xl shadow-lg px-5 py-4 flex items-start gap-3 max-w-xs mb-8 transition-transform hover:-translate-y-1 duration-300">
+          <div className="p-2 bg-purple-100 rounded-lg text-purple-600 shrink-0">
+            <Sparkles size={18} />
+          </div>
+          <div className="text-left">
+            <p className="text-sm font-semibold text-slate-900">
+              AI-Assisted Editing
+            </p>
+            <p className="text-xs text-slate-500">
+              Background removal, cleanup & intelligent enhancements
+            </p>
+            <span className="inline-block mt-1 px-2 py-0.5 text-xs rounded-full bg-yellow-100 text-yellow-700 font-semibold">
+              Coming Soon
+            </span>
           </div>
         </div>
 
-      </main>
+        {/* Center Card */}
+        <div className="bg-white rounded-3xl shadow-xl w-full max-w-[380px] p-8 relative">
+          <div className="w-14 h-14 rounded-2xl bg-purple-100 text-purple-600 flex items-center justify-center mx-auto mb-4">
+            <Image size={28} />
+          </div>
+
+          <h2 className="text-xl font-bold text-slate-900">
+            CNEAPEE Creative Studio
+          </h2>
+
+          <p className="text-sm text-slate-500 mt-2 leading-relaxed">
+            Browser-native photo editing inspired by professional tools.
+          </p>
+
+          <p className="text-xs text-slate-400 mt-3">
+            No uploads · Privacy-first · Real-time editing
+          </p>
+        </div>
+
+        {/* Side Pills - Kept absolute for decoration */}
+        <div className="hidden md:flex absolute left-10 lg:left-24 top-1/2 bg-white/80 backdrop-blur-sm rounded-full px-4 py-2 shadow-sm items-center gap-2 animate-pulse">
+          <Layers size={16} className="text-purple-600" />
+          <span className="text-xs font-semibold text-slate-600">Layer-Based</span>
+        </div>
+
+        <div className="hidden md:flex absolute right-10 lg:right-24 top-1/2 bg-white/80 backdrop-blur-sm rounded-full px-4 py-2 shadow-sm items-center gap-2 animate-pulse delay-700">
+          <Cloud size={16} className="text-blue-500" />
+          <span className="text-xs font-semibold text-slate-600">Cloud Sync</span>
+        </div>
+
+        {/* Bottom Stats */}
+        <div className="absolute bottom-10 md:bottom-20 flex gap-8 md:gap-16 text-center">
+          <div>
+            <p className="text-3xl md:text-4xl font-bold text-slate-900">0ms</p>
+            <p className="text-xs md:text-sm text-slate-500">Edit Latency</p>
+          </div>
+          <div>
+            <p className="text-3xl md:text-4xl font-bold text-slate-900">100%</p>
+            <p className="text-xs md:text-sm text-slate-500">Client-Side</p>
+          </div>
+          <div>
+            <p className="text-3xl md:text-4xl font-bold text-slate-900">60+</p>
+            <p className="text-xs md:text-sm text-slate-500">FPS Render</p>
+          </div>
+        </div>
+      </div>
+
+      {/* PRICING MODAL */}
+      {showPlans && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm p-4">
+          <div className="bg-white rounded-3xl w-full max-w-3xl p-6 md:p-8 relative shadow-2xl animate-in fade-in zoom-in duration-200">
+            <button
+              onClick={() => setShowPlans(false)}
+              className="absolute top-4 right-4 p-2 rounded-full hover:bg-slate-100 transition"
+            >
+              <X size={18} />
+            </button>
+
+            <h2 className="text-2xl font-bold text-center mb-2">
+              Creative Studio Plans
+            </h2>
+            <p className="text-sm text-slate-500 text-center mb-8">
+              These are upcoming plans
+            </p>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {/* Lite */}
+              <div className="border rounded-2xl p-6 text-center hover:border-slate-300 transition">
+                <h3 className="font-bold text-lg">Studio Lite</h3>
+                <p className="text-2xl font-black my-2 text-slate-800">
+                  ₹129<span className="text-sm font-medium text-slate-500">/mo</span>
+                </p>
+                <ul className="text-sm text-slate-500 space-y-2 mb-6 text-left pl-4 list-disc">
+                  <li>Basic Tools</li>
+                  <li>1080p Export</li>
+                  <li>5GB Storage</li>
+                </ul>
+                <button className="w-full py-2 rounded-xl bg-slate-100 font-semibold cursor-not-allowed text-slate-400">
+                  Coming Soon
+                </button>
+              </div>
+
+              {/* EG */}
+              <div className="border-2 border-purple-500 rounded-2xl p-6 text-center shadow-lg transform md:-translate-y-2 bg-white relative">
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-purple-500 text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wide">
+                  Most Popular
+                </div>
+                <h3 className="font-bold text-lg text-purple-700">Studio EG</h3>
+                <p className="text-2xl font-black my-2 text-slate-900">
+                  ₹299<span className="text-sm font-medium text-slate-500">/mo</span>
+                </p>
+                <ul className="text-sm text-slate-600 space-y-2 mb-6 text-left pl-4 list-disc">
+                  <li>Advanced Effects</li>
+                  <li>4K Export</li>
+                  <li>Stock Library</li>
+                </ul>
+                <button className="w-full py-2 rounded-xl bg-purple-600 text-white font-semibold cursor-not-allowed opacity-80">
+                  Coming Soon
+                </button>
+              </div>
+
+              {/* X */}
+              <div className="border rounded-2xl p-6 text-center hover:border-slate-300 transition">
+                <h3 className="font-bold text-lg">Studio X</h3>
+                <p className="text-2xl font-black my-2 text-slate-800">
+                  ₹499<span className="text-sm font-medium text-slate-500">/mo</span>
+                </p>
+                <ul className="text-sm text-slate-500 space-y-2 mb-6 text-left pl-4 list-disc">
+                  <li>AI Gen Tools</li>
+                  <li>Team Collaboration</li>
+                  <li>Priority Rendering</li>
+                </ul>
+                <button className="w-full py-2 rounded-xl bg-slate-100 font-semibold cursor-not-allowed text-slate-400">
+                  Coming Soon
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
-
-// Helper components remain the same...
-const NavButton = ({ icon, label, isActive, onClick }) => (
-    <button onClick={onClick} className={`flex flex-col items-center gap-1.5 p-2 w-full transition-all relative group ${isActive ? 'text-indigo-400' : 'text-gray-500 hover:text-gray-300'}`}>
-        {icon}
-        <span className="text-[10px] font-medium">{label}</span>
-        {isActive && <div className="absolute right-0 top-1/2 -translate-y-1/2 w-0.5 h-6 bg-indigo-500 rounded-l-full" />}
-    </button>
-);
-
-const SliderGroup = ({ icon, label, value, min, max, onChange }) => (
-    <div className="space-y-3">
-        <div className="flex justify-between items-center text-xs text-gray-300">
-            <div className="flex items-center gap-2">
-                {icon}<span>{label}</span>
-            </div>
-            <span className="text-gray-500 font-mono">{value}</span>
-        </div>
-        <input type="range" min={min} max={max} value={value} onChange={onChange} className="w-full h-1 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-indigo-500 hover:accent-indigo-400" />
-    </div>
-);
 
 export default Studio;
