@@ -28,7 +28,7 @@ const GoogleSignIn = () => {
         console.log("3. Sending data to Backend...");
         
         const backendRes = await axios.post(
-          'http://localhost:5000/api/auth/google', 
+          'https://cneapee-backend.onrender.com/api/auth/google', 
           {
             name,
             email,

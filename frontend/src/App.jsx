@@ -41,7 +41,7 @@ export default function App() {
       // 2. 🔥 BACKEND KO DATA BHEJEIN (Email Trigger Karne Ke Liye)
       // Note: Make sure Backend is running on port 5000
       try {
-        const backendRes = await axios.post('http://localhost:5000/api/auth/google', {
+        const backendRes = await axios.post('https://cneapee-backend.onrender.com/api/auth/google', {
           name: decoded.name,
           email: decoded.email,
           googleId: decoded.sub, // Google 'sub' ko ID maanta hai
