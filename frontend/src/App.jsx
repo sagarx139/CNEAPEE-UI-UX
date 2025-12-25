@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Routes, Route, useNavigate } from 'react-router-dom'; // <--- Router Imports
+import { Routes, Route, useNavigate } from 'react-router-dom'; 
 import { googleLogout } from '@react-oauth/google';
 import { jwtDecode } from "jwt-decode";
+import axios from 'axios'; // 👈 IMPORT ADDED
 
 // --- IMPORT YOUR PAGES ---
 import Home from './Home';
@@ -15,6 +16,7 @@ import Store from './Store';
 import Convo from './Convo';
 import Studio from './Studio';
 import Policy from './Policy';
+import AdminDashboard from './AdminDashboard';
 
 // --- MAIN APP COMPONENT ---
 export default function App() {
@@ -30,12 +32,40 @@ export default function App() {
   }, []);
 
   // --- HANDLERS ---
-  const handleLoginSuccess = (credentialResponse) => {
+  const handleLoginSuccess = async (credentialResponse) => {
     try {
+      // 1. Google Token Decode karein
       const decoded = jwtDecode(credentialResponse.credential);
-      console.log("Logged in:", decoded);
+      console.log("Logged in Google User:", decoded);
+
+      // 2. 🔥 BACKEND KO DATA BHEJEIN (Email Trigger Karne Ke Liye)
+      // Note: Make sure Backend is running on port 5000
+      try {
+        const backendRes = await axios.post('http://localhost:5000/api/auth/google', {
+          name: decoded.name,
+          email: decoded.email,
+          googleId: decoded.sub, // Google 'sub' ko ID maanta hai
+          picture: decoded.picture
+        });
+
+        console.log("✅ Backend Connected:", backendRes.data);
+
+        // 3. User ko Alert dikhayein (Email Sent status)
+        if (backendRes.data.firstLogin) {
+          alert(`Welcome to CNEAPEE, ${decoded.name}! 🎉\nCheck your email for a welcome message.`);
+        } else {
+          alert(`Welcome back, ${decoded.name}! 👋\nCheck your email for updates.`);
+        }
+
+      } catch (backendError) {
+        console.error("❌ Backend Connection Failed:", backendError);
+        // Agar backend band hai tab bhi login continue karein
+      }
+
+      // 4. State aur LocalStorage Update karein
       setUser(decoded);
       localStorage.setItem('user_data', JSON.stringify(decoded));
+
     } catch (error) {
       console.error("Login Failed", error);
     }
@@ -45,19 +75,19 @@ export default function App() {
     googleLogout();
     setUser(null);
     localStorage.removeItem('user_data');
-    navigate('/'); // Go back to home on logout
+    navigate('/'); 
   };
 
-  // Props for sub-pages to handle "Back" button
-  // Note: We use navigate('/') instead of setView('landing')
+  // Props for sub-pages
   const commonProps = { onBack: () => navigate('/') };
+  
   const onNavigate = (path) => {
-  if (path === 'home' || path === 'landing') {
-    navigate('/'); // Forces "home" to go to "/"
-  } else {
-    navigate(path);
-  }
-};
+    if (path === 'home' || path === 'landing') {
+      navigate('/'); 
+    } else {
+      navigate(path);
+    }
+  };
 
   // --- ROUTING ---
   return (
@@ -69,21 +99,21 @@ export default function App() {
           element={
             <Home 
               user={user} 
-              onLoginSuccess={handleLoginSuccess} 
+              onLoginSuccess={handleLoginSuccess} // Updated Handler Pass Kiya
               onLogout={handleLogout} 
             />
           } 
         />
 
         {/* APP ROUTES */}
-        {/* Pass navigate function if your components use it, or commonProps for back buttons */}
         <Route path="/home" element={<Home user={user} onNavigate={onNavigate} />} />
         <Route path="/chatbot" element={<Chatbot onNavigate={onNavigate} />} />
         <Route path="/vision" element={<Vision onNavigate={onNavigate} />} />
         <Route path="/plans" element={<Plans onNavigate={onNavigate} />} />
         <Route path="/policy" element={<Policy onNavigate={onNavigate} />} />
+        <Route path="/admin-dashboard" element={<AdminDashboard />} />
 
-        {/* Pass commonProps (onBack) to these apps */}
+        {/* Pass commonProps (onBack) */}
         <Route path="/learning" element={<Learning {...commonProps} />} />
         <Route path="/health" element={<HealthApp {...commonProps} />} />
         <Route path="/news" element={<NewsApp {...commonProps} />} />
