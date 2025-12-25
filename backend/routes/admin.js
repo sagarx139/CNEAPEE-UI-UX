@@ -45,9 +45,11 @@ router.post('/send-bulk-email', async (req, res) => {
                 from: process.env.EMAIL_USER,
                 to: email,
                 subject: subject,
-                html: `<div style="padding:20px; font-family:sans-serif; border: 1px solid #ddd;">
+                html: `<div style="padding:20px; font-family:sans-serif; border: 1px solid #ddd; border-radius: 8px;">
                         <h2 style="color: #333;">Message from CNEAPEE Admin</h2>
                         <p>${message}</p>
+                        <hr>
+                        <p style="font-size: 12px; color: #777;">Sent via CNEAPEE AI Intelligence</p>
                        </div>`
             });
         }

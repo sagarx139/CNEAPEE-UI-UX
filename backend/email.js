@@ -16,7 +16,7 @@ const transporter = nodemailer.createTransport({
   tls: {
     rejectUnauthorized: false // Timeout fix karne ke liye
   },
-  connectionTimeout: 10000 // 10 seconds timeout
+  connectionTimeout: 15000 // 15 seconds timeout badha diya hai
 });
 
 // 1. Welcome Email (New User)
@@ -27,10 +27,12 @@ export const sendWelcomeEmail = async (email, name) => {
       to: email,
       subject: 'Welcome to CNEAPEE - Registration Successful!',
       html: `
-        <div style="font-family: Arial, sans-serif; padding: 20px; border: 1px solid #eee;">
+        <div style="font-family: Arial, sans-serif; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
           <h2 style="color: #4CAF50;">Welcome to CNEAPEE, ${name}! 🎉</h2>
           <p>Thanks for registering. Your account is ready.</p>
-          <p>Explore our AI Intelligence platform now.</p>
+          <p>Start exploring CNEAPEE AI Intelligence now.</p>
+          <br>
+          <p>Best Regards,<br>Team CNEAPEE</p>
         </div>
       `,
     };
@@ -49,10 +51,12 @@ export const sendWelcomeBackEmail = async (email, name) => {
       to: email,
       subject: 'Welcome Back to CNEAPEE!',
       html: `
-        <div style="font-family: Arial, sans-serif; padding: 20px; border: 1px solid #eee;">
+        <div style="font-family: Arial, sans-serif; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
           <h2 style="color: #2196F3;">Welcome Back, ${name}! 👋</h2>
-          <p>We noticed a new login to your account.</p>
-          <p>Happy to see you again at CNEAPEE AI Intelligence!</p>
+          <p>We noticed a new login to your account at CNEAPEE AI Intelligence.</p>
+          <p>If this wasn't you, please secure your account.</p>
+          <br>
+          <p>Happy to see you again!</p>
         </div>
       `,
     };
