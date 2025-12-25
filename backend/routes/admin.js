@@ -1,5 +1,5 @@
 import express from 'express';
-import User from '../models/user.js'; // User model import zaroori hai
+import User from '../models/user.js';
 import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
 
@@ -7,27 +7,30 @@ dotenv.config();
 
 const router = express.Router();
 
-// --- EMAIL SETUP (Wahi same logic jo test.js me tha) ---
+// --- EMAIL SETUP (Updated for Production) ---
 const transporter = nodemailer.createTransport({
     service: 'gmail',
+    host: 'smtp.gmail.com',
+    port: 465,
+    secure: true,
     auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
     },
-    tls: { rejectUnauthorized: false } // Antivirus fix
+    tls: { rejectUnauthorized: false }
 });
 
-// 1️⃣ GET ALL USERS (Dashboard par dikhane ke liye)
+// 1️⃣ GET ALL USERS
 router.get('/users', async (req, res) => {
     try {
-        const users = await User.find({}, '-password'); // Password chhod kar sab lao
+        const users = await User.find({}, '-password');
         res.json(users);
     } catch (error) {
         res.status(500).json({ message: 'Error fetching users' });
     }
 });
 
-// 2️⃣ SEND BULK EMAIL (Sabko ek sath)
+// 2️⃣ SEND BULK EMAIL
 router.post('/send-bulk-email', async (req, res) => {
     const { subject, message } = req.body;
 
@@ -37,15 +40,13 @@ router.post('/send-bulk-email', async (req, res) => {
 
         if (emails.length === 0) return res.status(400).json({ message: "No users found" });
 
-        // Loop mein mail bhejo
-        // (Production mein BCC use karte hain, par abhi loop theek hai)
         for (const email of emails) {
             await transporter.sendMail({
                 from: process.env.EMAIL_USER,
                 to: email,
                 subject: subject,
-                html: `<div style="padding:20px; font-family:sans-serif;">
-                        <h2>Message from CNEAPEE Admin</h2>
+                html: `<div style="padding:20px; font-family:sans-serif; border: 1px solid #ddd;">
+                        <h2 style="color: #333;">Message from CNEAPEE Admin</h2>
                         <p>${message}</p>
                        </div>`
             });
@@ -69,10 +70,9 @@ router.delete('/delete-user/:id', async (req, res) => {
     }
 });
 
-// 4️⃣ DANGER: DELETE ALL USERS (Userbase saaf) ⚠️
+// 4️⃣ DELETE ALL USERS
 router.delete('/delete-all', async (req, res) => {
     try {
-        // Admin user ko bacha sakte ho agar chaho, par abhi sab uda raha hu
         await User.deleteMany({}); 
         res.json({ message: 'All users deleted successfully' });
     } catch (error) {

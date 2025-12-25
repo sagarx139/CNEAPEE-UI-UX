@@ -1,16 +1,22 @@
 import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
-import User from './models/user.js'; // Sahi path
 
 dotenv.config();
 
-// Email setup (Nodemailer)
+// Email setup (Nodemailer) - Updated for Render Production
 const transporter = nodemailer.createTransport({
   service: 'gmail',
+  host: 'smtp.gmail.com',
+  port: 465,
+  secure: true, // Port 465 ke liye true zaroori hai
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS,
   },
+  tls: {
+    rejectUnauthorized: false // Timeout fix karne ke liye
+  },
+  connectionTimeout: 10000 // 10 seconds timeout
 });
 
 // 1. Welcome Email (New User)
@@ -21,9 +27,10 @@ export const sendWelcomeEmail = async (email, name) => {
       to: email,
       subject: 'Welcome to CNEAPEE - Registration Successful!',
       html: `
-        <div style="font-family: Arial, sans-serif; padding: 20px;">
+        <div style="font-family: Arial, sans-serif; padding: 20px; border: 1px solid #eee;">
           <h2 style="color: #4CAF50;">Welcome to CNEAPEE, ${name}! 🎉</h2>
           <p>Thanks for registering. Your account is ready.</p>
+          <p>Explore our AI Intelligence platform now.</p>
         </div>
       `,
     };
@@ -34,7 +41,7 @@ export const sendWelcomeEmail = async (email, name) => {
   }
 };
 
-// 2. Welcome Back Email (Existing User Login) - Ye missing tha
+// 2. Welcome Back Email (Existing User Login)
 export const sendWelcomeBackEmail = async (email, name) => {
   try {
     const mailOptions = {
@@ -42,10 +49,10 @@ export const sendWelcomeBackEmail = async (email, name) => {
       to: email,
       subject: 'Welcome Back to CNEAPEE!',
       html: `
-        <div style="font-family: Arial, sans-serif; padding: 20px;">
+        <div style="font-family: Arial, sans-serif; padding: 20px; border: 1px solid #eee;">
           <h2 style="color: #2196F3;">Welcome Back, ${name}! 👋</h2>
           <p>We noticed a new login to your account.</p>
-          <p>Happy to see you again!</p>
+          <p>Happy to see you again at CNEAPEE AI Intelligence!</p>
         </div>
       `,
     };
@@ -56,6 +63,4 @@ export const sendWelcomeBackEmail = async (email, name) => {
   }
 };
 
-// Default export ki zarurat nahi hai agar named exports use kar rahe ho, 
-// par safety ke liye main object export kar deta hu.
 export default { sendWelcomeEmail, sendWelcomeBackEmail };
