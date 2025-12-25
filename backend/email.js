@@ -3,34 +3,35 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-// Email setup (Nodemailer) - Updated for Render Production
+// Email setup (Render Production Fix: Port 587)
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
   host: 'smtp.gmail.com',
-  port: 465,
-  secure: true, // Port 465 ke liye true zaroori hai
+  port: 587,
+  secure: false, // 587 ke liye hamesha false rakhein
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS,
   },
   tls: {
-    rejectUnauthorized: false // Timeout fix karne ke liye
+    rejectUnauthorized: false, // Security certificate bypass for timeout fix
+    minVersion: 'TLSv1.2'
   },
-  connectionTimeout: 15000 // 15 seconds timeout badha diya hai
+  connectionTimeout: 20000, // 20 seconds wait time
+  greetingTimeout: 20000
 });
 
-// 1. Welcome Email (New User)
+// 1. Welcome Email (New User Registration)
 export const sendWelcomeEmail = async (email, name) => {
   try {
     const mailOptions = {
-      from: process.env.EMAIL_USER,
+      from: `"CNEAPEE AI" <${process.env.EMAIL_USER}>`,
       to: email,
       subject: 'Welcome to CNEAPEE - Registration Successful!',
       html: `
-        <div style="font-family: Arial, sans-serif; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
+        <div style="font-family: Arial, sans-serif; padding: 20px; border: 1px solid #ddd; border-radius: 10px;">
           <h2 style="color: #4CAF50;">Welcome to CNEAPEE, ${name}! 🎉</h2>
-          <p>Thanks for registering. Your account is ready.</p>
-          <p>Start exploring CNEAPEE AI Intelligence now.</p>
+          <p>Thanks for registering. Your account is ready at CNEAPEE AI Intelligence.</p>
+          <p>Explore our platform and start your AI journey today.</p>
           <br>
           <p>Best Regards,<br>Team CNEAPEE</p>
         </div>
@@ -47,16 +48,16 @@ export const sendWelcomeEmail = async (email, name) => {
 export const sendWelcomeBackEmail = async (email, name) => {
   try {
     const mailOptions = {
-      from: process.env.EMAIL_USER,
+      from: `"CNEAPEE AI" <${process.env.EMAIL_USER}>`,
       to: email,
       subject: 'Welcome Back to CNEAPEE!',
       html: `
-        <div style="font-family: Arial, sans-serif; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
+        <div style="font-family: Arial, sans-serif; padding: 20px; border: 1px solid #ddd; border-radius: 10px;">
           <h2 style="color: #2196F3;">Welcome Back, ${name}! 👋</h2>
           <p>We noticed a new login to your account at CNEAPEE AI Intelligence.</p>
-          <p>If this wasn't you, please secure your account.</p>
-          <br>
           <p>Happy to see you again!</p>
+          <br>
+          <p>If this wasn't you, please secure your account.</p>
         </div>
       `,
     };
@@ -67,4 +68,5 @@ export const sendWelcomeBackEmail = async (email, name) => {
   }
 };
 
+// Default export for safety
 export default { sendWelcomeEmail, sendWelcomeBackEmail };
