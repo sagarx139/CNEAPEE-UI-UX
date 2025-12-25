@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useMemo } from 'react';
 import { 
   Brain, BookOpen, HeartPulse, Newspaper, Palette, Terminal, 
   MessageCircle, ShoppingBag, Video, Home, ChevronDown, 
@@ -7,32 +7,47 @@ import {
 
 // --- DECORATIVE BACKGROUND COMPONENTS ---
 
-const SnowParticles = () => (
-  <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden select-none">
-    {[...Array(40)].map((_, i) => (
-      <div 
-        key={i}
-        className="absolute bg-white rounded-full opacity-30 animate-fall"
-        style={{
-          left: `${Math.random() * 100}%`,
-          top: -20,
-          width: `${Math.random() * 4 + 1}px`,
-          height: `${Math.random() * 4 + 1}px`,
-          animationDuration: `${Math.random() * 15 + 10}s`,
-          animationDelay: `-${Math.random() * 10}s`
-        }}
-      />
-    ))}
-    <style>{`
-      @keyframes fall {
-        0% { transform: translateY(-20px) translateX(0px); opacity: 0; }
-        10% { opacity: 0.5; }
-        100% { transform: translateY(105vh) translateX(20px); opacity: 0; }
-      }
-      .animate-fall { animation: fall linear infinite; }
-    `}</style>
-  </div>
-);
+const SnowParticles = () => {
+  const particles = useMemo(() => {
+    const generateParticles = () => {
+      return [...Array(40)].map(() => ({
+        left: Math.random() * 100,
+        width: Math.random() * 4 + 1,
+        height: Math.random() * 4 + 1,
+        animationDuration: Math.random() * 15 + 10,
+        animationDelay: -Math.random() * 10
+      }));
+    };
+    return generateParticles();
+  }, []);
+
+  return (
+    <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden select-none">
+      {particles.map((particle, i) => (
+        <div 
+          key={i}
+          className="absolute bg-white rounded-full opacity-30 animate-fall"
+          style={{
+            left: `${particle.left}%`,
+            top: -20,
+            width: `${particle.width}px`,
+            height: `${particle.height}px`,
+            animationDuration: `${particle.animationDuration}s`,
+            animationDelay: `${particle.animationDelay}s`
+          }}
+        />
+      ))}
+      <style>{`
+        @keyframes fall {
+          0% { transform: translateY(-20px) translateX(0px); opacity: 0; }
+          10% { opacity: 0.5; }
+          100% { transform: translateY(105vh) translateX(20px); opacity: 0; }
+        }
+        .animate-fall { animation: fall linear infinite; }
+      `}</style>
+    </div>
+  );
+};
 
 const NorthernLights = () => (
   <div className="absolute inset-0 opacity-40 pointer-events-none select-none overflow-hidden">
