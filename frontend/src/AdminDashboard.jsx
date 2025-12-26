@@ -27,7 +27,7 @@ const AdminDashboard = () => {
     // 1. Fetch Users
     const fetchUsers = async () => {
         try {
-            const res = await axios.get('https://cneapee-backend.onrender.com/api/admin/users');
+            const res = await axios.get('https://cneapee-backend-703598443794.asia-south1.run.app/api/admin/users');
             setUsers(res.data);
         } catch (err) {
             console.error(err);
@@ -45,7 +45,7 @@ const AdminDashboard = () => {
         
         setLoading(true);
         try {
-            await axios.post('https://cneapee-backend.onrender.com/api/admin/send-bulk-email', { subject, message });
+            await axios.post('https://cneapee-backend-703598443794.asia-south1.run.app/api/admin/send-bulk-email', { subject, message });
             showNotify('success', "Emails Sent Successfully! 🚀");
             setSubject('');
             setMessage('');
@@ -60,7 +60,7 @@ const AdminDashboard = () => {
     const deleteUser = async (id) => {
         if (window.confirm("Are you sure you want to delete this user? This action cannot be undone.")) {
             try {
-                await axios.delete(`https://cneapee-backend.onrender.com/api/admin/delete-user/${id}`);
+                await axios.delete(`https://cneapee-backend-703598443794.asia-south1.run.app/api/admin/delete-user/${id}`);
                 showNotify('success', "User deleted successfully");
                 fetchUsers(); // Refresh list
             } catch (err) {
@@ -77,7 +77,7 @@ const AdminDashboard = () => {
             const confirm2 = window.confirm("Double Check: Wapas nahi aayenge users. Delete karu?");
             if (confirm2) {
                 try {
-                    await axios.delete('https://cneapee-backend.onrender.com/api/admin/delete-all');
+                    await axios.delete('https://cneapee-backend-703598443794.asia-south1.run.app/api/admin/delete-all');
                     showNotify('success', "Pura Userbase Saaf! 🗑️");
                     fetchUsers(); // Refresh list
                 } catch (err) {

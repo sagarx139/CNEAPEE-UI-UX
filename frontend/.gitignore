@@ -84,3 +84,20 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
+# Dependencies
+node_modules/
+
+# Production Build (Vercel khud banayega)
+dist/
+build/
+
+# Local Environment
+.env
+.env.local
+.env.*
+
+# Vite/Logs
+*.log
+npm-debug.log*
+.DS_Store
+Thumbs.db
