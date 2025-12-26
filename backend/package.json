@@ -6,12 +6,12 @@
     "start": "node index.js"
   },
   "dependencies": {
+    "@sendgrid/mail": "^8.1.6",
     "axios": "^1.13.2",
     "cors": "^2.8.5",
     "dotenv": "^16.4.1",
     "express": "^4.19.2",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.0.3",
-    "nodemailer": "^7.0.12"
+    "mongoose": "^8.0.3"
   }
 }
