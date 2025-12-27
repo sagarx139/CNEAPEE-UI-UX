@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { GoogleLogin } from '@react-oauth/google';
-import { useNavigate, Link } from 'react-router-dom'; 
+import { useNavigate, Link } from 'react-router-dom';
+import axios from 'axios'; // ✅ AXIOS IMPORT KIYA
 import { 
   Menu, X, ArrowRight, GraduationCap, HeartPulse, 
   Newspaper, Store as StoreIcon, Lightbulb, MessageCircle, 
@@ -16,7 +17,6 @@ const MagicCursor = () => {
   useEffect(() => {
     const handleMouseMove = (e) => {
       if (Math.random() > 0.8) return; 
-      // New Year Colors: Gold, Silver, Cyan, Magenta
       const newParticle = { id: Date.now(), x: e.clientX, y: e.clientY, color: ['#FFD700', '#C0C0C0', '#00FFFF', '#FF00FF'][Math.floor(Math.random() * 4)] };
       setParticles(prev => [...prev.slice(-15), newParticle]); 
       setTimeout(() => setParticles(prev => prev.filter(p => p.id !== newParticle.id)), 800);
@@ -27,7 +27,7 @@ const MagicCursor = () => {
   return <div className="fixed inset-0 pointer-events-none z-[9999]">{particles.map(p => (<div key={p.id} className="absolute w-2 h-2 rounded-full animate-ping" style={{ left: p.x, top: p.y, backgroundColor: p.color, boxShadow: `0 0 10px ${p.color}` }} />))}</div>;
 };
 
-// New Year Fireworks Effect (Simple CSS based)
+// New Year Fireworks Effect
 const Fireworks = () => {
   const bursts = useMemo(() => Array.from({ length: 8 }).map((_, i) => ({
     id: i,
@@ -56,13 +56,11 @@ const Fireworks = () => {
   );
 };
 
-// INTENSIFIED Snow Storm for "Snow Snow" effect
+// INTENSIFIED Snow Storm
 const SnowStorm = () => {
-  // Counts increased significantly for heavy snow effect
   const createFlakes = (count, speedClass, sizeClass, opacity) => Array.from({ length: count }).map((_, i) => (<div key={i} className={`absolute bg-white rounded-full ${speedClass}`} style={{ left: `${Math.random() * 100}%`, top: -20, width: sizeClass === 'lg' ? Math.random() * 6 + 4 : Math.random() * 3 + 1, height: sizeClass === 'lg' ? Math.random() * 6 + 4 : Math.random() * 3 + 1, opacity: opacity, animationDelay: `-${Math.random() * 10}s` }} />));
   return (
     <div className="fixed inset-0 pointer-events-none z-1 overflow-hidden">
-        {/* Increased particle counts */}
         <div className="w-full h-full absolute">{createFlakes(100, 'animate-fall-slow', 'sm', 0.4)}</div>
         <div className="w-full h-full absolute">{createFlakes(60, 'animate-fall', 'md', 0.7)}</div>
         <div className="w-full h-full absolute filter blur-[1px]">{createFlakes(30, 'animate-fall-fast', 'lg', 0.9)}</div>
@@ -84,6 +82,20 @@ export default function Home({ user, onLoginSuccess, onLogout }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false); 
   const navigate = useNavigate(); 
+
+  // ✅ NEW: TRACK VIEWS ON PAGE LOAD
+  useEffect(() => {
+    const trackView = async () => {
+        try {
+            // Tumhara Backend URL
+            await axios.post('https://cneapee-backend-703598443794.asia-south1.run.app/api/admin/track-view');
+            console.log("👁️ View Counted Successfully");
+        } catch (error) {
+            console.error("❌ Tracking Error (Ignore if Localhost):", error);
+        }
+    };
+    trackView();
+  }, []);
 
   // --- PROTECTED NAVIGATION HANDLER ---
   const handleProtectedNav = (path) => {
@@ -123,9 +135,9 @@ export default function Home({ user, onLoginSuccess, onLogout }) {
         .animate-spin-slow { animation: spin 4s linear infinite; }
       `}</style>
 
-      {/* Replaced Christmas Elements with New Year Elements */}
+      {/* Background Elements */}
       <Fireworks />
-      <SnowStorm /> {/* Heavy Snow */}
+      <SnowStorm />
       <MagicCursor />
 
       {/* Grid BG */}
@@ -231,7 +243,6 @@ export default function Home({ user, onLoginSuccess, onLogout }) {
 
         {/* New Year Banner */}
         <div className="w-full max-w-3xl mb-12 relative overflow-hidden rounded-3xl border backdrop-blur-md transition-all duration-300 hover:scale-[1.01] hover:shadow-2xl bg-zinc-900/40 border-white/10">
-            {/* Changed Gradient to New Year (Gold/Purple/Cyan) */}
             <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 via-yellow-500/10 to-cyan-500/20 opacity-60 animate-candy-cane" />
             <div className="relative p-6 sm:p-8 flex flex-col sm:flex-row items-center gap-6 text-center sm:text-left">
                 <div className="p-5 rounded-full shadow-inner bg-zinc-800 text-yellow-400"><Sparkles size={36} className="animate-pulse" /></div>
@@ -248,7 +259,6 @@ export default function Home({ user, onLoginSuccess, onLogout }) {
         <div className="text-center max-w-4xl mx-auto mb-12">
           <h1 className="text-6xl md:text-8xl font-extrabold tracking-tighter mb-8 text-white">
             Think bigger. <br />
-            {/* Gradient Text for New Year */}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-white to-purple-500 animate-candy-cane">Welcome 2026.</span>
           </h1>
           <p className="text-xl md:text-2xl font-medium max-w-2xl mx-auto leading-relaxed text-zinc-400">
