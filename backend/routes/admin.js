@@ -1,25 +1,59 @@
 import express from 'express';
 import User from '../models/user.js';
 import Analytics from '../models/analytics.js';
+import dotenv from 'dotenv';
 
+dotenv.config();
 const router = express.Router();
+
+// =========================================================
+// 🔐 SECURE LOGIN ROUTE (With Debugging Logs 🕵️‍♂️)
+// =========================================================
+router.post('/verify-login', (req, res) => {
+    const { id, password } = req.body;
+
+    // Google Cloud ke Environment Variables se values nikalo
+    const ENV_ADMIN_ID = process.env.ADMIN_ID; 
+    const ENV_ADMIN_PASS = process.env.ADMIN_PASS;
+
+    // 👇 DEBUGGING LOGS: Cloud Run ke "Logs" tab mein dikhenge
+    console.log("---------------- LOGIN DEBUGGER ----------------");
+    console.log("1. User Sent ID      :", `'${id}'`);           // Quotes isliye lagaye taaki space dikh jaye
+    console.log("2. Cloud Stored ID   :", `'${ENV_ADMIN_ID}'`);
+    console.log("3. User Sent Pass    :", `'${password}'`);
+    console.log("4. Cloud Stored Pass :", `'${ENV_ADMIN_PASS}'`);
+    
+    // Check agar variable undefined hai (Set nahi hua)
+    if (!ENV_ADMIN_ID || !ENV_ADMIN_PASS) {
+        console.log("❌ ERROR: Cloud Run Variables Missing!");
+        return res.status(500).json({ success: false, message: "Server Config Error: Variables Missing" });
+    }
+
+    // Comparison
+    if (id === ENV_ADMIN_ID && password === ENV_ADMIN_PASS) {
+        console.log("✅ RESULT: MATCH SUCCESS!");
+        return res.status(200).json({ success: true, message: "Welcome Boss!" });
+    } else {
+        console.log("❌ RESULT: MATCH FAILED");
+        return res.status(401).json({ success: false, message: "Wrong Credentials" });
+    }
+});
+// =========================================================
+
 
 // Helper: Get Today's Date String
 const getTodayDate = () => new Date().toISOString().split('T')[0];
 
-// 1️⃣ DASHBOARD STATS (Simplified)
+// 1️⃣ DASHBOARD STATS
 router.get('/stats', async (req, res) => {
     try {
         const today = getTodayDate();
         
-        // Total Users
         const totalUsers = await User.countDocuments();
         
-        // Daily Views
         let analytics = await Analytics.findOne({ date: today });
         if (!analytics) analytics = { views: 0 };
 
-        // Total Views
         const allAnalytics = await Analytics.find();
         const totalViews = allAnalytics.reduce((acc, curr) => acc + curr.views, 0);
 
@@ -49,7 +83,7 @@ router.post('/track-view', async (req, res) => {
     }
 });
 
-// 3️⃣ DELETE USER (New Feature) ⚠️
+// 3️⃣ DELETE USER
 router.delete('/delete-user/:id', async (req, res) => {
     try {
         const { id } = req.params;
