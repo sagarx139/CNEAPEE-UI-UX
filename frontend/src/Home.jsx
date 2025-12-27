@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { GoogleLogin } from '@react-oauth/google';
 import { useNavigate, Link } from 'react-router-dom';
-import axios from 'axios';
+import axios from 'axios'; // ✅ AXIOS IMPORT KIYA
 import { 
   Menu, X, ArrowRight, GraduationCap, HeartPulse, 
   Newspaper, Store as StoreIcon, Lightbulb, MessageCircle, 
@@ -82,13 +82,11 @@ export default function Home({ user, onLoginSuccess, onLogout }) {
   const [showLoginModal, setShowLoginModal] = useState(false); 
   const navigate = useNavigate(); 
 
-  // 🔒 ADMIN CHECK LOGIC: Sirf ye email ya role 'admin' ho tabhi true hoga
-  const isAdmin = user && (user.email === "sanskritibhushan139@gmail.com" || user.role === 'admin');
-
-  // TRACK VIEWS ON PAGE LOAD
+  // ✅ NEW: TRACK VIEWS ON PAGE LOAD
   useEffect(() => {
     const trackView = async () => {
         try {
+            // Tumhara Backend URL
             await axios.post('https://cneapee-backend-703598443794.asia-south1.run.app/api/admin/track-view');
             console.log("👁️ View Counted Successfully");
         } catch (error) {
@@ -201,18 +199,6 @@ export default function Home({ user, onLoginSuccess, onLogout }) {
             {/* --- USER PROFILE SECTION --- */}
             {user ? (
               <div className="flex items-center gap-3 pl-2 ml-1 animate-fade-in group relative">
-                
-                {/* 👑 ADMIN BUTTON: Sirf agar isAdmin true hai tab dikhega */}
-                {isAdmin && (
-                  <button 
-                    onClick={() => navigate('/admin-dashboard')}
-                    className="hidden md:flex items-center gap-1 bg-blue-600/20 text-blue-400 border border-blue-500/30 px-3 py-1.5 rounded-full text-[11px] font-bold hover:bg-blue-600 hover:text-white transition-all shadow-lg shadow-blue-500/20"
-                    title="Go to Admin Panel"
-                  >
-                    <Lock size={12} /> ADMIN
-                  </button>
-                )}
-
                 {user.picture ? (
                   <img src={user.picture} alt="profile" referrerPolicy="no-referrer" className="w-9 h-9 rounded-full border border-zinc-500 shadow-sm" />
                 ) : (
@@ -225,7 +211,6 @@ export default function Home({ user, onLoginSuccess, onLogout }) {
                     <span className="text-sm font-bold text-white leading-none max-w-[100px] truncate">{user.name}</span>
                     <button onClick={onLogout} className="text-[10px] text-zinc-400 hover:text-red-400 leading-none mt-1 flex items-center gap-1 transition-colors text-left">Log out</button>
                 </div>
-                {/* Mobile Logout Button */}
                 <button onClick={onLogout} className="sm:hidden p-1 text-zinc-400 hover:text-red-400"><LogOut size={16} /></button>
               </div>
             ) : (
@@ -249,11 +234,6 @@ export default function Home({ user, onLoginSuccess, onLogout }) {
           <div className="text-3xl font-bold tracking-tight" onClick={() => { setMenuOpen(false); handleProtectedNav('/chatbot'); }}>Ask Cneapee</div>
           <div className="text-3xl font-bold tracking-tight opacity-70" onClick={() => { setMenuOpen(false); handleProtectedNav('/vision'); }}>Vision</div>
           <div className="text-3xl font-bold tracking-tight opacity-70" onClick={() => { setMenuOpen(false); handleProtectedNav('/plans'); }}>Plans</div>
-          
-          {/* Mobile Admin Link */}
-          {isAdmin && (
-             <div className="text-3xl font-bold tracking-tight text-blue-400" onClick={() => { setMenuOpen(false); navigate('/admin-dashboard'); }}>Admin Panel</div>
-          )}
         </div>
       )}
 
