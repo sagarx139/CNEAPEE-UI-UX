@@ -1,17 +1,23 @@
 import express from 'express';
 import User from '../models/user.js';
-import Analytics from '../models/analytics.js';
-// ✅ Nodemailer hata diya, ab Brevo use karenge
-import brevo from '@getbrevo/brevo'; 
+import Analytics from '../models/analytics.js'; // ✅ Ab ye file exist karegi
+import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
 
 dotenv.config();
 const router = express.Router();
 
-// --- BREVO SETUP (Ye already working hai) ---
-const apiInstance = new brevo.TransactionalEmailsApi();
-const apiKey = apiInstance.authentications['apiKey'];
-apiKey.apiKey = process.env.BREVO_API_KEY; 
+// Nodemailer Setup (Gmail SMTP)
+const transporter = nodemailer.createTransport({
+    host: 'smtp.gmail.com',
+    port: 587,
+    secure: false,
+    auth: {
+        user: process.env.EMAIL_USER, // Google Cloud me add karna padega
+        pass: process.env.EMAIL_PASS, // Google Cloud me add karna padega
+    },
+    tls: { rejectUnauthorized: false }
+});
 
 // Helper: Get Today's Date String
 const getTodayDate = () => new Date().toISOString().split('T')[0];
@@ -20,6 +26,7 @@ const getTodayDate = () => new Date().toISOString().split('T')[0];
 router.get('/stats', async (req, res) => {
     try {
         const today = getTodayDate();
+        
         const totalUsers = await User.countDocuments();
         
         let analytics = await Analytics.findOne({ date: today });
@@ -36,7 +43,7 @@ router.get('/stats', async (req, res) => {
             emailLimit: 300 
         });
     } catch (error) {
-        console.error("Stats Error:", error);
+        console.error(error);
         res.status(500).json({ message: "Error fetching stats" });
     }
 });
@@ -56,27 +63,22 @@ router.post('/track-view', async (req, res) => {
     }
 });
 
-// 3️⃣ SEND PERSONAL EMAIL (Updated to use Brevo)
+// 3️⃣ SEND PERSONAL EMAIL
 router.post('/send-personal-email', async (req, res) => {
     const { email, subject, message } = req.body;
     try {
         const today = getTodayDate();
 
-        // Brevo Email Object
-        const sendSmtpEmail = new brevo.SendSmtpEmail();
-        sendSmtpEmail.subject = subject;
-        sendSmtpEmail.htmlContent = `<div style="padding:20px; font-family:sans-serif;">
-                                        <h3>Hello from CNEAPEE</h3>
-                                        <p>${message}</p>
-                                        <br><p style="font-size:12px; color:grey;">Sent via Admin Dashboard</p>
-                                     </div>`;
-        sendSmtpEmail.sender = { "name": "CNEAPEE Admin", "email": process.env.EMAIL_FROM };
-        sendSmtpEmail.to = [{ "email": email }];
+        await transporter.sendMail({
+            from: `"CNEAPEE Admin" <${process.env.EMAIL_USER}>`,
+            to: email,
+            subject: subject,
+            html: `<div style="padding:20px; font-family:sans-serif;">
+                    <h3>Hello from CNEAPEE</h3>
+                    <p>${message}</p>
+                   </div>`
+        });
 
-        // Send
-        await apiInstance.sendTransacEmail(sendSmtpEmail);
-
-        // Track Count
         await Analytics.findOneAndUpdate(
             { date: today },
             { $inc: { emailsSentToday: 1 } },
@@ -85,12 +87,12 @@ router.post('/send-personal-email', async (req, res) => {
 
         res.json({ message: "Personal email sent successfully!" });
     } catch (error) {
-        console.error("Personal Email Error:", error);
-        res.status(500).json({ message: "Failed to send email via Brevo" });
+        console.error(error);
+        res.status(500).json({ message: "Failed to send email" });
     }
 });
 
-// 4️⃣ SEND BROADCAST (Updated to use Brevo)
+// 4️⃣ SEND BROADCAST
 router.post('/send-bulk-email', async (req, res) => {
     const { subject, message } = req.body;
     try {
@@ -100,38 +102,26 @@ router.post('/send-bulk-email', async (req, res) => {
 
         if (emails.length === 0) return res.status(400).json({ message: "No users found" });
 
-        // Loop sending via Brevo
-        // Note: Brevo Free plan ka rate limit dhyan rakhna (300/day)
         for (const email of emails) {
-            const sendSmtpEmail = new brevo.SendSmtpEmail();
-            sendSmtpEmail.subject = `📢 ${subject}`;
-            sendSmtpEmail.htmlContent = `<div style="padding:20px; font-family:sans-serif;">
-                                            <h2>Update from CNEAPEE</h2>
-                                            <p>${message}</p>
-                                            <hr>
-                                            <p style="font-size:12px; color:grey;">You received this because you are a user of CNEAPEE.</p>
-                                           </div>`;
-            sendSmtpEmail.sender = { "name": "CNEAPEE Team", "email": process.env.EMAIL_FROM };
-            sendSmtpEmail.to = [{ "email": email }];
-
-            try {
-                await apiInstance.sendTransacEmail(sendSmtpEmail);
-            } catch (err) {
-                console.error(`Failed to send to ${email}`, err);
-                // Ek fail hone se loop mat roko, continue karo
-            }
+            await transporter.sendMail({
+                from: `"CNEAPEE Admin" <${process.env.EMAIL_USER}>`,
+                to: email,
+                subject: subject,
+                html: `<div style="padding:20px; font-family:sans-serif;">
+                        <h2>Update from CNEAPEE</h2>
+                        <p>${message}</p>
+                       </div>`
+            });
         }
 
-        // Count Update
         await Analytics.findOneAndUpdate(
             { date: today },
             { $inc: { emailsSentToday: emails.length } },
             { upsert: true }
         );
 
-        res.json({ message: `Broadcast initiated for ${emails.length} users` });
+        res.json({ message: `Broadcast sent to ${emails.length} users` });
     } catch (error) {
-        console.error("Bulk Email Error:", error);
         res.status(500).json({ message: "Broadcast failed" });
     }
 });
