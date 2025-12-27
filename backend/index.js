@@ -1,6 +1,3 @@
-// backend/index.js
-// process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"; // ⚠️ Ise hata dein agar zaroori na ho, ye security risk hai.
-
 import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
@@ -18,41 +15,42 @@ app.use(cors({ origin: '*', credentials: true }));
 
 app.get('/', (req, res) => res.send('<h1>✅ Server & Email System Active</h1>'));
 
-// ✅ FIX 1: Connection Status Track Karna
-let isConnected = false;
+// --- ✅ FIX STARTS HERE (Ye naya magic code hai) ---
+
+let isConnected = false; // Track karo ki connection zinda hai ya nahi
 
 const connectDB = async () => {
-    // Agar pehle se connected hai, toh return ho jao (time bachega)
+    // 1. Agar connection pehle se hai, toh wahi use karo
     if (isConnected) {
         return;
     }
 
+    // 2. Agar connection toot gaya hai ya naya server hai, toh connect karo
     try {
         const db = await mongoose.connect(process.env.MONGO_URI, { 
-            serverSelectionTimeoutMS: 5000 
+            serverSelectionTimeoutMS: 5000 // 5 second max wait
         });
         
         isConnected = db.connections[0].readyState;
-        console.log(`✅ MongoDB Connected`);
+        console.log(`✅ MongoDB Connected via Reconnect Logic`);
     } catch (error) {
-        console.error(`❌ MongoDB Error: ${error.message}`);
-        // Error throw karna zaroori hai taaki request fail ho jaye, 
-        // bajaye iske ki wo hang kare
-        throw error;
+        console.error(`❌ MongoDB Reconnect Error: ${error.message}`);
+        throw error; // Request fail karo taaki user ko pata chale
     }
 };
 
-// ✅ FIX 2: Middleware jo har request pe DB check karega
+// Ye Middleware har request se pehle check karega
 app.use(async (req, res, next) => {
     try {
-        await connectDB();
+        await connectDB(); // Jadoo yahan hai: Har hit pe check hoga
         next();
     } catch (error) {
-        res.status(500).json({ message: "Database Connection Failed" });
+        console.error("Database connection failed during request");
+        res.status(500).json({ error: "Database Connection Error" });
     }
 });
+// --- ✅ FIX ENDS HERE ---
 
-// Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/users', userRoutes);
