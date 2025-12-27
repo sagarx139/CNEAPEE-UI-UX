@@ -162,7 +162,7 @@ const AdminDashboard = () => {
                                     <td className="p-4 text-right">
                                         {user.role !== 'admin' && <button onClick={() => handleDeleteUser(user._id)} className="text-gray-500 hover:text-red-500 p-2"><FaTrash size={16}/></button>}
                                     </td>
-                                </tbody>
+                                </tr>
                             ))}
                         </tbody>
                     </table>
