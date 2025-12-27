@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import config from './config'; // (Path adjust kar lena, agar file folder k andar h to ../config hoga)
 import { 
   Users, Mail, Trash2, Send, RefreshCw, 
   Search, AlertTriangle, CheckCircle, XCircle, LogOut, ShieldAlert 

@@ -1,4 +1,5 @@
 import React, { useRef, useMemo } from 'react';
+import config from './config';
 import { 
   Brain, BookOpen, HeartPulse, Newspaper, Palette, Terminal, 
   MessageCircle, ShoppingBag, Video, Home, ChevronDown, 

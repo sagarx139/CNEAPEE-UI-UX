@@ -1,5 +1,7 @@
-import { useGoogleLogin } from '@react-oauth/google'
-import axios from 'axios'
+// File: src/GoogleSignIn.jsx
+import { useGoogleLogin } from '@react-oauth/google';
+import axios from 'axios';
+import config from './config'; // ✅ Config import kiya
 
 const GoogleSignIn = () => {
 
@@ -18,24 +20,23 @@ const GoogleSignIn = () => {
               Authorization: `Bearer ${tokenResponse.access_token}`,
             },
           }
-        )
+        );
 
-        const { name, email, sub, picture } = res.data
+        const { name, email, sub, picture } = res.data;
         console.log("2. Google User Found:", email);
 
-        // --- YAHAN GALTI THI (URL FIX) ---
-        // Backend URL sahi kar diya hai: /api/auth/google
-        console.log("3. Sending data to Backend...");
+        // --- ✅ FIX HERE: Using config.API_URL instead of hardcoded link ---
+        console.log("3. Sending data to Backend at:", `${config.API_URL}/api/auth/google`);
         
         const backendRes = await axios.post(
-          'https://cneapee-backend.onrender.com/api/auth/google', 
+          `${config.API_URL}/api/auth/google`, // Ab ye automatic environment uthayega
           {
             name,
             email,
             googleId: sub,
             picture
           }
-        )
+        );
 
         console.log("4. Backend Response:", backendRes.data);
 
@@ -46,20 +47,23 @@ const GoogleSignIn = () => {
             name,
             email,
             picture,
-            role: backendRes.data.role
+            role: backendRes.data.role || 'user' // Fallback role added
           })
-        )
+        );
 
-        // 4️⃣ Alert
-        alert(`Success! Check your Email now 📩`)
-        // Page reload taaki state update ho jaye
+        // 4️⃣ Alert & Reload
+        alert(`Success! Check your Email now 📩`);
         window.location.reload();
 
       } catch (error) {
         console.error("❌ ERROR in Login Flow:", error);
-        // Agar connection fail hua to ye dikhega
+        
+        // Error Handling
         if (error.code === "ERR_NETWORK") {
-            alert("Backend se connect nahi ho pa raha. Check karo Server port 5000 par chal raha hai?");
+            alert("Backend se connect nahi ho pa raha. Check karo Server/Internet connection.");
+        } else if (error.response) {
+            // Server responded with a status other than 2xx
+            alert(`Login Failed: ${error.response.data.message || "Server Error"}`);
         } else {
             alert("Login Failed. Inspect Console for details.");
         }
@@ -67,10 +71,10 @@ const GoogleSignIn = () => {
     },
 
     onError: (err) => {
-      console.error("LOGIN ERROR", err)
-      alert("Google login failed")
+      console.error("LOGIN ERROR", err);
+      alert("Google login failed");
     },
-  })
+  });
 
   return (
     <button
@@ -79,7 +83,7 @@ const GoogleSignIn = () => {
     >
       Sign in with Google
     </button>
-  )
-}
+  );
+};
 
-export default GoogleSignIn
+export default GoogleSignIn;

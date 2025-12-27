@@ -1,6 +1,7 @@
 import React from 'react';
 import { ArrowLeft, Shield, Lock, FileText, Server, Cpu, Building2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import config from './config';
 
 export default function Policy() {
   const navigate = useNavigate();

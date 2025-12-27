@@ -1,5 +1,6 @@
 import React from 'react';
 import { ArrowRight, ShoppingBag, Star } from 'lucide-react';
+import config from './config';
 
 export default function Store({ onBack }) {
   return (

@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import config from './config';
 import { 
   Home as HomeIcon, ChevronDown, Send, Sparkles, 
   Paperclip, Mic, Trash2, Check, X, 

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Snowflake, Gift, Trees, ArrowRight, Bell, Home } from 'lucide-react';
+import config from './config';
 
 const Convo = ({ onNavigate }) => {
   const [isDarkMode, setIsDarkMode] = useState(true);

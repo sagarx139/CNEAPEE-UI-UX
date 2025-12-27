@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { Home, Settings, X, ExternalLink, Rss, Globe, RefreshCw, AlertCircle } from 'lucide-react';
+import config from './config';
 
 // --- CONFIGURATION ---
 const API_KEY = '2877481bf91e69e4b75457258c852780'; // Enter your API Key here

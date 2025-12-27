@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Home, ChevronDown, Sun, Moon, Check, Minus, Sliders, Zap, Database, Users, Shield } from 'lucide-react';
+import config from './config';
 
 // --- CONFIGURATION ---
 const PERIODS = {

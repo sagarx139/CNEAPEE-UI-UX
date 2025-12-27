@@ -3,6 +3,7 @@ import {
   Home, Settings, Activity, Search, X, ChevronDown, 
   Info, AlertTriangle, Shield, Pill, Heart 
 } from 'lucide-react';
+import config from './config';
 
 // --- Static Data ---
 const DISEASES = [

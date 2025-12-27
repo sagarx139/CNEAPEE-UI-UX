@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Routes, Route, useNavigate } from 'react-router-dom'; 
 import { googleLogout } from '@react-oauth/google';
 import { jwtDecode } from "jwt-decode";
-import axios from 'axios'; // 👈 IMPORT ADDED
+import axios from 'axios';
+import config from './config'; // ✅ IMPORT IS CORRECT
 
 // --- IMPORT YOUR PAGES ---
 import Home from './Home';
@@ -39,9 +40,11 @@ export default function App() {
       console.log("Logged in Google User:", decoded);
 
       // 2. 🔥 BACKEND KO DATA BHEJEIN (Email Trigger Karne Ke Liye)
-      // Note: Make sure Backend is running on port 5000
       try {
-        const backendRes = await axios.post('https://cneapee-backend.onrender.com/api/auth/google', {
+        // ✅ FIX: Using config.API_URL instead of hardcoded Render URL
+        console.log("Connecting to Backend at:", `${config.API_URL}/api/auth/google`);
+        
+        const backendRes = await axios.post(`${config.API_URL}/api/auth/google`, {
           name: decoded.name,
           email: decoded.email,
           googleId: decoded.sub, // Google 'sub' ko ID maanta hai
@@ -60,6 +63,7 @@ export default function App() {
       } catch (backendError) {
         console.error("❌ Backend Connection Failed:", backendError);
         // Agar backend band hai tab bhi login continue karein
+        // Lekin user ko pata chalna chahiye (Optional)
       }
 
       // 4. State aur LocalStorage Update karein

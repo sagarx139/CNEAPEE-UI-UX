@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import config from './config';
 import { 
   Home, Sun, Moon, GraduationCap, ChevronDown, 
   Brain, X, ExternalLink, Loader2 

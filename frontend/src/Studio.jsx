@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import config from './config';
 import {
   Home,
   DollarSign,

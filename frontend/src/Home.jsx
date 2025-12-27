@@ -6,6 +6,7 @@ import {
   Newspaper, Store as StoreIcon, Lightbulb, MessageCircle, 
   Sparkles, Snowflake, Gift, Trees, LogOut, Lock 
 } from 'lucide-react';
+import config from './config';
 
 const LOGO = '/logo.png';
 
