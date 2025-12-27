@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 // Agar icons install nahi hain to terminal me: npm install react-icons
-import { FaUserFriends, FaEye, FaEnvelope, FaChartLine } from 'react-icons/fa6';
+import { FaUserFriends, FaEye, FaEnvelope, FaChartLine } from 'react-icons/fa';
 
 const AdminDashboard = () => {
   const [stats, setStats] = useState({
