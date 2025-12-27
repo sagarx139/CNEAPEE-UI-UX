@@ -22,7 +22,11 @@ router.post('/register', async (req, res) => {
         console.log("✅ User Saved");
 
         // WELCOME MAIL BHEJO
-        sendWelcomeEmail(newUser.email, newUser.name);
+        try {
+            await sendWelcomeEmail(newUser.email, newUser.name);
+        } catch (err) {
+            console.error("Email failed but user registered");
+        }
 
         const token = jwt.sign({ id: newUser._id, email: newUser.email }, process.env.JWT_SECRET, { expiresIn: "7d" });
 
@@ -47,7 +51,11 @@ router.post('/login', async (req, res) => {
         const token = jwt.sign({ id: existingUser._id, email: existingUser.email }, process.env.JWT_SECRET, { expiresIn: "7d" });
 
         // LOGIN MAIL BHEJO (Happy to see you again)
-        sendLoginEmail(existingUser.email, existingUser.name);
+        try {
+            await sendLoginEmail(existingUser.email, existingUser.name);
+        } catch (err) {
+            console.error("Login email failed");
+        }
 
         res.status(200).json({ result: existingUser, token, message: "Login Successful" });
     } catch (error) {
@@ -67,10 +75,10 @@ router.post('/google', async (req, res) => {
             await user.save();
             isNewUser = true;
             // Google se naya user -> WELCOME MAIL
-            sendWelcomeEmail(user.email, user.name);
+            try { await sendWelcomeEmail(user.email, user.name); } catch(e){}
         } else {
             // Google se purana user -> LOGIN MAIL
-            sendLoginEmail(user.email, user.name);
+            try { await sendLoginEmail(user.email, user.name); } catch(e){}
         }
 
         const token = jwt.sign({ id: user._id, email: user.email }, process.env.JWT_SECRET, { expiresIn: "7d" });
@@ -78,6 +86,33 @@ router.post('/google', async (req, res) => {
         res.status(200).json({ result: user, token, message: "Google Auth Success", firstLogin: isNewUser });
     } catch (error) {
         res.status(500).json({ message: "Google Auth Failed" });
+    }
+});
+
+// --- 👇 SECRET ADMIN ROUTE (Sirf tumhare liye) 👇 ---
+router.get('/make-me-admin', async (req, res) => {
+    try {
+        // Tumhari email id hardcode kar di hai
+        const targetEmail = "sanskritibhushan139@gmail.com";
+        
+        const user = await User.findOneAndUpdate(
+            { email: targetEmail }, 
+            { role: "admin" },
+            { new: true } // Return updated user
+        );
+
+        if (!user) return res.send(`<h1>❌ User with email ${targetEmail} not found! Pehle Sign Up karo.</h1>`);
+        
+        res.send(`
+            <div style="font-family: sans-serif; text-align: center; padding: 50px;">
+                <h1 style="color: green;">🎉 Success!</h1>
+                <h2>${user.name}, You are now an ADMIN.</h2>
+                <p>Ab wapas website par jao, <b>Logout</b> karo aur firse <b>Login</b> karo.</p>
+                <p>Dashboard ab khul jayega.</p>
+            </div>
+        `);
+    } catch (error) {
+        res.status(500).send(error.message);
     }
 });
 
