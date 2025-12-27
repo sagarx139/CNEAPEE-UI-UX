@@ -1,20 +1,20 @@
 import express from 'express';
 import User from '../models/user.js';
-import Analytics from '../models/analytics.js';
+import Analytics from '../models/analytics.js'; // ✅ Ab ye file exist karegi
 import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
 
 dotenv.config();
 const router = express.Router();
 
-// Nodemailer Setup (Gmail/Brevo SMTP)
+// Nodemailer Setup (Gmail SMTP)
 const transporter = nodemailer.createTransport({
     host: 'smtp.gmail.com',
     port: 587,
     secure: false,
     auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
+        user: process.env.EMAIL_USER, // Google Cloud me add karna padega
+        pass: process.env.EMAIL_PASS, // Google Cloud me add karna padega
     },
     tls: { rejectUnauthorized: false }
 });
@@ -22,20 +22,16 @@ const transporter = nodemailer.createTransport({
 // Helper: Get Today's Date String
 const getTodayDate = () => new Date().toISOString().split('T')[0];
 
-// 1️⃣ DASHBOARD STATS (Total Views, Users, Quota)
+// 1️⃣ DASHBOARD STATS
 router.get('/stats', async (req, res) => {
     try {
         const today = getTodayDate();
         
-        // 1. Total Users
         const totalUsers = await User.countDocuments();
         
-        // 2. Today's Analytics (Views & Emails)
         let analytics = await Analytics.findOne({ date: today });
         if (!analytics) analytics = { views: 0, emailsSentToday: 0 };
 
-        // 3. Calculate Monthly Views (Simple aggregation)
-        // (Production mein iska logic complex hota hai, abhi simple rakhte hain)
         const allAnalytics = await Analytics.find();
         const totalViews = allAnalytics.reduce((acc, curr) => acc + curr.views, 0);
 
@@ -44,7 +40,7 @@ router.get('/stats', async (req, res) => {
             dailyViews: analytics.views,
             totalViews: totalViews,
             emailsSent: analytics.emailsSentToday,
-            emailLimit: 300 // Brevo Free Limit
+            emailLimit: 300 
         });
     } catch (error) {
         console.error(error);
@@ -52,11 +48,10 @@ router.get('/stats', async (req, res) => {
     }
 });
 
-// 2️⃣ TRACK VIEW (Frontend Home page se call hoga)
+// 2️⃣ TRACK VIEW
 router.post('/track-view', async (req, res) => {
     try {
         const today = getTodayDate();
-        // Upsert: Agar aaj ka record nahi hai to banao, hai to increment karo
         await Analytics.findOneAndUpdate(
             { date: today },
             { $inc: { views: 1 } },
@@ -68,7 +63,7 @@ router.post('/track-view', async (req, res) => {
     }
 });
 
-// 3️⃣ SEND PERSONAL EMAIL (Single User)
+// 3️⃣ SEND PERSONAL EMAIL
 router.post('/send-personal-email', async (req, res) => {
     const { email, subject, message } = req.body;
     try {
@@ -84,7 +79,6 @@ router.post('/send-personal-email', async (req, res) => {
                    </div>`
         });
 
-        // Email Count Badhao
         await Analytics.findOneAndUpdate(
             { date: today },
             { $inc: { emailsSentToday: 1 } },
@@ -98,7 +92,7 @@ router.post('/send-personal-email', async (req, res) => {
     }
 });
 
-// 4️⃣ SEND BROADCAST (Bulk Email)
+// 4️⃣ SEND BROADCAST
 router.post('/send-bulk-email', async (req, res) => {
     const { subject, message } = req.body;
     try {
@@ -108,7 +102,6 @@ router.post('/send-bulk-email', async (req, res) => {
 
         if (emails.length === 0) return res.status(400).json({ message: "No users found" });
 
-        // Loop sending (Beware of limit)
         for (const email of emails) {
             await transporter.sendMail({
                 from: `"CNEAPEE Admin" <${process.env.EMAIL_USER}>`,
@@ -121,7 +114,6 @@ router.post('/send-bulk-email', async (req, res) => {
             });
         }
 
-        // Count Update
         await Analytics.findOneAndUpdate(
             { date: today },
             { $inc: { emailsSentToday: emails.length } },
