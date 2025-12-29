@@ -48,7 +48,7 @@ router.post('/send', auth, async (req, res) => {
 
     // --- B. GEMINI AI CALL ---
     const model = genAI.getGenerativeModel({ 
-      model: "gemini-2.0-flash-lite-preview-02-05", // Latest Lite Model
+      model: "gemini-2.5-flash-lite", // Latest Lite Model
       generationConfig: { maxOutputTokens: limits.tokens }
     });
 
