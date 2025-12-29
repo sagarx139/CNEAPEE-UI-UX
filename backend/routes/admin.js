@@ -1,10 +1,11 @@
 import express from 'express';
 import User from '../models/user.js';
 import Analytics from '../models/analytics.js';
-import Broadcast from '../models/Broadcast.js'; // ✅ Import Broadcast Model
+import Broadcast from '../models/Broadcast.js';
+import PaymentRequest from '../models/PaymentRequest.js'; // ✅ NEW MODEL IMPORT
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
-import { Resend } from 'resend'; // ✅ Import Resend
+import { Resend } from 'resend';
 
 dotenv.config();
 const router = express.Router();
@@ -45,7 +46,7 @@ router.post('/verify-login', (req, res) => {
 });
 
 // =========================================================
-// 2. DASHBOARD DATA
+// 2. DASHBOARD DATA (Stats & Users)
 // =========================================================
 router.get('/stats', requireAdminToken, async (req, res) => {
     try {
@@ -129,13 +130,14 @@ router.post('/send-email-broadcast', requireAdminToken, async (req, res) => {
         
         // 🚀 Sending via Resend
         await resend.emails.send({
-            from: 'CNEAPEE AI<support@cneapee.com>', // Verify domain to change this
+            from: 'CNEAPEE AI <support@cneapee.com>', 
             to: emailList, 
             subject: subject,
-            html: `<div style="padding:20px; font-family:sans-serif;">
+            html: `<div style="padding:20px; font-family:sans-serif; color:#333;">
                      <h2 style="color:#4F46E5">${subject}</h2>
-                     <p>${message}</p>
-                     <hr/><p style="color:#888; font-size:12px">© Cneapee AI</p>
+                     <p style="font-size:16px;">${message}</p>
+                     <hr style="border:0; border-top:1px solid #eee; margin:20px 0;"/>
+                     <p style="color:#888; font-size:12px">© Cneapee AI Team</p>
                    </div>`
         });
 
@@ -143,6 +145,52 @@ router.post('/send-email-broadcast', requireAdminToken, async (req, res) => {
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: "Email Failed" });
+    }
+});
+
+// =========================================================
+// 💰 5. PAYMENT REQUEST SYSTEM (New Feature)
+// =========================================================
+
+// USER: Submit Request (Public Route)
+router.post('/submit-payment-request', async (req, res) => {
+    const { userId, userName, userEmail, planName } = req.body;
+    try {
+        // Check duplicate pending request
+        const existing = await PaymentRequest.findOne({ userId, status: 'pending' });
+        if(existing) return res.status(400).json({ message: "Request already pending!" });
+
+        const newReq = new PaymentRequest({ userId, userName, userEmail, planName });
+        await newReq.save();
+        res.json({ success: true, message: "Request Sent!" });
+    } catch (error) {
+        res.status(500).json({ message: "Server Error" });
+    }
+});
+
+// ADMIN: Get Pending Requests
+router.get('/payment-requests', requireAdminToken, async (req, res) => {
+    try {
+        const requests = await PaymentRequest.find({ status: 'pending' }).sort({ createdAt: -1 });
+        res.json(requests);
+    } catch (error) {
+        res.status(500).json({ message: "Error fetching requests" });
+    }
+});
+
+// ADMIN: Approve & Upgrade
+router.post('/approve-payment', requireAdminToken, async (req, res) => {
+    const { requestId, userId, planName } = req.body;
+    try {
+        // 1. Upgrade User Plan
+        await User.findByIdAndUpdate(userId, { plan: planName.toLowerCase() });
+        
+        // 2. Mark Request as Approved
+        await PaymentRequest.findByIdAndUpdate(requestId, { status: 'approved' });
+
+        res.json({ message: "User Upgraded Successfully!" });
+    } catch (error) {
+        res.status(500).json({ message: "Approval Failed" });
     }
 });
 

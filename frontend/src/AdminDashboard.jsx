@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { 
   Users, Shield, Search, Trash2, 
-  BarChart3, Eye, Zap, Lock, LogOut, Megaphone, Mail, Send, X 
+  BarChart3, Eye, Zap, Lock, LogOut, Megaphone, Mail, Send, X, Check 
 } from 'lucide-react';
 
 const API_URL = "https://cneapee-backend-703598443794.asia-south1.run.app/api/admin";
@@ -19,6 +19,7 @@ export default function AdminDashboard() {
 
   // Dashboard Data
   const [users, setUsers] = useState([]);
+  const [requests, setRequests] = useState([]); // 💰 Pending Requests
   const [stats, setStats] = useState({ totalUsers: 0, dailyViews: 0, totalViews: 0 });
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
@@ -71,18 +72,23 @@ export default function AdminDashboard() {
     setIsAuthenticated(false);
   };
 
-  // --- 2. FETCH DATA ---
+  // --- 2. FETCH DATA (Users + Stats + Requests) ---
   const fetchDashboardData = async (tokenOverride) => {
     setLoading(true);
     const token = tokenOverride || sessionStorage.getItem('admin_token');
     try {
       const config = { headers: { 'x-admin-token': token } };
-      const [statsRes, usersRes] = await Promise.all([
+      
+      const [statsRes, usersRes, reqRes] = await Promise.all([
         axios.get(`${API_URL}/stats`, config),
-        axios.get(`${API_URL}/users`, config)
+        axios.get(`${API_URL}/users`, config),
+        axios.get(`${API_URL}/payment-requests`, config) // Fetch Requests
       ]);
+
       setStats(statsRes.data);
       setUsers(usersRes.data);
+      setRequests(reqRes.data);
+
     } catch (error) {
       if (error.response?.status === 403 || error.response?.status === 401) handleLogout();
     } finally {
@@ -92,7 +98,29 @@ export default function AdminDashboard() {
 
   // --- 3. ACTIONS ---
   
-  // Update Plan
+  // Approve Payment Request
+  const handleApprovePayment = async (req) => {
+      if(!window.confirm(`Approve ${req.planName} for ${req.userName}?`)) return;
+      try {
+          const token = sessionStorage.getItem('admin_token');
+          
+          await axios.post(`${API_URL}/approve-payment`, 
+             { requestId: req._id, userId: req.userId, planName: req.planName },
+             { headers: { 'x-admin-token': token } }
+          );
+          
+          // UI Update: Remove from request list
+          setRequests(requests.filter(r => r._id !== req._id));
+          // Refresh User list to show new plan
+          fetchDashboardData(token);
+          
+          alert("✅ User Upgraded!");
+      } catch (error) { 
+          alert("Approval Failed"); 
+      }
+  };
+
+  // Update Plan Manually (Dropdown)
   const handleUpdatePlan = async (userId, newPlan) => {
     if (!window.confirm(`Change plan to ${newPlan}?`)) return;
     setUpdating(userId);
@@ -114,7 +142,7 @@ export default function AdminDashboard() {
     } catch (error) { alert("Failed"); }
   };
 
-  // Send Broadcast (Banner)
+  // Send Broadcast
   const handleSendBroadcast = async () => {
     if(!broadcastMsg.trim()) return;
     if(!window.confirm("Set this live banner?")) return;
@@ -198,6 +226,47 @@ export default function AdminDashboard() {
             <StatCard label="Total Views" value={stats.totalViews} icon={BarChart3} color="text-purple-400" />
         </div>
       </div>
+
+      {/* --- 💰 PENDING PAYMENT REQUESTS (NEW SECTION) --- */}
+      {requests.length > 0 && (
+        <div className="max-w-7xl mx-auto mb-8 bg-[#0e0e11] border border-orange-500/30 rounded-3xl overflow-hidden shadow-2xl">
+          <div className="p-5 border-b border-white/5 bg-orange-500/5 flex items-center justify-between">
+            <h2 className="text-lg font-bold text-orange-400 flex items-center gap-2">
+              <Zap size={20}/> Pending Upgrades
+            </h2>
+            <span className="text-xs bg-orange-500/20 text-orange-400 px-3 py-1 rounded-full font-bold">{requests.length} pending</span>
+          </div>
+          
+          <div className="overflow-x-auto">
+            <table className="w-full text-left">
+              <tbody className="divide-y divide-white/5">
+                {requests.map(req => (
+                  <tr key={req._id} className="hover:bg-white/[0.02]">
+                    <td className="p-5">
+                      <div className="font-bold text-white">{req.userName}</div>
+                      <div className="text-xs text-zinc-500">{req.userEmail}</div>
+                    </td>
+                    <td className="p-5">
+                      <span className="text-indigo-400 font-bold bg-indigo-500/10 px-3 py-1 rounded-full text-xs border border-indigo-500/20">
+                        Requested: {req.planName}
+                      </span>
+                    </td>
+                    <td className="p-5 text-right">
+                      <button 
+                        onClick={() => handleApprovePayment(req)}
+                        className="bg-green-600 hover:bg-green-500 text-white px-4 py-2 rounded-lg transition font-bold text-xs flex items-center gap-2 float-right"
+                        title="Approve & Upgrade"
+                      >
+                        <Check size={16} /> Approve
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
 
       {/* --- BROADCAST & EMAIL CONTROL PANEL --- */}
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">

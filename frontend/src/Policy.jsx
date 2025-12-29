@@ -174,9 +174,9 @@ export default function Policy() {
           </p>
           
           <div className="inline-block text-left bg-zinc-900 p-6 rounded-2xl border border-zinc-800">
-             <p className="text-zinc-400 text-sm">Business Entity: <span className="text-white font-bold">Individual (Sanskriti Bhushan)</span></p>
+             <p className="text-zinc-400 text-sm">Business Entity: <span className="text-white font-bold">Individual (S Bhushan)</span></p>
              <p className="text-zinc-400 text-sm mt-1">Domain: <span className="text-white">cneapee.com</span></p>
-             <p className="text-zinc-400 text-sm mt-1">Location: <span className="text-white">Patna, Bihar, India</span></p>
+             <p className="text-zinc-400 text-sm mt-1">Location: <span className="text-white">New Delhi, India</span></p>
              <hr className="my-3 border-zinc-800"/>
              <p className="text-zinc-400 text-sm mt-1">Support Email: <a href="mailto:support@cneapee.com" className="text-indigo-400 hover:underline">support@cneapee.com</a></p>
           </div>
