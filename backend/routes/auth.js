@@ -3,10 +3,11 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import User from '../models/user.js';
 import { sendWelcomeEmail, sendLoginEmail } from '../email.js';
+import auth from '../middleware/auth.js'; // ✅ IMPORTED AUTH MIDDLEWARE
 
 const router = express.Router();
 
-// REGISTER
+// 1. REGISTER
 router.post('/register', async (req, res) => {
     try {
         const { name, email, password } = req.body;
@@ -34,7 +35,7 @@ router.post('/register', async (req, res) => {
     }
 });
 
-// LOGIN
+// 2. LOGIN
 router.post('/login', async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -55,7 +56,7 @@ router.post('/login', async (req, res) => {
     }
 });
 
-// GOOGLE AUTH
+// 3. GOOGLE AUTH
 router.post('/google', async (req, res) => {
     try {
         const { email, name, picture, sub } = req.body;
@@ -80,6 +81,39 @@ router.post('/google', async (req, res) => {
         res.status(200).json({ result: user, token, message: "Google Auth Success", firstLogin: isNewUser });
     } catch (error) {
         res.status(500).json({ message: "Google Auth Failed" });
+    }
+});
+
+// 4. 👇 NEW PROFILE ROUTE (Auto-Reset Logic) 👇
+router.get('/profile', auth, async (req, res) => {
+    try {
+        const user = await User.findById(req.user.id);
+        if (!user) return res.status(404).json({ message: "User not found" });
+
+        // ✅ CHECK DATE & RESET IF NEEDED
+        const now = new Date();
+        const lastReset = user.usage?.lastDailyReset ? new Date(user.usage.lastDailyReset) : new Date(0);
+
+        // Compare Dates (ignores time)
+        if (now.toDateString() !== lastReset.toDateString()) {
+            user.usage.dailyTokens = 0;
+            user.usage.lastDailyReset = now;
+
+            // Monthly Check
+            const lastMonth = user.usage?.lastMonthlyReset ? new Date(user.usage.lastMonthlyReset) : new Date(0);
+            if (now.getMonth() !== lastMonth.getMonth() || now.getFullYear() !== lastMonth.getFullYear()) {
+                user.usage.monthlyTokens = 0;
+                user.usage.lastMonthlyReset = now;
+            }
+
+            await user.save();
+            console.log(`Usage reset for ${user.email} on Profile load.`);
+        }
+
+        res.json({ result: user });
+    } catch (error) {
+        console.error("Profile Error:", error);
+        res.status(500).json({ message: "Server Error" });
     }
 });
 
