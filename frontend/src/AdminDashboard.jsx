@@ -26,6 +26,15 @@ export default function AdminDashboard() {
   
   const navigate = useNavigate();
 
+  // Check if session exists on load
+  useEffect(() => {
+    const adminToken = sessionStorage.getItem('admin_token');
+    if (adminToken) {
+      setIsAuthenticated(true);
+      fetchDashboardData(adminToken);
+    }
+  }, []);
+
   // --- 🔐 1. LOGIN HANDLING ---
   const handleAdminLogin = async (e) => {
     e.preventDefault();
@@ -33,47 +42,51 @@ export default function AdminDashboard() {
     setLoginError('');
 
     try {
-      // Backend verify karega credentials
       const res = await axios.post(`${API_URL}/verify-login`, {
         id: adminId,
         password: adminPass
       });
 
       if (res.data.success) {
+        // SAVE SPECIAL TOKEN
+        const token = res.data.token;
+        sessionStorage.setItem('admin_token', token);
         setIsAuthenticated(true);
-        fetchDashboardData(); // Login pass hone ke baad hi data lao
+        fetchDashboardData(token);
       }
     } catch (err) {
-      console.error("Login Error:", err);
+      console.error(err);
       setLoginError('❌ Access Denied: Invalid ID or Password');
     } finally {
       setIsChecking(false);
     }
   };
 
-  // --- 📡 2. DATA FETCHING ---
-  const fetchDashboardData = async () => {
-    setLoading(true);
-    try {
-      const token = localStorage.getItem('token');
-      
-      // Stats fetch
-      const statsRes = await axios.get(`${API_URL}/stats`);
-      setStats(statsRes.data);
+  const handleLogout = () => {
+    sessionStorage.removeItem('admin_token');
+    setIsAuthenticated(false);
+  };
 
-      // Users fetch (Auth Token Required)
-      const usersRes = await axios.get(`${API_URL}/users`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+  // --- 📡 2. DATA FETCHING (Uses Admin Token) ---
+  const fetchDashboardData = async (tokenOverride) => {
+    setLoading(true);
+    const token = tokenOverride || sessionStorage.getItem('admin_token');
+
+    try {
+      const config = { headers: { 'x-admin-token': token } }; // Special Header
+
+      const [statsRes, usersRes] = await Promise.all([
+        axios.get(`${API_URL}/stats`, config),
+        axios.get(`${API_URL}/users`, config)
+      ]);
+
+      setStats(statsRes.data);
       setUsers(usersRes.data);
       
     } catch (error) {
       console.error("Fetch Error:", error);
-      if (error.response?.status === 404) {
-        alert("⚠️ Backend Error: Please Redeploy Backend Code to Cloud.");
-      }
-      else if (error.response?.status === 403 || error.response?.status === 401) {
-        alert("⚠️ Permission Error: You must be an Admin user in the main app to edit plans.");
+      if (error.response?.status === 403 || error.response?.status === 401) {
+        handleLogout(); // Session Expired
       }
     } finally {
       setLoading(false);
@@ -85,12 +98,11 @@ export default function AdminDashboard() {
     if (!window.confirm(`Change plan to ${newPlan}?`)) return;
     setUpdating(userId);
     try {
-      const token = localStorage.getItem('token');
+      const token = sessionStorage.getItem('admin_token');
       await axios.put(`${API_URL}/update-plan/${userId}`, { plan: newPlan }, {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { 'x-admin-token': token }
       });
       
-      // UI Update
       setUsers(users.map(u => u._id === userId ? { ...u, plan: newPlan } : u));
     } catch (error) {
       alert("Failed to update plan.");
@@ -103,9 +115,9 @@ export default function AdminDashboard() {
   const handleDeleteUser = async (userId) => {
     if (!window.confirm("⚠️ DELETE USER PERMANENTLY?")) return;
     try {
-        const token = localStorage.getItem('token');
+        const token = sessionStorage.getItem('admin_token');
         await axios.delete(`${API_URL}/delete-user/${userId}`, {
-            headers: { Authorization: `Bearer ${token}` }
+            headers: { 'x-admin-token': token }
         });
         setUsers(users.filter(u => u._id !== userId));
     } catch (error) {
@@ -118,7 +130,6 @@ export default function AdminDashboard() {
     return (
       <div className="min-h-screen bg-[#050505] flex items-center justify-center p-4 selection:bg-indigo-500/30">
         <div className="w-full max-w-md bg-[#0e0e11] border border-white/10 rounded-3xl p-8 shadow-2xl relative overflow-hidden">
-          {/* Background Glow */}
           <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500"></div>
           
           <div className="flex justify-center mb-6">
@@ -128,7 +139,7 @@ export default function AdminDashboard() {
           </div>
           
           <h2 className="text-2xl font-bold text-white text-center mb-2">Admin Security</h2>
-          <p className="text-zinc-500 text-center mb-8 text-sm">Restricted Access. Identity Verification Required.</p>
+          <p className="text-zinc-500 text-center mb-8 text-sm">Identity Verification Required.</p>
 
           <form onSubmit={handleAdminLogin} className="space-y-4">
             <div>
@@ -171,7 +182,7 @@ export default function AdminDashboard() {
     );
   }
 
-  // --- RENDER DASHBOARD (After Login) ---
+  // --- RENDER DASHBOARD ---
   const filteredUsers = users.filter(u => 
     u.name?.toLowerCase().includes(searchTerm.toLowerCase()) || 
     u.email?.toLowerCase().includes(searchTerm.toLowerCase())
@@ -183,7 +194,7 @@ export default function AdminDashboard() {
       {/* Header */}
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center mb-8 gap-6">
         <div className="flex items-center gap-4 w-full md:w-auto">
-           <button onClick={() => setIsAuthenticated(false)} className="p-3 bg-white/5 rounded-full hover:bg-red-500/20 hover:text-red-400 transition border border-white/5 group">
+           <button onClick={handleLogout} className="p-3 bg-white/5 rounded-full hover:bg-red-500/20 hover:text-red-400 transition border border-white/5 group">
              <LogOut size={20} className="group-hover:-translate-x-0.5 transition-transform"/>
            </button>
            <div>
@@ -234,7 +245,6 @@ export default function AdminDashboard() {
                    {filteredUsers.map(user => (
                      <tr key={user._id} className="hover:bg-white/[0.02] transition group">
                        
-                       {/* Profile */}
                        <td className="p-5">
                          <div className="flex items-center gap-4">
                            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500/20 to-purple-500/20 flex items-center justify-center text-indigo-400 font-bold border border-white/5 shadow-inner">
@@ -250,14 +260,12 @@ export default function AdminDashboard() {
                          </div>
                        </td>
 
-                       {/* Role */}
                        <td className="p-5">
-                          <span className={`px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wide border ${user.role === 'admin' ? 'bg-indigo-500/10 text-indigo-400 border-indigo-500/30 shadow-indigo-500/10 shadow-sm' : 'bg-zinc-800/50 text-zinc-500 border-white/5'}`}>
+                          <span className={`px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wide border ${user.role === 'admin' ? 'bg-indigo-500/10 text-indigo-400 border-indigo-500/30' : 'bg-zinc-800/50 text-zinc-500 border-white/5'}`}>
                             {user.role || 'user'}
                           </span>
                        </td>
 
-                       {/* Plan Selector */}
                        <td className="p-5">
                          <div className="relative w-32">
                             <select 
@@ -280,7 +288,6 @@ export default function AdminDashboard() {
                          </div>
                        </td>
 
-                       {/* Actions */}
                        <td className="p-5 text-right">
                          <button 
                             onClick={() => handleDeleteUser(user._id)} 
@@ -298,11 +305,10 @@ export default function AdminDashboard() {
              </div>
          )}
          
-         {/* Empty State */}
          {!loading && filteredUsers.length === 0 && (
             <div className="p-16 text-center">
                <div className="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-3 text-zinc-600"><Search size={20}/></div>
-               <p className="text-zinc-500 text-sm">No users found matching "{searchTerm}"</p>
+               <p className="text-zinc-500 text-sm">No users found.</p>
             </div>
          )}
       </div>
@@ -310,7 +316,6 @@ export default function AdminDashboard() {
   );
 }
 
-// Mini Stat Card
 const StatCard = ({ label, value, icon: Icon, color }) => (
     <div className="bg-[#0e0e11] border border-white/5 rounded-2xl p-4 flex items-center gap-4 min-w-[150px] shadow-lg hover:border-white/10 transition">
         <div className={`p-2.5 rounded-xl bg-white/5 ${color} shadow-inner`}>
