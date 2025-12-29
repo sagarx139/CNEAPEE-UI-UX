@@ -1,13 +1,14 @@
 import React from 'react';
-import { ArrowLeft, Shield, Lock, FileText, Server, Cpu, Building2 } from 'lucide-react';
+import { 
+  ArrowLeft, Shield, Lock, FileText, Server, Cpu, Building2, CreditCard, RefreshCcw 
+} from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import config from './config';
 
 export default function Policy() {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-[#09090b] text-zinc-300 font-sans selection:bg-red-500/30">
+    <div className="min-h-screen bg-[#09090b] text-zinc-300 font-sans selection:bg-indigo-500/30">
       
       {/* --- HEADER --- */}
       <div className="fixed top-0 w-full z-50 bg-[#09090b]/80 backdrop-blur-md border-b border-white/5">
@@ -34,8 +35,8 @@ export default function Policy() {
             </span>
           </h1>
           <p className="text-zinc-500 max-w-2xl mx-auto">
-            Last Updated: December 25, 2025. <br />
-            Transparency is our core value. Here is how we handle your data, AI interactions, and platform usage.
+            Last Updated: December 2025. <br />
+            Transparency is our core value. Below are our policies regarding data, payments, and usage.
           </p>
         </div>
 
@@ -98,8 +99,40 @@ export default function Policy() {
           </ul>
         </Section>
 
-        {/* --- SECTION 4: API ATTRIBUTIONS --- */}
-        <Section title="4. Third-Party Services & APIs" icon={Server}>
+        {/* --- SECTION 4: PAYMENTS & REFUNDS (CRITICAL FOR GATEWAY) --- */}
+        <Section title="4. Payments, Refunds & Cancellations" icon={CreditCard}>
+          <p>
+            This section outlines the terms for purchasing subscriptions (Student/Working/Coder plans) on Cneapee.
+          </p>
+
+          <h3 className="text-white font-bold mt-6 mb-2">A. Pricing & Payment</h3>
+          <ul className="list-disc pl-5 mt-2 space-y-1 text-zinc-400">
+            <li>All prices listed on the Pricing page are in <strong>Indian Rupees (INR)</strong>.</li>
+            <li>Payments are processed securely via third-party gateways (e.g., Easebuzz, Cashfree, UPI). We do not store your card details on our servers.</li>
+          </ul>
+
+          <h3 className="text-white font-bold mt-6 mb-2 text-red-400 flex items-center gap-2">
+            <RefreshCcw size={18}/> B. Refund Policy
+          </h3>
+          <div className="p-4 bg-zinc-900 border border-zinc-700 rounded-lg text-sm">
+            <p className="mb-2">
+              <strong>Digital Goods Policy:</strong> Cneapee provides digital services (AI Tokens/Credits) which are consumed immediately upon usage. Therefore:
+            </p>
+            <ul className="list-disc pl-5 space-y-1 text-zinc-400">
+              <li><strong>General Rule:</strong> All sales are final. We do not offer refunds once a plan is purchased and the account status is updated to Pro/Student.</li>
+              <li><strong>Exception (Technical Error):</strong> If money is deducted from your bank account but your Cneapee plan is <u>not updated</u> within 24 hours, you are eligible for a full refund. Please email us with your Transaction ID.</li>
+              <li><strong>Refund Timeline:</strong> Eligible refunds will be processed within <strong>5-7 business days</strong> to the original payment method.</li>
+            </ul>
+          </div>
+
+          <h3 className="text-white font-bold mt-6 mb-2">C. Cancellation Policy</h3>
+          <p>
+            You may cancel your subscription renewal at any time. Since Cneapee operates on a non-recurring (manual top-up) model for many plans, simply do not purchase the next month's plan to cancel.
+          </p>
+        </Section>
+
+        {/* --- SECTION 5: API ATTRIBUTIONS --- */}
+        <Section title="5. Third-Party Services & APIs" icon={Server}>
           <p>Cneapee is powered by incredible technologies. We acknowledge the use of:</p>
           <div className="grid gap-4 mt-4 sm:grid-cols-2">
             <div className="p-4 rounded-xl bg-zinc-900 border border-zinc-800">
@@ -110,26 +143,22 @@ export default function Policy() {
               <div className="font-bold text-white mb-1">GNews API</div>
               <div className="text-xs text-zinc-500">Used for aggregating real-time news headlines.</div>
             </div>
-            <div className="p-4 rounded-xl bg-zinc-900 border border-zinc-800">
-              <div className="font-bold text-white mb-1">Google Identity Services</div>
-              <div className="text-xs text-zinc-500">Used for secure User Authentication (OAuth 2.0).</div>
-            </div>
           </div>
         </Section>
 
-        {/* --- SECTION 5: LEGAL & ORGANIZATION STATUS --- */}
-        <Section title="5. Legal & Organization Status" icon={Building2}>
+        {/* --- SECTION 6: LEGAL & ORGANIZATION STATUS --- */}
+        <Section title="6. Legal & Organization Status" icon={Building2}>
           <div className="space-y-4">
             <div className="p-4 bg-green-900/10 border border-green-500/20 rounded-xl">
                <p className="text-green-100 font-medium">
-                 The India tax information of organisation has been accepted and validated, and is now active.
+                 Organization Status: Active
                </p>
             </div>
             <p>
-              <strong>cneapee.com</strong> is a valid organisation with a dedicated ID. We are committed to operating in full compliance with local regulations.
+              <strong>cneapee.com</strong> is operated as an <strong>Individual / Sole Proprietorship</strong> entity based in India. We are committed to operating in full compliance with local regulations.
             </p>
             <p className="text-sm text-zinc-500">
-              *Note: For official inquiries or support requests, response may take upto 24hrs in some cases.
+              *Note: For official inquiries or support requests, response may take upto 24hrs.
             </p>
           </div>
         </Section>
@@ -138,19 +167,22 @@ export default function Policy() {
         <div className="mt-12 pt-8 border-t border-white/10 text-center">
           <Shield className="mx-auto text-zinc-600 mb-4" size={32} />
           
-          <h3 className="text-white font-bold mb-2">Grievance Redressal (India)</h3>
+          <h3 className="text-white font-bold mb-2">Contact & Grievance Redressal</h3>
           <p className="text-zinc-500 mb-4 max-w-lg mx-auto text-sm">
             In accordance with the Digital Personal Data Protection (DPDP) Act, 2023, 
-            and the Information Technology Act, 2000, the contact details of the Grievance Officer are provided below:
+            and Payment Settlement Act, the contact details are provided below:
           </p>
           
-          <div className="inline-block text-left bg-zinc-900 p-4 rounded-lg border border-zinc-800">
-             <p className="text-zinc-400 text-sm">Grievance Officer: <span className="text-white">Cneapee Support Team</span></p>
-             <p className="text-zinc-400 text-sm mt-1">Email: <a href="mailto:support@cneapee.com" className="text-white hover:underline">support@cneapee.com</a></p>
+          <div className="inline-block text-left bg-zinc-900 p-6 rounded-2xl border border-zinc-800">
+             <p className="text-zinc-400 text-sm">Business Entity: <span className="text-white font-bold">Individual (Sanskriti Bhushan)</span></p>
+             <p className="text-zinc-400 text-sm mt-1">Domain: <span className="text-white">cneapee.com</span></p>
+             <p className="text-zinc-400 text-sm mt-1">Location: <span className="text-white">Patna, Bihar, India</span></p>
+             <hr className="my-3 border-zinc-800"/>
+             <p className="text-zinc-400 text-sm mt-1">Support Email: <a href="mailto:support@cneapee.com" className="text-indigo-400 hover:underline">support@cneapee.com</a></p>
           </div>
 
           <p className="text-zinc-600 mt-8 text-xs">
-             © 2025 Cneapee. All rights reserved.
+              © 2025 Cneapee. All rights reserved.
           </p>
         </div>
 

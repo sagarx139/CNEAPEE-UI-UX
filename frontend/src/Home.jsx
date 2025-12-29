@@ -159,7 +159,7 @@ export default function Home({ user, onLoginSuccess, onLogout }) {
         
         <div className="text-center max-w-3xl mx-auto mb-16">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-[10px] font-bold uppercase tracking-wider mb-6 animate-fade-in-up">
-           The CNEAPEE AI team wishes you a very Happy New Year! May this year be filled with joy, prosperity, and countless wonderful moments. We're excited for what's to come and look forward to sharing it with you.
+          May this year be filled with joy, prosperity, and countless wonderful moments.
           </div>
           <h1 className="text-5xl md:text-7xl font-bold tracking-tighter mb-6 bg-gradient-to-b from-white via-white to-white/40 bg-clip-text text-transparent drop-shadow-sm">
             Happy New Year
