@@ -5,7 +5,7 @@ import {
   Settings, User, ChevronLeft, Menu, Plus 
 } from 'lucide-react';
 
-// ✅ STEP 1: Cloud URL Hardcode karo (Localhost hatao)
+// ✅ CLOUD URL (Deployed site ke liye ye zaroori hai)
 const API_URL = "https://cneapee-backend-703598443794.asia-south1.run.app/api/chat";
 
 export default function Chatbot({ onNavigate }) {
@@ -19,12 +19,8 @@ export default function Chatbot({ onNavigate }) {
 
   const messagesEndRef = useRef(null);
 
-  // Load History
-  useEffect(() => {
-    fetchHistory();
-  }, []);
+  useEffect(() => { fetchHistory(); }, []);
 
-  // Auto-scroll
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isTyping]);
@@ -32,8 +28,7 @@ export default function Chatbot({ onNavigate }) {
   const fetchHistory = async () => {
     try {
       const token = localStorage.getItem('token');
-      if (!token) return; // Token nahi hai to shant raho
-      
+      if (!token) return;
       const { data } = await axios.get(`${API_URL}/history`, {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -48,7 +43,6 @@ export default function Chatbot({ onNavigate }) {
       setIsTyping(true);
       setActiveChatId(chatId);
       const token = localStorage.getItem('token');
-      
       const { data } = await axios.get(`${API_URL}/${chatId}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -69,15 +63,10 @@ export default function Chatbot({ onNavigate }) {
   const handleSend = async () => {
     if (!input.trim()) return;
 
-    // ✅ STEP 2: Token Check (Sabse Zaroori)
+    // ✅ CHECK: TOKEN HAI YA NAHI?
     const token = localStorage.getItem('token');
-    
-    // Agar Token nahi hai, to User ko batao aur roko (Null token nahi bhejenge)
     if (!token) {
-        setMessages(prev => [...prev, { 
-            role: 'assistant', 
-            text: "⚠️ You are not logged in. Please Logout and Login again." 
-        }]);
+        setMessages(prev => [...prev, { role: 'assistant', text: "⚠️ Please Logout and Login again to fix connection." }]);
         return;
     }
 
@@ -87,10 +76,9 @@ export default function Chatbot({ onNavigate }) {
     setIsTyping(true);
 
     try {
-      // ✅ STEP 3: Cloud URL use karo
       const { data } = await axios.post(`${API_URL}/send`, 
         { prompt: userMsg.text, chatId: activeChatId },
-        { headers: { Authorization: `Bearer ${token}` } } // Ab ye 'Bearer null' nahi hoga
+        { headers: { Authorization: `Bearer ${token}` } }
       );
 
       setMessages(prev => [...prev, { role: 'assistant', text: data.reply }]);
@@ -100,30 +88,20 @@ export default function Chatbot({ onNavigate }) {
         setActiveChatId(data.chatId);
         fetchHistory(); 
       }
-
     } catch (err) {
-      console.error("Chat Error:", err);
-      setMessages(prev => [...prev, { 
-        role: 'assistant', 
-        text: "❌ Error: AI connect nahi ho raha. Shayad Plan limit ya Server issue." 
-      }]);
+      console.error(err);
+      setMessages(prev => [...prev, { role: 'assistant', text: "❌ Error: Could not connect to CNEAPEE Brain." }]);
     } finally {
       setIsTyping(false);
     }
   };
 
-  // ... (Baaki UI code same rahega tera) ...
   return (
     <div className="flex h-screen bg-[#09090b] text-zinc-100 font-sans selection:bg-indigo-500/30 overflow-hidden">
-      {/* SIDEBAR CODE SAME AS BEFORE */}
       <aside className={`${isSidebarOpen ? 'w-80 translate-x-0' : 'w-0 -translate-x-full'} fixed md:relative z-20 h-full transition-all duration-300 bg-[#0c0c0e] border-r border-white/5 flex flex-col`}>
         <div className="p-4 flex items-center justify-between border-b border-white/5">
-          <button onClick={handleNewChat} className="flex-1 flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-xl text-sm font-medium transition-all shadow-lg shadow-indigo-900/20">
-            <Plus size={18}/> New Chat
-          </button>
-          <button onClick={() => setSidebarOpen(false)} className="md:hidden ml-2 p-2 hover:bg-white/5 rounded-lg">
-            <ChevronLeft size={20}/>
-          </button>
+          <button onClick={handleNewChat} className="flex-1 flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-xl text-sm font-medium transition-all shadow-lg shadow-indigo-900/20"><Plus size={18}/> New Chat</button>
+          <button onClick={() => setSidebarOpen(false)} className="md:hidden ml-2 p-2 hover:bg-white/5 rounded-lg"><ChevronLeft size={20}/></button>
         </div>
         <div className="flex-1 overflow-y-auto p-3 space-y-1 scrollbar-thin scrollbar-thumb-zinc-800">
           <h3 className="px-3 py-2 text-xs font-semibold text-zinc-500 uppercase tracking-wider">Recent</h3>
@@ -142,7 +120,6 @@ export default function Chatbot({ onNavigate }) {
         </div>
       </aside>
 
-      {/* MAIN CHAT AREA */}
       <main className="flex-1 flex flex-col relative w-full h-full bg-[#09090b]">
         <header className="h-16 flex items-center justify-between px-4 md:px-6 border-b border-white/5 bg-[#09090b]/80 backdrop-blur-md z-10">
           <div className="flex items-center gap-3">

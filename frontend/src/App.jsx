@@ -3,7 +3,7 @@ import { Routes, Route, useNavigate } from 'react-router-dom';
 import { googleLogout } from '@react-oauth/google';
 import { jwtDecode } from "jwt-decode";
 import axios from 'axios';
-import config from './config'; // ✅ IMPORT IS CORRECT
+import config from './config'; 
 
 // --- IMPORT YOUR PAGES ---
 import Home from './Home';
@@ -19,7 +19,6 @@ import Studio from './Studio';
 import Policy from './Policy';
 import AdminDashboard from './AdminDashboard';
 
-// --- MAIN APP COMPONENT ---
 export default function App() {
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
@@ -35,38 +34,42 @@ export default function App() {
   // --- HANDLERS ---
   const handleLoginSuccess = async (credentialResponse) => {
     try {
-      // 1. Google Token Decode karein
+      // 1. Google Token Decode
       const decoded = jwtDecode(credentialResponse.credential);
       console.log("Logged in Google User:", decoded);
 
-      // 2. 🔥 BACKEND KO DATA BHEJEIN (Email Trigger Karne Ke Liye)
+      // 2. 🔥 BACKEND CONNECTION
       try {
-        // ✅ FIX: Using config.API_URL instead of hardcoded Render URL
         console.log("Connecting to Backend at:", `${config.API_URL}/api/auth/google`);
         
         const backendRes = await axios.post(`${config.API_URL}/api/auth/google`, {
           name: decoded.name,
           email: decoded.email,
-          googleId: decoded.sub, // Google 'sub' ko ID maanta hai
+          googleId: decoded.sub, 
           picture: decoded.picture
         });
 
         console.log("✅ Backend Connected:", backendRes.data);
 
-        // 3. User ko Alert dikhayein (Email Sent status)
+        // ⭐⭐⭐ MAIN FIX HERE: TOKEN SAVE KARNA ZAROORI HAI ⭐⭐⭐
+        if (backendRes.data.token) {
+            localStorage.setItem('token', backendRes.data.token);
+            console.log("🔑 Token Saved to LocalStorage!");
+        }
+        // ⭐⭐⭐ FIX END ⭐⭐⭐
+
         if (backendRes.data.firstLogin) {
-          alert(`Welcome to CNEAPEE, ${decoded.name}! 🎉\nCheck your email for a welcome message.`);
+          alert(`Welcome to CNEAPEE, ${decoded.name}! 🎉`);
         } else {
-          alert(`Welcome back, ${decoded.name}! 👋\nCheck your email for updates.`);
+          alert(`Welcome back, ${decoded.name}! 👋`);
         }
 
       } catch (backendError) {
         console.error("❌ Backend Connection Failed:", backendError);
-        // Agar backend band hai tab bhi login continue karein
-        // Lekin user ko pata chalna chahiye (Optional)
+        // Backend fail hone par bhi login state maintain karte hain
       }
 
-      // 4. State aur LocalStorage Update karein
+      // 3. State aur LocalStorage Update
       setUser(decoded);
       localStorage.setItem('user_data', JSON.stringify(decoded));
 
@@ -79,10 +82,10 @@ export default function App() {
     googleLogout();
     setUser(null);
     localStorage.removeItem('user_data');
+    localStorage.removeItem('token'); // Logout pe token bhi hatao
     navigate('/'); 
   };
 
-  // Props for sub-pages
   const commonProps = { onBack: () => navigate('/') };
   
   const onNavigate = (path) => {
@@ -93,31 +96,16 @@ export default function App() {
     }
   };
 
-  // --- ROUTING ---
   return (
     <div className="dark bg-[#050507] text-white min-h-screen">
       <Routes>
-        {/* LANDING PAGE ROUTE */}
-        <Route 
-          path="/" 
-          element={
-            <Home 
-              user={user} 
-              onLoginSuccess={handleLoginSuccess} // Updated Handler Pass Kiya
-              onLogout={handleLogout} 
-            />
-          } 
-        />
-
-        {/* APP ROUTES */}
+        <Route path="/" element={<Home user={user} onLoginSuccess={handleLoginSuccess} onLogout={handleLogout} />} />
         <Route path="/home" element={<Home user={user} onNavigate={onNavigate} />} />
         <Route path="/chatbot" element={<Chatbot onNavigate={onNavigate} />} />
         <Route path="/vision" element={<Vision onNavigate={onNavigate} />} />
         <Route path="/plans" element={<Plans onNavigate={onNavigate} />} />
         <Route path="/policy" element={<Policy onNavigate={onNavigate} />} />
         <Route path="/admin-dashboard" element={<AdminDashboard />} />
-
-        {/* Pass commonProps (onBack) */}
         <Route path="/learning" element={<Learning {...commonProps} />} />
         <Route path="/health" element={<HealthApp {...commonProps} />} />
         <Route path="/news" element={<NewsApp {...commonProps} />} />
@@ -128,5 +116,3 @@ export default function App() {
     </div>
   );
 }
-
-//v1.2.1
