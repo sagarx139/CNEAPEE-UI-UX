@@ -7,60 +7,52 @@ import cors from 'cors';
 import authRoutes from './routes/auth.js';
 import adminRoutes from './routes/admin.js';
 import userRoutes from './routes/user.js';
-import chatRoutes from './routes/chat.js'; // ✅ Chat Route Added
+import chatRoutes from './routes/chat.js';
 
 dotenv.config();
 const app = express();
 
 // Middleware
 app.use(express.json());
-// CORS: Filhal '*' rakha hai taaki localhost aur cloud dono pe chale
 app.use(cors({ origin: '*', credentials: true }));
+
+// ⭐⭐⭐ FIX: GOOGLE AUTH POPUP BLOCKERS ⭐⭐⭐
+app.use((req, res, next) => {
+    res.setHeader("Cross-Origin-Opener-Policy", "same-origin-allow-popups");
+    res.setHeader("Cross-Origin-Embedder-Policy", "require-corp");
+    next();
+});
+// ⭐⭐⭐ END FIX ⭐⭐⭐
 
 // Test Route
 app.get('/', (req, res) => res.send('<h1>✅ CNEAPEE Server & AI System Active</h1>'));
 
-// --- 🔌 DATABASE CONNECTION LOGIC (Magic Code) ---
+// DB Logic
 let isConnected = false; 
-
 const connectDB = async () => {
-    if (isConnected) {
-        return;
-    }
-
+    if (isConnected) return;
     try {
-        console.log("⏳ Connecting to MongoDB...");
-        const db = await mongoose.connect(process.env.MONGO_URI, { 
-            serverSelectionTimeoutMS: 5000 // 5 sec mein fail ho jayega agar IP block hua
-        });
-        
+        const db = await mongoose.connect(process.env.MONGO_URI, { serverSelectionTimeoutMS: 5000 });
         isConnected = db.connections[0].readyState;
         console.log(`✅ MongoDB Connected Successfully`);
     } catch (error) {
         console.error(`❌ MongoDB Error: ${error.message}`);
-        // Agar IP Whitelist issue hai to ye error dega
     }
 };
 
-// Har request se pehle DB check karega
 app.use(async (req, res, next) => {
-    if (!isConnected) {
-        await connectDB();
-    }
+    if (!isConnected) await connectDB();
     next();
 });
-// --- 🔌 END DATABASE LOGIC ---
 
-// ✅ Routes Register
+// Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/users', userRoutes);
-app.use('/api/chat', chatRoutes); // 👈 Ye zaroori hai Gemini ke liye
+app.use('/api/chat', chatRoutes);
 
-// Server Start
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, async () => {
     console.log(`🚀 Server running on port ${PORT}`);
-    // Server start hote hi ek baar DB connect karne ki koshish karein
     await connectDB();
 });

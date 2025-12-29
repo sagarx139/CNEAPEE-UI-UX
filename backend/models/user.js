@@ -7,16 +7,18 @@ const userSchema = mongoose.Schema({
   googleId: { type: String },
   picture: { type: String },
   role: { type: String, default: 'user' }, 
-  // 👇 Naya data jo add kiya limits ke liye
+  
+  // 👇 Plan & Token Tracking
   plan: { 
     type: String, 
     enum: ['free', 'student', 'working', 'coder'], 
     default: 'free' 
   },
   usage: {
-    dailyCount: { type: Number, default: 0 },
-    monthlyCount: { type: Number, default: 0 },
-    lastRequestDate: { type: Date, default: Date.now }
+    dailyTokens: { type: Number, default: 0 },   // Changed to store Tokens
+    monthlyTokens: { type: Number, default: 0 }, // Changed to store Tokens
+    lastDailyReset: { type: Date, default: Date.now },
+    lastMonthlyReset: { type: Date, default: Date.now } // Monthly reset tracking
   }
 }, { timestamps: true });
 
