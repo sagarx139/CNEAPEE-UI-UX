@@ -7,7 +7,9 @@ import auth from '../middleware/auth.js';
 const router = express.Router();
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
-// 📊 PLAN LIMITS (Tokens per Day)
+/* ============================
+   PLAN LIMITS
+============================ */
 const PLAN_LIMITS = {
   free:    { daily: 4000,   monthly: 120000 },
   student: { daily: 27000,  monthly: 810000 },
@@ -15,130 +17,190 @@ const PLAN_LIMITS = {
   coder:   { daily: 200000, monthly: 6000000 }
 };
 
-// Helper: Estimate Token Count (1 token ≈ 4 chars)
-const estimateTokens = (text) => Math.ceil((text || "").length / 4);
+const estimateTokens = (text = "") => Math.ceil(text.length / 4);
 
-// 🤖 System Instruction for Concise Answers
+/* ============================
+   SYSTEM PROMPT (HIDDEN)
+============================ */
 const SYSTEM_INSTRUCTION = `
-You are CNEAPEE, a helpful and precise AI assistant.
-RULES:
-1. Provide SHORT, direct answers (2-3 sentences max) for general queries.
-2. Only provide long explanations or code if explicitly asked.
-3. Be efficient to save user tokens.
+You are CNEAPEE AI.
+Never mention Google, Gemini, GPT, LLMs, or training sources.
+You are a proprietary AI assistant.
 `;
 
+/* ============================
+   CHAT SEND
+============================ */
 router.post('/send', auth, async (req, res) => {
   try {
     const { prompt, chatId } = req.body;
-    
-    // 1. User Fetch
+    const raw = (prompt || "").trim();
+    const lower = raw.toLowerCase();
+
+    /* ============================
+       USER
+    ============================ */
     const user = await User.findById(req.user.id);
-    if (!user) return res.status(404).json({ message: "User not found" });
+    if (!user) return res.status(404).json({ reply: "User not found" });
 
-    // ⭐⭐⭐ FIX: OLD USER SCHEMA UPDATE ⭐⭐⭐
-    if (!user.usage || !user.usage.lastDailyReset) {
-       user.usage = {
-         dailyTokens: 0,
-         monthlyTokens: 0,
-         lastDailyReset: new Date(),
-         lastMonthlyReset: new Date()
-       };
-       if (!user.plan) user.plan = 'free';
-       await user.save();
-       console.log(`Schema updated for old user: ${user.email}`);
-    }
-    // ⭐⭐⭐ END FIX ⭐⭐⭐
-
-    // 2. LIMITS & RESET LOGIC
-    const now = new Date();
-    const limits = PLAN_LIMITS[user.role === 'admin' ? 'coder' : (user.plan || 'free')];
-
-    // Daily Reset
-    if (new Date(user.usage.lastDailyReset).toDateString() !== now.toDateString()) {
-      user.usage.dailyTokens = 0;
-      user.usage.lastDailyReset = now;
+    if (!user.usage) {
+      user.usage = {
+        dailyTokens: 0,
+        monthlyTokens: 0,
+        lastDailyReset: new Date(),
+        lastMonthlyReset: new Date()
+      };
+      if (!user.plan) user.plan = "free";
+      await user.save();
     }
 
-    // Monthly Reset
-    const lastMonth = new Date(user.usage.lastMonthlyReset);
-    if (now.getMonth() !== lastMonth.getMonth()) {
-      user.usage.monthlyTokens = 0;
-      user.usage.lastMonthlyReset = now;
+    const limits = PLAN_LIMITS[user.plan || "free"];
+    const inputTokens = estimateTokens(raw);
+
+    if (user.usage.dailyTokens + inputTokens > limits.daily) {
+      return res.status(429).json({
+        reply: "Daily usage limit reached. Please upgrade your plan."
+      });
     }
 
-    // 3. CHECK USAGE
-    const inputTokens = estimateTokens(prompt);
-    if ((user.usage.dailyTokens || 0) + inputTokens >= limits.daily) {
-      return res.status(429).json({ message: "Daily Limit Reached. Upgrade Plan." });
+    /* ============================
+       🔒 HARD GUARDS (NO AI)
+    ============================ */
+
+    // 👉 DATE / TIME (IST)
+    if (
+      lower === "date" ||
+      lower === "time" ||
+      lower.includes("date") ||
+      lower.includes("time") ||
+      lower.includes("today")
+    ) {
+      const ist = new Date(
+        new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
+      );
+
+      const formatted = ist.toLocaleString("en-IN", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false
+      });
+
+      return res.json({
+        reply: `Today's date and time is ${formatted} IST.`,
+        chatId
+      });
     }
 
-    // 4. AI GENERATION (Using 2.5 Flash Lite for Credits/Speed)
-    const model = genAI.getGenerativeModel({ 
-      model: "gemini-2.5-flash-lite", 
-      systemInstruction: SYSTEM_INSTRUCTION 
-    });
+    // 👉 WHO ARE YOU / CNEAPEE
+    if (
+      lower.includes("who are you") ||
+      lower.includes("what is cneapee") ||
+      lower.includes("about cneapee") ||
+      lower === "cneapee"
+    ) {
+      return res.json({
+        reply:
+          "CNEAPEE AI brings together knowledge, creativity, and holiday cheer into a single, unified ecosystem. Smarter tools, faster insights, zero clutter.",
+        chatId
+      });
+    }
 
-    const result = await model.generateContent(prompt);
-    const aiResponse = result.response.text();
+    // 👉 MODEL / GOOGLE / GEMINI
+    if (
+      lower.includes("model") ||
+      lower.includes("google") ||
+      lower.includes("gemini") ||
+      lower.includes("gpt") ||
+      lower.includes("llm") ||
+      lower.includes("trained")
+    ) {
+      return res.json({
+        reply: "CNEAPEE AI v1.2. Version v1.8 is coming soon.",
+        chatId
+      });
+    }
 
-    // 5. UPDATE DB
-    const outputTokens = estimateTokens(aiResponse);
-    const totalCost = inputTokens + outputTokens;
-
-    user.usage.dailyTokens = (user.usage.dailyTokens || 0) + totalCost;
-    user.usage.monthlyTokens = (user.usage.monthlyTokens || 0) + totalCost;
-    await user.save();
-
-    // Save Chat History
+    /* ============================
+       LOAD HISTORY
+    ============================ */
+    let history = [];
     let chat;
+
     if (chatId) {
       chat = await Chat.findOne({ _id: chatId, userId: req.user.id });
-      if (chat) {
-        chat.messages.push({ role: 'user', text: prompt });
-        chat.messages.push({ role: 'assistant', text: aiResponse });
-        await chat.save();
+      if (chat?.messages?.length) {
+        history = chat.messages.map(m => ({
+          role: m.role === "user" ? "user" : "model",
+          parts: [{ text: m.text }]
+        }));
       }
+    }
+
+    /* ============================
+       GEMINI CALL (ONLY HERE)
+    ============================ */
+    const model = genAI.getGenerativeModel({
+      model: "gemini-2.5-flash-lite",
+      systemInstruction: SYSTEM_INSTRUCTION
+    });
+
+    const session = model.startChat({ history });
+    const result = await session.sendMessage(raw);
+    const aiText = result.response.text();
+
+    /* ============================
+       USAGE
+    ============================ */
+    const outputTokens = estimateTokens(aiText);
+    user.usage.dailyTokens += inputTokens + outputTokens;
+    user.usage.monthlyTokens += inputTokens + outputTokens;
+    await user.save();
+
+    /* ============================
+       SAVE CHAT
+    ============================ */
+    if (chat) {
+      chat.messages.push({ role: "user", text: raw });
+      chat.messages.push({ role: "assistant", text: aiText });
+      await chat.save();
     } else {
-      const title = prompt.split(' ').slice(0, 5).join(' ') + "...";
       chat = new Chat({
         userId: req.user.id,
-        title: title,
-        messages: [{ role: 'user', text: prompt }, { role: 'assistant', text: aiResponse }]
+        title: raw.split(" ").slice(0, 5).join(" ") + "...",
+        messages: [
+          { role: "user", text: raw },
+          { role: "assistant", text: aiText }
+        ]
       });
       await chat.save();
     }
 
-    // Calculate Percentage for Frontend
-    const percentage = Math.min((user.usage.dailyTokens / limits.daily) * 100, 100);
-
-    res.json({ 
-      reply: aiResponse, 
-      chatId: chat._id, 
-      usagePercent: percentage.toFixed(1), // Send % to update UI
-      historyTitle: chat.title
+    return res.json({
+      reply: aiText,
+      chatId: chat._id
     });
 
-  } catch (error) {
-    console.error("AI Error:", error);
-    res.status(500).json({ message: "Server Error: AI busy or connection failed." });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ reply: "Server error" });
   }
 });
 
-// GET HISTORY
+/* ============================
+   HISTORY
+============================ */
 router.get('/history', auth, async (req, res) => {
-  try {
-    const chats = await Chat.find({ userId: req.user.id }).sort({ updatedAt: -1 });
-    res.json(chats);
-  } catch (error) { res.status(500).json({ message: "History Error" }); }
+  const chats = await Chat.find({ userId: req.user.id }).sort({ updatedAt: -1 });
+  res.json(chats);
 });
 
-// GET SINGLE CHAT
 router.get('/:id', auth, async (req, res) => {
-  try {
-    const chat = await Chat.findOne({ _id: req.params.id, userId: req.user.id });
-    if (!chat) return res.status(404).json({ message: "Chat not found" });
-    res.json(chat);
-  } catch (error) { res.status(500).json({ message: "Chat Error" }); }
+  const chat = await Chat.findOne({ _id: req.params.id, userId: req.user.id });
+  if (!chat) return res.status(404).json({ message: "Chat not found" });
+  res.json(chat);
 });
 
 export default router;

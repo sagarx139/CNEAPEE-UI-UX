@@ -131,7 +131,7 @@ export default function Home({ user, onLoginSuccess, onLogout }) {
         
         <div className="text-center max-w-3xl mx-auto mb-16">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-[10px] font-bold uppercase tracking-wider mb-6 animate-fade-in-up">
-            <Sparkles size={12} /> New Year 2026 Update
+            <Sparkles size={12} /> CNEAPEE AI Wishing you all a Happy New Year 2026
           </div>
           
           <h1 className="text-5xl md:text-7xl font-bold tracking-tighter mb-6 bg-gradient-to-b from-white via-white to-white/40 bg-clip-text text-transparent drop-shadow-sm">

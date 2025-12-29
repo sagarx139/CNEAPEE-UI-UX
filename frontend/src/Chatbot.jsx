@@ -1,14 +1,25 @@
 import React, { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
 import {
-  Home, Send, Sparkles, MessageSquare, X, Image as ImageIcon
+  Home,
+  Send,
+  Sparkles,
+  MessageSquare,
+  X,
+  Image as ImageIcon
 } from 'lucide-react';
 
 // 🔗 Backend API
 const API_URL = "https://cneapee-backend-703598443794.asia-south1.run.app/api/chat";
 
+// 🟣 DEFAULT GREETING
+const DEFAULT_GREETING = {
+  role: "assistant",
+  text: "Hello 👋 This is CNEAPEE AI v1.2. You can ask me anything."
+};
+
 export default function Chatbot({ onNavigate }) {
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState([DEFAULT_GREETING]);
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [history, setHistory] = useState([]);
@@ -18,73 +29,98 @@ export default function Chatbot({ onNavigate }) {
   const messagesEndRef = useRef(null);
   const fileInputRef = useRef(null);
 
-  useEffect(() => {
-    fetchHistory();
-  }, []);
-
+  /* ===========================
+     AUTO SCROLL
+  =========================== */
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isTyping]);
 
-  // 🔁 Fetch chat history
+  /* ===========================
+     FETCH HISTORY ON LOAD
+  =========================== */
+  useEffect(() => {
+    fetchHistory();
+  }, []);
+
+  /* ===========================
+     FETCH HISTORY
+  =========================== */
   const fetchHistory = async () => {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       if (!token) return;
+
       const { data } = await axios.get(`${API_URL}/history`, {
         headers: { Authorization: `Bearer ${token}` }
       });
+
       setHistory(data);
-    } catch (err) {
-      console.error("History fetch failed");
+    } catch {
+      console.log("History fetch failed");
     }
   };
 
-  // 📂 Load previous chat
+  /* ===========================
+     LOAD OLD CHAT
+  =========================== */
   const loadChat = async (chatId) => {
     try {
       setIsTyping(true);
       setActiveChatId(chatId);
-      const token = localStorage.getItem('token');
+
+      const token = localStorage.getItem("token");
       const { data } = await axios.get(`${API_URL}/${chatId}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
+
       setMessages(data.messages);
       setIsTyping(false);
-    } catch (err) {
+    } catch {
       setIsTyping(false);
     }
   };
 
-  // ✉️ Send message
+  /* ===========================
+     NEW CHAT
+  =========================== */
+  const startNewChat = () => {
+    setActiveChatId(null);
+    setMessages([DEFAULT_GREETING]);
+  };
+
+  /* ===========================
+     SEND MESSAGE
+  =========================== */
   const handleSend = async () => {
     if (!input.trim()) return;
-    const token = localStorage.getItem('token');
 
-    const userMsg = { role: 'user', text: input };
-    setMessages(prev => [...prev, userMsg]);
+    const token = localStorage.getItem("token");
+    const userText = input;
+
+    setMessages(prev => [...prev, { role: "user", text: userText }]);
     setInput('');
     setIsTyping(true);
 
     try {
       const { data } = await axios.post(
         `${API_URL}/send`,
-        { prompt: userMsg.text, chatId: activeChatId },
+        { prompt: userText, chatId: activeChatId },
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      setMessages(prev => [...prev, { role: 'assistant', text: data.reply }]);
+      setMessages(prev => [...prev, { role: "assistant", text: data.reply }]);
 
       if (!activeChatId) {
         setActiveChatId(data.chatId);
         fetchHistory();
       }
     } catch (err) {
-      let errorText = "❌ Connection error.";
+      let msg = "❌ Connection error.";
       if (err.response?.status === 429) {
-        errorText = "⚠️ Usage limit reached.";
+        msg = "⚠️ Usage limit reached.";
       }
-      setMessages(prev => [...prev, { role: 'assistant', text: errorText }]);
+      setMessages(prev => [...prev, { role: "assistant", text: msg }]);
     } finally {
       setIsTyping(false);
     }
@@ -93,35 +129,29 @@ export default function Chatbot({ onNavigate }) {
   return (
     <div className="flex h-screen bg-[#050505] text-zinc-100 overflow-hidden">
 
-      {/* HISTORY DRAWER */}
+      {/* HISTORY PANEL */}
       {showHistory && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm">
           <div className="absolute right-0 top-0 h-full w-[320px] bg-[#0c0c0e] border-l border-white/5 p-4">
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex justify-between mb-4">
               <h3 className="text-sm font-bold">Chat History</h3>
-              <button onClick={() => setShowHistory(false)} className="text-zinc-400 hover:text-white">
-                <X size={20} />
+              <button onClick={() => setShowHistory(false)}>
+                <X size={18} />
               </button>
             </div>
 
-            <div className="space-y-1 overflow-y-auto h-full pr-1">
-              {history.length === 0 && (
-                <p className="text-zinc-500 text-xs italic">No history yet.</p>
-              )}
-
-              {history.map(chat => (
-                <button
-                  key={chat._id}
-                  onClick={() => {
-                    loadChat(chat._id);
-                    setShowHistory(false);
-                  }}
-                  className="w-full text-left p-3 rounded-xl text-sm text-zinc-400 hover:bg-white/5 hover:text-white transition"
-                >
-                  {chat.title}
-                </button>
-              ))}
-            </div>
+            {history.map(chat => (
+              <button
+                key={chat._id}
+                onClick={() => {
+                  loadChat(chat._id);
+                  setShowHistory(false);
+                }}
+                className="w-full text-left p-3 rounded-xl text-sm text-zinc-400 hover:bg-white/5"
+              >
+                {chat.title}
+              </button>
+            ))}
           </div>
         </div>
       )}
@@ -130,60 +160,37 @@ export default function Chatbot({ onNavigate }) {
       <main className="flex-1 flex flex-col">
 
         {/* HEADER */}
-        <header className="h-16 flex items-center justify-between px-4 border-b border-white/5 bg-[#050505]/80 backdrop-blur-md">
+        <header className="h-16 flex items-center justify-between px-4 border-b border-white/5">
           <div className="flex items-center gap-2">
             <Sparkles size={18} className="text-indigo-500" />
-            <span className="font-bold text-lg">CNEAPEE AI</span>
+            <span className="font-bold">CNEAPEE AI</span>
           </div>
 
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => setShowHistory(true)}
-              className="p-2 hover:bg-white/5 rounded-lg text-zinc-400 hover:text-white"
-            >
+          <div className="flex gap-2">
+            <button onClick={() => setShowHistory(true)}>
               <MessageSquare size={20} />
             </button>
-            <button
-              onClick={() => onNavigate('home')}
-              className="p-2 hover:bg-white/5 rounded-lg text-zinc-400 hover:text-white"
-            >
+            <button onClick={() => onNavigate("home")}>
               <Home size={20} />
             </button>
           </div>
         </header>
 
         {/* MESSAGES */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-6">
-          {messages.length === 0 ? (
-            <div className="h-full flex flex-col items-center justify-center text-center">
-              <Sparkles size={32} className="text-indigo-500 mb-4" />
-              <h1 className="text-3xl font-bold mb-2">Hello, Friend.</h1>
-              <p className="text-zinc-500 text-sm">
-                I am optimized to be concise. Ask me anything.
-              </p>
-            </div>
-          ) : (
-            messages.map((msg, idx) => (
-              <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                <div
-                  className={`max-w-[75%] px-5 py-3 rounded-2xl text-sm whitespace-pre-wrap
-                    ${msg.role === 'user'
-                      ? 'bg-indigo-600 text-white rounded-br-none'
-                      : 'bg-[#18181b] border border-white/10 rounded-bl-none'
-                    }`}
-                >
-                  {msg.text}
-                </div>
+        <div className="flex-1 overflow-y-auto p-4 space-y-4">
+          {messages.map((m, i) => (
+            <div key={i} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
+              <div className={`px-4 py-2 rounded-xl max-w-[75%]
+                ${m.role === "user"
+                  ? "bg-indigo-600 text-white"
+                  : "bg-[#18181b] border border-white/10"}`}>
+                {m.text}
               </div>
-            ))
-          )}
+            </div>
+          ))}
 
           {isTyping && (
-            <div className="flex justify-start animate-pulse">
-              <div className="bg-[#18181b] px-4 py-3 rounded-2xl rounded-bl-none">
-                typing…
-              </div>
-            </div>
+            <div className="text-zinc-500 text-sm">typing…</div>
           )}
 
           <div ref={messagesEndRef} />
@@ -191,12 +198,10 @@ export default function Chatbot({ onNavigate }) {
 
         {/* INPUT */}
         <div className="p-4 border-t border-white/5">
-          <div className="max-w-3xl mx-auto relative">
-
-            {/* Image Upload */}
+          <div className="relative max-w-3xl mx-auto">
             <button
               onClick={() => fileInputRef.current.click()}
-              className="absolute left-3 top-3 text-zinc-400 hover:text-white"
+              className="absolute left-3 top-3 text-zinc-400"
             >
               <ImageIcon size={20} />
             </button>
@@ -204,33 +209,24 @@ export default function Chatbot({ onNavigate }) {
             <input
               type="file"
               ref={fileInputRef}
-              accept="image/*"
               hidden
-              onChange={(e) => console.log("Image selected:", e.target.files[0])}
             />
 
             <input
-              type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+              onKeyDown={(e) => e.key === "Enter" && handleSend()}
               placeholder="Message CNEAPEE AI..."
-              className="w-full bg-[#0e0e11] border border-white/10 rounded-2xl py-4 pl-12 pr-14 focus:outline-none focus:border-indigo-500 text-white"
-              disabled={isTyping}
+              className="w-full bg-[#0e0e11] rounded-xl py-3 pl-12 pr-14 border border-white/10"
             />
 
             <button
               onClick={handleSend}
-              disabled={!input.trim() || isTyping}
-              className="absolute right-3 top-3 bg-indigo-600 hover:bg-indigo-500 text-white p-2 rounded-xl disabled:opacity-50"
+              className="absolute right-3 top-3 bg-indigo-600 p-2 rounded-lg"
             >
-              <Send size={18} />
+              <Send size={16} />
             </button>
           </div>
-
-          <p className="text-center text-[10px] text-zinc-600 mt-2">
-            AI can make mistakes. Verify important info.
-          </p>
         </div>
 
       </main>

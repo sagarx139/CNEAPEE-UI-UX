@@ -1,176 +1,324 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { FaUserFriends, FaEye, FaChartLine, FaTrash, FaLock, FaKey, FaShieldAlt } from 'react-icons/fa';
+import { 
+  Users, Shield, Search, ArrowLeft, Trash2, 
+  BarChart3, Eye, Zap, Lock, LogOut 
+} from 'lucide-react';
 
-const AdminDashboard = () => {
+const API_URL = "https://cneapee-backend-703598443794.asia-south1.run.app/api/admin";
+
+export default function AdminDashboard() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  
+  // Login State
+  const [adminId, setAdminId] = useState('');
+  const [adminPass, setAdminPass] = useState('');
+  const [loginError, setLoginError] = useState('');
+  const [isChecking, setIsChecking] = useState(false);
+
+  // Dashboard State
+  const [users, setUsers] = useState([]);
+  const [stats, setStats] = useState({ totalUsers: 0, dailyViews: 0, totalViews: 0 });
+  const [loading, setLoading] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [updating, setUpdating] = useState(null);
+  
   const navigate = useNavigate();
 
-  // 🚫 NO HARDCODED PASSWORDS HERE ANYMORE!
-
-  const [isUnlocked, setIsUnlocked] = useState(false);
-  const [credentials, setCredentials] = useState({ id: '', password: '' });
-  const [error, setError] = useState('');
-  
-  const [stats, setStats] = useState({ totalUsers: 0, dailyViews: 0, totalViews: 0 });
-  const [users, setUsers] = useState([]);
-  const [loadingData, setLoadingData] = useState(false);
-  const [verifying, setVerifying] = useState(false);
-
-  const API_URL = "https://cneapee-backend-703598443794.asia-south1.run.app/api";
-
-  // 🔐 SECURE LOGIN CHECK
-  const handleUnlock = async (e) => {
+  // --- 🔐 1. LOGIN HANDLING ---
+  const handleAdminLogin = async (e) => {
     e.preventDefault();
-    setVerifying(true);
-    setError('');
+    setIsChecking(true);
+    setLoginError('');
 
     try {
-        // Hum ID/Pass Backend ko bhej rahe hain check karne ke liye
-        const res = await axios.post(`${API_URL}/admin/verify-login`, credentials);
-        
-        if (res.data.success) {
-            setIsUnlocked(true);
-            fetchData();
-        }
+      // Backend verify karega credentials
+      const res = await axios.post(`${API_URL}/verify-login`, {
+        id: adminId,
+        password: adminPass
+      });
+
+      if (res.data.success) {
+        setIsAuthenticated(true);
+        fetchDashboardData(); // Login pass hone ke baad hi data lao
+      }
     } catch (err) {
-        setError("❌ Wrong ID or Password! Access Denied.");
-        setCredentials({ ...credentials, password: '' });
+      console.error("Login Error:", err);
+      setLoginError('❌ Access Denied: Invalid ID or Password');
+    } finally {
+      setIsChecking(false);
     }
-    setVerifying(false);
   };
 
-  const fetchData = async () => {
-    setLoadingData(true);
+  // --- 📡 2. DATA FETCHING ---
+  const fetchDashboardData = async () => {
+    setLoading(true);
     try {
-        const statsRes = await axios.get(`${API_URL}/admin/stats`);
-        setStats(statsRes.data);
-        const usersRes = await axios.get(`${API_URL}/users`);
-        setUsers(usersRes.data);
-    } catch (error) { console.error("Error fetching data", error); }
-    setLoadingData(false);
+      const token = localStorage.getItem('token');
+      
+      // Stats fetch
+      const statsRes = await axios.get(`${API_URL}/stats`);
+      setStats(statsRes.data);
+
+      // Users fetch (Auth Token Required)
+      const usersRes = await axios.get(`${API_URL}/users`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setUsers(usersRes.data);
+      
+    } catch (error) {
+      console.error("Fetch Error:", error);
+      if (error.response?.status === 404) {
+        alert("⚠️ Backend Error: Please Redeploy Backend Code to Cloud.");
+      }
+      else if (error.response?.status === 403 || error.response?.status === 401) {
+        alert("⚠️ Permission Error: You must be an Admin user in the main app to edit plans.");
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
+  // --- ⚡ UPDATE PLAN ---
+  const handleUpdatePlan = async (userId, newPlan) => {
+    if (!window.confirm(`Change plan to ${newPlan}?`)) return;
+    setUpdating(userId);
+    try {
+      const token = localStorage.getItem('token');
+      await axios.put(`${API_URL}/update-plan/${userId}`, { plan: newPlan }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
+      // UI Update
+      setUsers(users.map(u => u._id === userId ? { ...u, plan: newPlan } : u));
+    } catch (error) {
+      alert("Failed to update plan.");
+    } finally {
+      setUpdating(null);
+    }
+  };
+
+  // --- 🗑️ DELETE USER ---
   const handleDeleteUser = async (userId) => {
-    if(!window.confirm("WARNING: Permanently delete this user?")) return;
+    if (!window.confirm("⚠️ DELETE USER PERMANENTLY?")) return;
     try {
-        await axios.delete(`${API_URL}/admin/delete-user/${userId}`);
+        const token = localStorage.getItem('token');
+        await axios.delete(`${API_URL}/delete-user/${userId}`, {
+            headers: { Authorization: `Bearer ${token}` }
+        });
         setUsers(users.filter(u => u._id !== userId));
-        setStats({...stats, totalUsers: stats.totalUsers - 1});
-        alert("✅ User deleted");
-    } catch (error) { alert("❌ Failed to delete"); }
+    } catch (error) {
+        alert("Delete Failed");
+    }
   };
 
-  // --- LOCKED SCREEN ---
-  if (!isUnlocked) {
+  // --- RENDER LOGIN SCREEN ---
+  if (!isAuthenticated) {
     return (
-        <div className="min-h-screen bg-black flex flex-col items-center justify-center p-4">
-            <div className="w-full max-w-md bg-zinc-900 border border-zinc-800 p-8 rounded-2xl shadow-2xl">
-                <div className="flex justify-center mb-6">
-                    <div className="p-4 bg-blue-600/20 rounded-full text-blue-500">
-                        <FaShieldAlt size={40} />
-                    </div>
-                </div>
-                
-                <h2 className="text-2xl font-bold text-white text-center mb-2">Secure Admin Access</h2>
-                <p className="text-zinc-500 text-center mb-6 text-sm">Credentials are verified securely by the server.</p>
-                
-                <form onSubmit={handleUnlock} className="space-y-4">
-                    <div>
-                        <label className="text-zinc-400 text-xs uppercase font-bold ml-1">Admin ID</label>
-                        <input 
-                            type="text" 
-                            className="bg-black border border-zinc-700 text-white w-full rounded-lg px-3 py-3 mt-1 outline-none focus:border-blue-500 transition"
-                            placeholder="Enter Admin ID"
-                            value={credentials.id}
-                            onChange={(e) => setCredentials({...credentials, id: e.target.value})}
-                        />
-                    </div>
-                    <div>
-                        <label className="text-zinc-400 text-xs uppercase font-bold ml-1">Password</label>
-                        <input 
-                            type="password" 
-                            className="bg-black border border-zinc-700 text-white w-full rounded-lg px-3 py-3 mt-1 outline-none focus:border-blue-500 transition"
-                            placeholder="Enter Server Password"
-                            value={credentials.password}
-                            onChange={(e) => setCredentials({...credentials, password: e.target.value})}
-                        />
-                    </div>
-
-                    {error && <p className="text-red-500 text-sm text-center font-bold animate-pulse">{error}</p>}
-
-                    <button 
-                        type="submit" 
-                        disabled={verifying}
-                        className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg transition-all active:scale-95 flex items-center justify-center gap-2"
-                    >
-                        {verifying ? "Verifying..." : <><FaLock size={14} /> UNLOCK DASHBOARD</>}
-                    </button>
-                    
-                    <button type="button" onClick={() => navigate('/')} className="w-full text-zinc-500 text-sm hover:text-white mt-2">Back to Home</button>
-                </form>
+      <div className="min-h-screen bg-[#050505] flex items-center justify-center p-4 selection:bg-indigo-500/30">
+        <div className="w-full max-w-md bg-[#0e0e11] border border-white/10 rounded-3xl p-8 shadow-2xl relative overflow-hidden">
+          {/* Background Glow */}
+          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500"></div>
+          
+          <div className="flex justify-center mb-6">
+            <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center text-indigo-500 border border-white/5 shadow-lg shadow-indigo-500/10">
+              <Shield size={32} />
             </div>
+          </div>
+          
+          <h2 className="text-2xl font-bold text-white text-center mb-2">Admin Security</h2>
+          <p className="text-zinc-500 text-center mb-8 text-sm">Restricted Access. Identity Verification Required.</p>
+
+          <form onSubmit={handleAdminLogin} className="space-y-4">
+            <div>
+              <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider ml-1">Secure ID</label>
+              <input 
+                type="text" 
+                value={adminId}
+                onChange={e => setAdminId(e.target.value)}
+                className="w-full mt-2 bg-[#050505] border border-white/10 rounded-xl p-3 text-white focus:border-indigo-500 outline-none transition"
+                placeholder="Enter ID"
+              />
+            </div>
+            <div>
+              <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider ml-1">Password</label>
+              <input 
+                type="password" 
+                value={adminPass}
+                onChange={e => setAdminPass(e.target.value)}
+                className="w-full mt-2 bg-[#050505] border border-white/10 rounded-xl p-3 text-white focus:border-indigo-500 outline-none transition"
+                placeholder="Enter Password"
+              />
+            </div>
+
+            {loginError && <div className="text-red-400 text-xs text-center font-bold bg-red-500/10 p-3 rounded-lg border border-red-500/20">{loginError}</div>}
+
+            <button 
+              type="submit" 
+              disabled={isChecking}
+              className="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3.5 rounded-xl transition-all mt-4 flex justify-center gap-2 items-center shadow-lg shadow-indigo-500/20"
+            >
+              {isChecking ? "Verifying..." : <><Lock size={16}/> Unlock Console</>}
+            </button>
+          </form>
+
+          <button onClick={() => navigate('/')} className="w-full text-center text-zinc-600 text-xs mt-6 hover:text-white transition">
+            &larr; Return to Application
+          </button>
         </div>
+      </div>
     );
   }
 
-  // --- UNLOCKED DASHBOARD ---
+  // --- RENDER DASHBOARD (After Login) ---
+  const filteredUsers = users.filter(u => 
+    u.name?.toLowerCase().includes(searchTerm.toLowerCase()) || 
+    u.email?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white p-8 font-sans animate-fade-in">
-      <div className="flex justify-between items-center mb-10 border-b border-gray-800 pb-6">
-        <div>
-            <h1 className="text-3xl font-bold text-white flex items-center gap-3">
-                <span className="bg-green-600 p-2 rounded-lg"><FaLock size={20}/></span> Admin Console
-            </h1>
-            <p className="text-green-500 text-xs font-mono mt-1 ml-1">● SECURE CONNECTION ACTIVE</p>
+    <div className="min-h-screen bg-[#050505] text-white font-sans p-4 md:p-8 selection:bg-indigo-500/30">
+      
+      {/* Header */}
+      <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center mb-8 gap-6">
+        <div className="flex items-center gap-4 w-full md:w-auto">
+           <button onClick={() => setIsAuthenticated(false)} className="p-3 bg-white/5 rounded-full hover:bg-red-500/20 hover:text-red-400 transition border border-white/5 group">
+             <LogOut size={20} className="group-hover:-translate-x-0.5 transition-transform"/>
+           </button>
+           <div>
+             <h1 className="text-2xl font-bold flex items-center gap-2">
+                <Shield className="text-indigo-500" fill="currentColor" /> Admin Console
+             </h1>
+             <p className="text-xs text-zinc-500">System Overview & Management</p>
+           </div>
         </div>
-        <button onClick={() => setIsUnlocked(false)} className="flex items-center gap-2 bg-red-600/20 text-red-400 hover:bg-red-600 hover:text-white px-4 py-2 rounded-lg transition text-sm font-bold border border-red-600/30">
-            <FaLock /> LOCK PANEL
-        </button>
+        <div className="flex gap-3 w-full md:w-auto overflow-x-auto pb-2 md:pb-0 scrollbar-hide">
+            <StatCard label="Users" value={stats.totalUsers} icon={Users} color="text-blue-400" />
+            <StatCard label="Views Today" value={stats.dailyViews} icon={Eye} color="text-green-400" />
+            <StatCard label="Total Views" value={stats.totalViews} icon={BarChart3} color="text-purple-400" />
+        </div>
       </div>
 
-      {loadingData ? <div className="text-center py-20 text-gray-500">Loading Database...</div> : (
-        <>
-            {/* Stats Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-                <div className="bg-[#111] p-6 rounded-xl border-l-4 border-blue-500 shadow-lg">
-                    <p className="text-gray-400 text-sm">Total Users</p>
-                    <h2 className="text-2xl font-bold">{stats.totalUsers}</h2>
-                </div>
-                <div className="bg-[#111] p-6 rounded-xl border-l-4 border-green-500 shadow-lg">
-                    <p className="text-gray-400 text-sm">Today's Views</p>
-                    <h2 className="text-2xl font-bold">{stats.dailyViews}</h2>
-                </div>
-                <div className="bg-[#111] p-6 rounded-xl border-l-4 border-purple-500 shadow-lg">
-                    <p className="text-gray-400 text-sm">Total Views</p>
-                    <h2 className="text-2xl font-bold">{stats.totalViews}</h2>
-                </div>
-            </div>
+      {/* Search Bar */}
+      <div className="max-w-7xl mx-auto mb-6 relative group">
+          <Search className="absolute left-4 top-3.5 text-zinc-500 group-focus-within:text-indigo-400 transition-colors" size={18} />
+          <input 
+            type="text" 
+            placeholder="Search users database..." 
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full bg-[#0e0e11] border border-white/10 rounded-2xl py-3 pl-12 pr-4 focus:outline-none focus:border-indigo-500 transition text-sm text-white placeholder:text-zinc-600"
+          />
+      </div>
 
-            {/* Users Table */}
-            <div className="bg-[#111] rounded-xl border border-gray-800 overflow-hidden shadow-2xl">
-                <div className="p-6 border-b border-gray-800"><h3 className="text-xl font-bold text-gray-200">User Database</h3></div>
-                <div className="overflow-x-auto">
-                    <table className="w-full text-left border-collapse">
-                        <thead><tr className="bg-gray-900 text-gray-400 text-sm uppercase"><th className="p-4">Name</th><th className="p-4">Email</th><th className="p-4">Role</th><th className="p-4 text-right">Actions</th></tr></thead>
-                        <tbody className="divide-y divide-gray-800">
-                            {users.map((user) => (
-                                <tr key={user._id} className="hover:bg-gray-800/50">
-                                    <td className="p-4 font-medium">{user.name}</td>
-                                    <td className="p-4 text-blue-400">{user.email}</td>
-                                    <td className="p-4"><span className="px-2 py-1 rounded text-xs font-bold bg-gray-700 text-gray-400">{user.role}</span></td>
-                                    <td className="p-4 text-right">
-                                        {user.role !== 'admin' && <button onClick={() => handleDeleteUser(user._id)} className="text-gray-500 hover:text-red-500 p-2"><FaTrash size={16}/></button>}
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
+      {/* Users Table */}
+      <div className="max-w-7xl mx-auto bg-[#0e0e11] border border-white/5 rounded-3xl overflow-hidden shadow-2xl min-h-[400px]">
+         {loading ? (
+             <div className="p-20 flex flex-col items-center justify-center text-zinc-500 gap-4">
+                <div className="w-8 h-8 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin"/>
+                <p className="text-sm font-medium">Fetching secure data...</p>
+             </div>
+         ) : (
+             <div className="overflow-x-auto">
+               <table className="w-full text-left border-collapse">
+                 <thead>
+                   <tr className="bg-white/5 text-zinc-400 text-[10px] font-bold uppercase tracking-widest border-b border-white/5">
+                     <th className="p-5">User Profile</th>
+                     <th className="p-5">System Role</th>
+                     <th className="p-5">Plan Status</th>
+                     <th className="p-5 text-right">Actions</th>
+                   </tr>
+                 </thead>
+                 <tbody className="divide-y divide-white/5">
+                   {filteredUsers.map(user => (
+                     <tr key={user._id} className="hover:bg-white/[0.02] transition group">
+                       
+                       {/* Profile */}
+                       <td className="p-5">
+                         <div className="flex items-center gap-4">
+                           <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500/20 to-purple-500/20 flex items-center justify-center text-indigo-400 font-bold border border-white/5 shadow-inner">
+                             {user.name?.charAt(0).toUpperCase() || 'U'}
+                           </div>
+                           <div>
+                             <div className="font-bold text-zinc-200 text-sm">{user.name}</div>
+                             <div className="text-xs text-zinc-500">{user.email}</div>
+                             <div className="text-[10px] text-zinc-600 font-mono mt-0.5">
+                               Used: <span className="text-zinc-400">{user.usage?.dailyTokens || 0}</span> tokens
+                             </div>
+                           </div>
+                         </div>
+                       </td>
+
+                       {/* Role */}
+                       <td className="p-5">
+                          <span className={`px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wide border ${user.role === 'admin' ? 'bg-indigo-500/10 text-indigo-400 border-indigo-500/30 shadow-indigo-500/10 shadow-sm' : 'bg-zinc-800/50 text-zinc-500 border-white/5'}`}>
+                            {user.role || 'user'}
+                          </span>
+                       </td>
+
+                       {/* Plan Selector */}
+                       <td className="p-5">
+                         <div className="relative w-32">
+                            <select 
+                              value={user.plan || 'free'} 
+                              onChange={(e) => handleUpdatePlan(user._id, e.target.value)}
+                              disabled={updating === user._id}
+                              className={`
+                                w-full appearance-none bg-[#050505] border border-white/10 rounded-lg pl-3 pr-8 py-2 text-xs font-bold uppercase tracking-wide focus:border-indigo-500 outline-none cursor-pointer transition
+                                ${user.plan === 'coder' ? 'text-purple-400 border-purple-500/30' : 
+                                  user.plan === 'working' ? 'text-blue-400 border-blue-500/30' : 
+                                  user.plan === 'student' ? 'text-green-400 border-green-500/30' : 'text-zinc-400'}
+                              `}
+                            >
+                              <option value="free">Free</option>
+                              <option value="student">Student</option>
+                              <option value="working">Working</option>
+                              <option value="coder">Coder</option>
+                            </select>
+                            <Zap size={12} className="absolute right-3 top-2.5 text-zinc-600 pointer-events-none opacity-50" />
+                         </div>
+                       </td>
+
+                       {/* Actions */}
+                       <td className="p-5 text-right">
+                         <button 
+                            onClick={() => handleDeleteUser(user._id)} 
+                            className="p-2 text-zinc-600 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition opacity-0 group-hover:opacity-100"
+                            title="Delete User"
+                         >
+                            <Trash2 size={16} />
+                         </button>
+                       </td>
+
+                     </tr>
+                   ))}
+                 </tbody>
+               </table>
+             </div>
+         )}
+         
+         {/* Empty State */}
+         {!loading && filteredUsers.length === 0 && (
+            <div className="p-16 text-center">
+               <div className="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-3 text-zinc-600"><Search size={20}/></div>
+               <p className="text-zinc-500 text-sm">No users found matching "{searchTerm}"</p>
             </div>
-        </>
-      )}
+         )}
+      </div>
     </div>
   );
-};
-export default AdminDashboard;
+}
+
+// Mini Stat Card
+const StatCard = ({ label, value, icon: Icon, color }) => (
+    <div className="bg-[#0e0e11] border border-white/5 rounded-2xl p-4 flex items-center gap-4 min-w-[150px] shadow-lg hover:border-white/10 transition">
+        <div className={`p-2.5 rounded-xl bg-white/5 ${color} shadow-inner`}>
+            <Icon size={20} />
+        </div>
+        <div>
+            <div className="text-xl font-bold text-white">{value}</div>
+            <div className="text-[10px] text-zinc-500 uppercase tracking-widest font-semibold">{label}</div>
+        </div>
+    </div>
+);
