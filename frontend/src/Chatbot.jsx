@@ -1,266 +1,270 @@
 import React, { useState, useRef, useEffect } from 'react';
-import config from './config';
+import axios from 'axios';
 import { 
-  Home as HomeIcon, ChevronDown, Send, Sparkles, 
-  Paperclip, Mic, Trash2, Check, X, 
-  Gift, Snowflake, Trees
+  Home, Send, Sparkles, MessageSquare, 
+  Settings, User, ChevronLeft, Menu, Plus 
 } from 'lucide-react';
 
-// --- SNOW COMPONENT (Simplified for Chat) ---
-const ChatSnow = () => (
-  <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
-    {[...Array(20)].map((_, i) => (
-      <div 
-        key={i}
-        className="absolute bg-white rounded-full opacity-30 animate-fall"
-        style={{
-          left: `${Math.random() * 100}%`,
-          top: -10,
-          width: `${Math.random() * 4 + 2}px`,
-          height: `${Math.random() * 4 + 2}px`,
-          animationDuration: `${Math.random() * 10 + 5}s`,
-          animationDelay: `-${Math.random() * 5}s`
-        }}
-      />
-    ))}
-    <style>{`
-      @keyframes fall {
-        to { transform: translateY(100vh); }
-      }
-      .animate-fall { animation: fall linear infinite; }
-    `}</style>
-  </div>
-);
+// 👇 LOCALHOST KE LIYE YE URL SAHI HAI. 
+// JAB DEPLOY KAROGE TO ISSE CLOUD RUN URL SE REPLACE KAR DENA.
+const API_URL = "http://localhost:5000/api/chat";
 
 export default function Chatbot({ onNavigate }) {
-  // --- STATE ---
-  const [messages, setMessages] = useState([
-    { id: 1, role: 'assistant', text: "Ho ho ho! I'm Flare+ (Holiday Edition). I'm ready to help you wrap up your tasks." }
-  ]);
+  // --- STATE MANAGEMENT ---
+  const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
-  const [model, setModel] = useState('Flare 0.5 Holiday');
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  
-  // --- REFS ---
-  const messagesEndRef = useRef(null);
-  const containerRef = useRef(null);
-  const dropdownRef = useRef(null);
+  const [isSidebarOpen, setSidebarOpen] = useState(true);
+  const [history, setHistory] = useState([]);
+  const [activeChatId, setActiveChatId] = useState(null); 
+  const [usage, setUsage] = useState({ current: 0, limit: 0 });
 
-  // --- SCROLL LOGIC ---
+  const messagesEndRef = useRef(null);
+
+  // 1. Load History on Mount
+  useEffect(() => {
+    fetchHistory();
+  }, []);
+
+  // 2. Scroll to bottom on new message
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isTyping]);
 
-  // --- SPOTLIGHT EFFECT ---
-  const handleMouseMove = (e) => {
-    if (containerRef.current) {
-      const rect = containerRef.current.getBoundingClientRect();
-      containerRef.current.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
-      containerRef.current.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
+  // --- API FUNCTIONS ---
+  
+  const fetchHistory = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) return;
+      
+      const { data } = await axios.get(`${API_URL}/history`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setHistory(data);
+    } catch (error) {
+      console.error("History Error", error);
     }
   };
 
-  // --- HANDLERS ---
-  const handleSend = () => {
-    if (!input.trim()) return;
-    const userMsg = { id: Date.now(), role: 'user', text: input };
-    setMessages(prev => [...prev, userMsg]);
-    setInput('');
-    setIsTyping(true); 
-
-    // Simulate AI Response
-    setTimeout(() => {
+  const loadChat = async (chatId) => {
+    try {
+      setIsTyping(true);
+      setActiveChatId(chatId);
+      const token = localStorage.getItem('token');
+      
+      const { data } = await axios.get(`${API_URL}/${chatId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
+      setMessages(data.messages);
       setIsTyping(false);
-      setMessages(prev => [...prev, { 
-        id: Date.now() + 1, 
-        role: 'assistant', 
-        text: "Checking my list twice... here is the information you requested." 
-      }]);
-    }, 2000);
+      if (window.innerWidth < 768) setSidebarOpen(false); // Mobile pe sidebar close
+    } catch (error) {
+      console.error("Load Chat Error", error);
+      setIsTyping(false);
+    }
   };
 
-  const handleKeyDown = (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); }
+  const handleNewChat = () => {
+    setActiveChatId(null);
+    setMessages([]);
+    setInput('');
+  };
+
+  const handleSend = async () => {
+    if (!input.trim()) return;
+
+    // Optimistic Update (Turant UI me dikhao)
+    const userMsg = { role: 'user', text: input };
+    setMessages(prev => [...prev, userMsg]);
+    setInput('');
+    setIsTyping(true);
+
+    try {
+      const token = localStorage.getItem('token');
+      
+      const { data } = await axios.post(`${API_URL}/send`, 
+        { prompt: userMsg.text, chatId: activeChatId },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      // AI Response Update
+      setMessages(prev => [...prev, { role: 'assistant', text: data.reply }]);
+      setUsage(data.usage);
+      
+      // Agar ye nayi chat thi, to ID set karo aur history refresh karo
+      if (!activeChatId) {
+        setActiveChatId(data.chatId);
+        fetchHistory(); 
+      }
+
+    } catch (err) {
+      console.error(err);
+      setMessages(prev => [...prev, { 
+        role: 'assistant', 
+        text: err.response?.data?.message || "❌ Connection Error. Backend start hai na?" 
+      }]);
+    } finally {
+      setIsTyping(false);
+    }
   };
 
   return (
-    <div 
-      ref={containerRef}
-      onMouseMove={handleMouseMove}
-      className="flex flex-col h-screen bg-[#050507] text-zinc-300 font-sans overflow-hidden relative selection:bg-red-500/30"
-    >
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
-        .font-sans { font-family: 'Plus Jakarta Sans', sans-serif; }
-        
-        /* Festive Spotlight */
-        .spotlight-bg {
-          background: radial-gradient(600px circle at var(--mouse-x) var(--mouse-y), rgba(220, 38, 38, 0.08), transparent 40%);
-        }
-
-        /* Holiday Aurora Wave Animation */
-        .neural-wave {
-          position: fixed;
-          bottom: -100px;
-          left: 0;
-          right: 0;
-          height: 300px;
-          /* Red and Green Gradient */
-          background: linear-gradient(180deg, transparent, rgba(220, 38, 38, 0.15), rgba(22, 163, 74, 0.2));
-          filter: blur(60px);
-          opacity: 0;
-          transition: opacity 1s ease, transform 1s ease;
-          transform: translateY(100px) scaleY(0.5);
-          z-index: 10;
-          pointer-events: none;
-        }
-
-        .neural-wave.active {
-          opacity: 1;
-          transform: translateY(0) scaleY(1);
-          animation: pulseWave 4s infinite alternate;
-        }
-
-        @keyframes pulseWave {
-          0% { filter: blur(60px) hue-rotate(0deg); }
-          50% { filter: blur(70px) hue-rotate(20deg); } 
-          100% { filter: blur(80px) hue-rotate(-20deg); }
-        }
-
-        ::-webkit-scrollbar { width: 5px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
-      `}</style>
-
-      {/* --- BACKGROUNDS --- */}
-      <div className="absolute inset-0 pointer-events-none spotlight-bg z-0" />
-      <div className="fixed inset-0 opacity-[0.03] z-0 pointer-events-none" 
-           style={{ backgroundImage: `linear-gradient(#333 1px, transparent 1px), linear-gradient(90deg, #333 1px, transparent 1px)`, backgroundSize: '40px 40px' }} />
+    <div className="flex h-screen bg-[#09090b] text-zinc-100 font-sans selection:bg-indigo-500/30 overflow-hidden">
       
-      {/* Background Snow for Chat */}
-      <ChatSnow />
-
-      {/* --- THE AURORA WAVE (Activates when isTyping is true) --- */}
-      <div className={`neural-wave ${isTyping ? 'active' : ''}`} />
-
-      {/* --- NAVBAR --- */}
-      <nav className="fixed top-6 left-0 right-0 z-50 flex justify-center px-4">
-        <div className="backdrop-blur-xl bg-zinc-900/80 border border-white/10 rounded-full p-1.5 flex items-center gap-1 shadow-2xl">
-          <button onClick={() => onNavigate('home')} className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/10 text-zinc-400 hover:text-white transition">
-            <HomeIcon size={18} />
+      {/* --- SIDEBAR --- */}
+      <aside className={`${isSidebarOpen ? 'w-80 translate-x-0' : 'w-0 -translate-x-full'} fixed md:relative z-20 h-full transition-all duration-300 bg-[#0c0c0e] border-r border-white/5 flex flex-col`}>
+        
+        {/* Sidebar Header */}
+        <div className="p-4 flex items-center justify-between border-b border-white/5">
+          <button onClick={handleNewChat} className="flex-1 flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-xl text-sm font-medium transition-all shadow-lg shadow-indigo-900/20">
+            <Plus size={18}/> New Chat
           </button>
-
-          <div className="w-px h-4 mx-1 bg-white/10" />
-
-          {/* Model Selector */}
-          <div className="relative" ref={dropdownRef}>
+          <button onClick={() => setSidebarOpen(false)} className="md:hidden ml-2 p-2 hover:bg-white/5 rounded-lg">
+            <ChevronLeft size={20}/>
+          </button>
+        </div>
+        
+        {/* Chat History List */}
+        <div className="flex-1 overflow-y-auto p-3 space-y-1 scrollbar-thin scrollbar-thumb-zinc-800">
+          <h3 className="px-3 py-2 text-xs font-semibold text-zinc-500 uppercase tracking-wider">Recent</h3>
+          {history.length === 0 && <p className="text-zinc-600 text-xs px-3">No recent chats</p>}
+          {history.map(chat => (
             <button 
-              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-              className="flex items-center gap-2 px-4 py-2 rounded-full hover:bg-white/5 text-white transition min-w-[140px] justify-between text-sm font-semibold"
+              key={chat._id} 
+              onClick={() => loadChat(chat._id)}
+              className={`w-full text-left p-3 rounded-xl text-sm transition-all flex items-center gap-3 group
+                ${activeChatId === chat._id ? 'bg-white/10 text-white' : 'text-zinc-400 hover:bg-white/5 hover:text-white'}
+              `}
             >
-              <span className="flex items-center gap-2 text-red-400">
-                <Gift size={14} className="animate-bounce" /> {model}
-              </span>
-              <ChevronDown size={14} className="opacity-60" />
+              <MessageSquare size={16} className={`shrink-0 ${activeChatId === chat._id ? 'text-indigo-400' : 'opacity-50'}`}/>
+              <span className="truncate">{chat.title}</span>
             </button>
-            {isDropdownOpen && (
-              <div className="absolute top-full left-0 mt-2 w-52 bg-zinc-900 border border-white/10 rounded-2xl shadow-xl p-1.5 z-50 animate-in fade-in zoom-in duration-200">
-                {['Flare 0.5 Holiday', 'Flare Frost Ace'].map((m) => (
-                  <button key={m} onClick={() => { setModel(m); setIsDropdownOpen(false); }} className="w-full text-left px-3 py-2 rounded-xl text-sm font-medium text-zinc-400 hover:bg-white/5 hover:text-white transition flex justify-between">
-                    {m} {model === m && <Check size={14} className="text-red-500" />}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-
-          <div className="w-px h-4 mx-1 bg-white/10" />
-          <button onClick={() => setMessages([])} className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/10 text-zinc-400 hover:text-red-400 transition">
-            <Trash2 size={16} />
-          </button>
-        </div>
-      </nav>
-
-      {/* --- CHAT AREA --- */}
-      <main className="flex-1 overflow-y-auto pt-28 pb-4 px-4 z-20">
-        <div className="max-w-3xl mx-auto space-y-6">
-          {messages.length === 0 && (
-            <div className="text-center py-20 opacity-50">
-              <div className="w-16 h-16 mx-auto bg-red-500/10 rounded-2xl flex items-center justify-center mb-4 border border-red-500/20">
-                <Snowflake size={32} className="text-red-400 animate-spin-slow" />
-              </div>
-              <p className="text-lg font-medium text-zinc-400">Holiday System Ready.</p>
-            </div>
-          )}
-
-          {messages.map((msg) => (
-            <div key={msg.id} className={`flex gap-4 animate-in fade-in slide-in-from-bottom-2 duration-300 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-              <div className={`max-w-[85%] px-5 py-3.5 rounded-2xl text-[15px] leading-relaxed shadow-sm backdrop-blur-sm
-                ${msg.role === 'user' 
-                  ? 'bg-red-600 text-white rounded-tr-none shadow-red-500/20' 
-                  : 'bg-zinc-800/80 border border-white/5 text-zinc-200 rounded-tl-none'
-                }`}>
-                {msg.text}
-              </div>
-            </div>
           ))}
-
-          {isTyping && (
-            <div className="flex gap-4 justify-start animate-pulse">
-              <div className="bg-zinc-800/80 border border-white/5 px-4 py-3 rounded-2xl rounded-tl-none flex items-center gap-1.5">
-                <div className="w-1.5 h-1.5 bg-red-500 rounded-full animate-bounce delay-0" />
-                <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-bounce delay-150" />
-                <div className="w-1.5 h-1.5 bg-white rounded-full animate-bounce delay-300" />
-              </div>
-            </div>
-          )}
-          <div ref={messagesEndRef} className="h-4" />
         </div>
-      </main>
 
-      {/* --- INPUT AREA --- */}
-      <footer className="p-4 z-30">
-        <div className="max-w-3xl mx-auto">
-          <div className="relative flex items-end gap-2 p-2 rounded-[28px] border border-white/10 bg-zinc-900/90 shadow-2xl backdrop-blur-xl focus-within:border-red-500/50 transition-colors">
-            
-            <button className="p-3 rounded-full text-zinc-400 hover:text-white hover:bg-white/10 transition shrink-0">
-              <Paperclip size={20} />
-            </button>
+        {/* Usage Stats Footer */}
+        <div className="p-4 border-t border-white/5 bg-zinc-900/50">
+          <div className="flex items-center gap-3 mb-3">
+            <div className="w-8 h-8 rounded-full bg-indigo-500/20 flex items-center justify-center text-indigo-400">
+              <User size={16}/>
+            </div>
+            <div>
+              <p className="text-sm font-medium text-white">My Plan</p>
+              <p className="text-xs text-zinc-500">Free Tier</p>
+            </div>
+          </div>
+          
+          <div className="bg-black/40 rounded-lg p-3 border border-white/5">
+            <div className="flex justify-between text-[10px] mb-1.5 text-zinc-400 font-semibold uppercase">
+              <span>Daily Usage</span>
+              <span className={usage.current >= usage.limit ? "text-red-400" : "text-indigo-400"}>
+                {usage.current} / {usage.limit || '∞'}
+              </span>
+            </div>
+            <div className="h-1.5 bg-zinc-800 rounded-full overflow-hidden">
+              <div 
+                className={`h-full transition-all duration-500 ${usage.current >= usage.limit ? 'bg-red-500' : 'bg-indigo-500'}`}
+                style={{ width: `${Math.min((usage.current / (usage.limit || 1)) * 100, 100)}%` }}
+              />
+            </div>
+          </div>
+        </div>
+      </aside>
 
-            <textarea
-              value={input}
-              onChange={(e) => {
-                setInput(e.target.value);
-                e.target.style.height = 'auto';
-                e.target.style.height = Math.min(e.target.scrollHeight, 120) + 'px';
-              }}
-              onKeyDown={handleKeyDown}
-              placeholder="Ask Cneapee for holiday plans..."
-              className="w-full bg-transparent border-none outline-none resize-none py-3.5 max-h-[120px] text-[15px] placeholder:text-zinc-500 text-white"
-              rows={1}
-            />
-
-            {input.trim() ? (
-              <button onClick={handleSend} className="p-3 rounded-full bg-red-600 text-white hover:bg-red-500 transition shrink-0 shadow-lg shadow-red-500/20">
-                <Send size={18} />
-              </button>
-            ) : (
-              <button className="p-3 rounded-full text-zinc-400 hover:text-white hover:bg-white/10 transition shrink-0">
-                <Mic size={20} />
+      {/* --- MAIN CHAT AREA --- */}
+      <main className="flex-1 flex flex-col relative w-full h-full bg-[#09090b]">
+        
+        {/* Top Navbar */}
+        <header className="h-16 flex items-center justify-between px-4 md:px-6 border-b border-white/5 bg-[#09090b]/80 backdrop-blur-md z-10">
+          <div className="flex items-center gap-3">
+            {!isSidebarOpen && (
+              <button onClick={() => setSidebarOpen(true)} className="p-2 hover:bg-white/5 rounded-lg text-zinc-400">
+                <Menu size={20}/>
               </button>
             )}
+            <div className="flex items-center gap-2">
+              <Sparkles size={18} className="text-indigo-500"/>
+              <span className="font-semibold text-lg tracking-tight">CNEAPEE <span className="text-zinc-500 font-normal">AI</span></span>
+            </div>
           </div>
-          <p className="text-center text-[10px] text-zinc-600 mt-3 flex items-center justify-center gap-1">
-             Flare can make mistakes. <Trees size={10} /> Happy Holidays.
+          <button onClick={() => onNavigate('home')} className="p-2 hover:bg-white/5 rounded-full text-zinc-400 hover:text-white transition">
+            <Home size={20}/>
+          </button>
+        </header>
+
+        {/* Messages Container */}
+        <div className="flex-1 overflow-y-auto p-4 md:p-8 space-y-6">
+          {messages.length === 0 ? (
+            <div className="h-full flex flex-col items-center justify-center text-center opacity-60 mt-[-50px]">
+              <div className="w-20 h-20 bg-gradient-to-tr from-indigo-500/20 to-purple-500/10 rounded-3xl flex items-center justify-center mb-6 border border-white/5 shadow-2xl shadow-indigo-500/10">
+                <Sparkles size={40} className="text-indigo-400"/>
+              </div>
+              <h1 className="text-3xl font-bold text-white mb-3">Hello, Sanskriti.</h1>
+              <p className="max-w-md text-zinc-400">I'm ready to help you build CNEAPEE. Ask me about code, design, or strategy.</p>
+            </div>
+          ) : (
+            messages.map((msg, idx) => (
+              <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'} animate-in fade-in slide-in-from-bottom-2`}>
+                <div className={`max-w-[85%] md:max-w-[70%] flex gap-4 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
+                  {/* Avatar */}
+                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 border mt-1
+                    ${msg.role === 'user' ? 'bg-indigo-600 border-indigo-400 text-white' : 'bg-zinc-800 border-white/10 text-indigo-400'}`}>
+                    {msg.role === 'user' ? <User size={16}/> : <Sparkles size={16}/>}
+                  </div>
+                  
+                  {/* Bubble */}
+                  <div className={`px-5 py-3.5 rounded-2xl text-[15px] leading-relaxed shadow-sm whitespace-pre-wrap
+                    ${msg.role === 'user' 
+                      ? 'bg-indigo-600 text-white rounded-tr-sm' 
+                      : 'bg-zinc-800/50 border border-white/5 text-zinc-200 rounded-tl-sm'}`}>
+                    {msg.text}
+                  </div>
+                </div>
+              </div>
+            ))
+          )}
+          
+          {isTyping && (
+            <div className="flex justify-start gap-4">
+               <div className="w-8 h-8 rounded-lg bg-zinc-800 flex items-center justify-center shrink-0"><Sparkles size={16} className="text-indigo-400"/></div>
+               <div className="bg-zinc-800/50 border border-white/5 px-4 py-3 rounded-2xl flex items-center gap-1">
+                  <div className="w-1.5 h-1.5 bg-indigo-400 rounded-full animate-bounce"/>
+                  <div className="w-1.5 h-1.5 bg-indigo-400 rounded-full animate-bounce [animation-delay:0.2s]"/>
+                  <div className="w-1.5 h-1.5 bg-indigo-400 rounded-full animate-bounce [animation-delay:0.4s]"/>
+               </div>
+            </div>
+          )}
+          <div ref={messagesEndRef} />
+        </div>
+
+        {/* Input Area */}
+        <div className="p-4 md:p-6 bg-gradient-to-t from-[#09090b] via-[#09090b] to-transparent z-10">
+          <div className="max-w-3xl mx-auto relative">
+            <input
+              type="text"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              // 👇 Prevent Default add kiya hai taaki page reload na ho
+              onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleSend())}
+              placeholder="Message CNEAPEE AI..."
+              className="w-full bg-[#18181b] border border-white/10 rounded-2xl py-4 pl-6 pr-14 focus:outline-none focus:border-indigo-500/50 focus:bg-[#1c1c1f] transition-all text-white placeholder:text-zinc-600 shadow-xl"
+              disabled={isTyping}
+            />
+            <button 
+              onClick={handleSend}
+              disabled={!input.trim() || isTyping}
+              className="absolute right-2 top-2 p-2 bg-indigo-600 text-white rounded-xl hover:bg-indigo-500 disabled:opacity-50 disabled:hover:bg-indigo-600 transition-all"
+            >
+              <Send size={20}/>
+            </button>
+          </div>
+          <p className="text-center text-[10px] text-zinc-600 mt-3">
+             Gemini 2.5 Flash Lite can make mistakes. Check important info.
           </p>
         </div>
-      </footer>
-
-      <style>{`
-        .animate-spin-slow { animation: spin 8s linear infinite; }
-        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-      `}</style>
+      </main>
     </div>
   );
 }
