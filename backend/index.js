@@ -12,20 +12,41 @@ import chatRoutes from './routes/chat.js';
 dotenv.config();
 const app = express();
 
-// Middleware
-app.use(express.json());
-app.use(cors({ origin: '*', credentials: true }));
+// ⭐⭐⭐ 1. CORS SETUP (Sabse Pehle) ⭐⭐⭐
+const allowedOrigins = [
+  "http://localhost:5173",            
+  "https://www.cneapee.com",          
+  "https://cneapee.com"               
+];
 
-// ⭐⭐⭐ FIX: GOOGLE AUTH POPUP BLOCKERS ⭐⭐⭐
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) === -1) {
+      // Dev mode mein loose check rakh sakte ho agar dikkat aaye
+      return callback(new Error('CORS Policy Error'), false);
+    }
+    return callback(null, true);
+  },
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization", "x-admin-token"],
+  optionsSuccessStatus: 200 // Legacy browsers fix
+}));
+
+// ⭐⭐⭐ 2. BODY PARSER (Limit 50mb) ⭐⭐⭐
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
+
+// ⭐⭐⭐ 3. SECURITY HEADERS ⭐⭐⭐
 app.use((req, res, next) => {
     res.setHeader("Cross-Origin-Opener-Policy", "same-origin-allow-popups");
     res.setHeader("Cross-Origin-Embedder-Policy", "require-corp");
     next();
 });
-// ⭐⭐⭐ END FIX ⭐⭐⭐
 
 // Test Route
-app.get('/', (req, res) => res.send('<h1>✅ CNEAPEE Server & AI System Active</h1>'));
+app.get('/', (req, res) => res.send('<h1>✅ CNEAPEE Server Active</h1>'));
 
 // DB Logic
 let isConnected = false; 
@@ -34,9 +55,9 @@ const connectDB = async () => {
     try {
         const db = await mongoose.connect(process.env.MONGO_URI, { serverSelectionTimeoutMS: 5000 });
         isConnected = db.connections[0].readyState;
-        console.log(`✅ MongoDB Connected Successfully`);
+        console.log(`✅ MongoDB Connected`);
     } catch (error) {
-        console.error(`❌ MongoDB Error: ${error.message}`);
+        console.error(`❌ DB Error: ${error.message}`);
     }
 };
 

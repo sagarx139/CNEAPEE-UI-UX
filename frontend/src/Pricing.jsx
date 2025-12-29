@@ -1,8 +1,8 @@
-import React, { useState } from "react";
-import { Check, ArrowLeft, X, Loader2, PartyPopper } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { Check, ArrowLeft, X, Loader2, PartyPopper, Tag, CreditCard, ShieldCheck } from "lucide-react";
 import axios from 'axios';
 
-// Backend URL update karna mat bhoolna
+// ✅ Backend URL
 const API_URL = "https://cneapee-backend-703598443794.asia-south1.run.app/api/admin";
 
 const PLANS = [
@@ -15,85 +15,257 @@ const PLANS = [
 export default function Pricing({ user, onNavigate }) {
   const [showModal, setShowModal] = useState(false);
   const [coupon, setCoupon] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [step, setStep] = useState(1); // 1: Form, 2: Success
+  const [loading, setLoading] = useState(false); // For final payment
+  const [applyingCoupon, setApplyingCoupon] = useState(false); // For coupon check
+  const [step, setStep] = useState(1); // 1: Checkout, 2: Processing, 3: Success
+  
+  // 💰 Billing State
+  const [price, setPrice] = useState(199);
+  const [isCouponApplied, setIsCouponApplied] = useState(false);
+  const [couponError, setCouponError] = useState("");
+
+  // 🛠️ User Recovery Logic (Refresh Fix)
+  const [activeUser, setActiveUser] = useState(user);
+  useEffect(() => {
+    if (user) {
+        setActiveUser(user);
+    } else {
+        const stored = localStorage.getItem('user_data') || localStorage.getItem('profile');
+        if (stored) {
+            try { setActiveUser(JSON.parse(stored)); } catch(e) {}
+        }
+    }
+  }, [user]);
 
   const handlePlanClick = (plan) => {
     if (plan.name === "Neo") {
-      if(!user) return alert("Please Login First!");
+      if(!activeUser) return alert("Please Login First!");
+      // Reset Modal State
+      setPrice(199);
+      setCoupon("");
+      setIsCouponApplied(false);
+      setStep(1);
       setShowModal(true);
     }
   };
 
-  const handleApplyCoupon = async () => {
-    if (coupon.trim().toUpperCase() !== "NEWYEAR100") {
-      alert("Invalid Coupon! Try: NEWYEAR100");
-      return;
-    }
+  const handleApplyCoupon = () => {
+    setApplyingCoupon(true);
+    setCouponError("");
+
+    // Fake Network Delay for "Premium Feel"
+    setTimeout(() => {
+        if (coupon.trim().toUpperCase() === "NEWYEAR100") {
+            setPrice(0);
+            setIsCouponApplied(true);
+        } else {
+            setCouponError("Invalid Coupon Code");
+        }
+        setApplyingCoupon(false);
+    }, 1000);
+  };
+
+  const handleFinalPayment = async () => {
     setLoading(true);
+    
+    // Step 2: Show "Processing" Animation
+    setStep(2); 
+
     try {
+      // Backend Request
       await axios.post(`${API_URL}/submit-payment-request`, {
-        userId: user._id,
-        userName: user.name,
-        userEmail: user.email,
+        userId: activeUser._id || activeUser.sub,
+        userName: activeUser.name,
+        userEmail: activeUser.email,
         planName: "Neo"
       });
-      setStep(2);
+      
+      // Wait 2 seconds for animation
+      setTimeout(() => {
+        setStep(3); // Success Screen
+        setLoading(false);
+      }, 2000);
+
     } catch (error) {
       alert(error.response?.data?.message || "Failed to send request");
-    } finally {
+      setStep(1); // Go back on error
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white px-4 py-10 relative">
-      <div className="max-w-5xl mx-auto">
+    <div className="min-h-screen bg-[#050505] text-white px-4 py-10 relative font-sans selection:bg-indigo-500/30">
+      <div className="max-w-6xl mx-auto">
+        
+        {/* Header */}
         <div className="flex items-center gap-4 mb-10">
-          <button onClick={() => onNavigate("home")} className="p-2 rounded-lg bg-white/5 hover:bg-white/10"><ArrowLeft size={18} /></button>
-          <h1 className="text-xl font-semibold">Pricing</h1>
+          <button onClick={() => onNavigate("home")} className="p-2 rounded-full bg-white/5 hover:bg-white/10 transition border border-white/5"><ArrowLeft size={20} /></button>
+          <h1 className="text-2xl font-bold tracking-tight">Upgrade Plan</h1>
         </div>
 
+        {/* Plans Grid */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-10">
           {PLANS.map((plan, idx) => (
-            <div key={idx} className={`rounded-2xl border p-6 flex flex-col ${plan.primary ? "border-indigo-500 bg-indigo-500/5" : "border-white/10 bg-white/5"}`}>
-              <h3 className="text-lg font-semibold">{plan.name}</h3>
-              <div className="my-4"><span className="text-3xl font-bold">{plan.price}</span><span className="text-sm text-zinc-400">/mo</span></div>
-              <ul className="space-y-3 text-sm flex-1 mb-6">{plan.features.map((f, i) => (<li key={i} className="flex gap-2 text-zinc-300"><Check size={16} className="text-green-500"/>{f}</li>))}</ul>
-              <button onClick={() => handlePlanClick(plan)} disabled={plan.disabled} className={`w-full py-3 rounded-xl font-bold text-sm ${plan.primary ? "bg-indigo-600 hover:bg-indigo-500" : "bg-white/10 opacity-50 cursor-not-allowed"}`}>{plan.btnText}</button>
+            <div key={idx} className={`relative group rounded-3xl border p-8 flex flex-col transition-all duration-300 hover:-translate-y-1
+                ${plan.primary 
+                  ? "border-indigo-500/50 bg-gradient-to-b from-indigo-900/20 to-[#0a0a0a] shadow-[0_0_40px_-10px_rgba(99,102,241,0.3)]" 
+                  : "border-white/10 bg-[#0e0e0e]"
+                }`}>
+              {plan.primary && <div className="absolute top-0 right-0 bg-indigo-600 text-[10px] font-bold px-3 py-1 rounded-bl-xl rounded-tr-xl uppercase tracking-wider">Most Popular</div>}
+              
+              <h3 className="text-xl font-bold text-white mb-2">{plan.name}</h3>
+              <div className="my-4">
+                  <span className="text-4xl font-extrabold tracking-tight">{plan.price}</span>
+                  <span className="text-sm text-zinc-500 font-medium">/mo</span>
+              </div>
+              
+              <div className="h-px w-full bg-gradient-to-r from-transparent via-white/10 to-transparent my-6"></div>
+
+              <ul className="space-y-4 text-sm flex-1 mb-8">
+                  {plan.features.map((f, i) => (
+                      <li key={i} className="flex gap-3 text-zinc-300 items-start">
+                          <div className="mt-0.5 p-0.5 bg-green-500/20 rounded-full text-green-400"><Check size={12}/></div>
+                          {f}
+                      </li>
+                  ))}
+              </ul>
+              
+              <button 
+                  onClick={() => handlePlanClick(plan)} 
+                  disabled={plan.disabled} 
+                  className={`w-full py-4 rounded-xl font-bold text-sm tracking-wide transition-all shadow-lg
+                  ${plan.primary 
+                    ? "bg-indigo-600 hover:bg-indigo-500 hover:shadow-indigo-500/25 text-white" 
+                    : "bg-white/5 text-zinc-500 cursor-not-allowed border border-white/5"}`}
+              >
+                  {plan.btnText}
+              </button>
             </div>
           ))}
         </div>
       </div>
 
-      {/* FAKE BILLING MODAL */}
+      {/* 🚀 GOOGLE PAY STYLE MODAL */}
       {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-          <div className="bg-[#121212] border border-white/10 w-full max-w-md rounded-2xl p-6 relative shadow-2xl">
-            <button onClick={() => setShowModal(false)} className="absolute top-4 right-4 text-zinc-500 hover:text-white"><X size={20}/></button>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md p-4 animate-in fade-in duration-200">
+          <div className="bg-[#121212] border border-white/10 w-full max-w-md rounded-3xl relative shadow-2xl overflow-hidden flex flex-col min-h-[450px]">
             
-            {step === 1 ? (
-              <>
-                <h3 className="text-xl font-bold mb-2">Secure Checkout</h3>
-                <p className="text-zinc-400 text-sm mb-6">Plan: <span className="text-indigo-400 font-bold">Neo (₹199)</span></p>
-                <div className="space-y-4">
-                  <div>
-                    <label className="text-xs text-zinc-500 uppercase font-bold">Coupon Code</label>
-                    <input type="text" placeholder="Enter Code" value={coupon} onChange={(e) => setCoupon(e.target.value)} className="w-full bg-black border border-white/10 rounded-xl p-3 text-white mt-1 focus:border-indigo-500 outline-none"/>
-                    <p className="text-[10px] text-zinc-500 mt-1">*Hint: Use NEWYEAR100</p>
-                  </div>
-                  <div className="bg-zinc-900/50 p-3 rounded-lg flex justify-between text-sm"><span className="text-zinc-400">Total:</span><span className="font-bold text-white">₹0.00</span></div>
-                  <button onClick={handleApplyCoupon} disabled={loading} className="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 rounded-xl flex justify-center items-center">{loading ? <Loader2 className="animate-spin"/> : "Complete Upgrade"}</button>
+            {/* Background Effects */}
+            <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-indigo-600/20 to-transparent pointer-events-none"></div>
+            
+            {/* Close Button */}
+            {step === 1 && (
+                <button onClick={() => setShowModal(false)} className="absolute top-5 right-5 z-20 text-zinc-400 hover:text-white bg-black/20 p-2 rounded-full backdrop-blur-sm transition">
+                    <X size={20}/>
+                </button>
+            )}
+
+            {/* --- STEP 1: BILLING --- */}
+            {step === 1 && (
+              <div className="p-8 flex flex-col h-full relative z-10">
+                <div className="text-center mb-8">
+                    <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-indigo-500/20 text-indigo-400 mb-4 border border-indigo-500/30 shadow-inner">
+                        <CreditCard size={24}/>
+                    </div>
+                    <h3 className="text-2xl font-bold text-white">Payment Details</h3>
+                    <p className="text-zinc-400 text-sm">Upgrade to Neo Plan</p>
                 </div>
-              </>
-            ) : (
-              <div className="text-center py-6">
-                <PartyPopper size={40} className="mx-auto text-green-500 mb-4"/>
-                <h3 className="text-2xl font-bold mb-2">Success!</h3>
-                <p className="text-zinc-400 mb-6">Request sent. You will be upgraded shortly.</p>
-                <button onClick={() => { setShowModal(false); onNavigate('home'); }} className="w-full bg-white text-black font-bold py-3 rounded-xl">Back to Home</button>
+
+                {/* Price Display */}
+                <div className="text-center mb-8">
+                    <p className="text-zinc-500 text-xs font-bold uppercase tracking-widest mb-1">Total Payable</p>
+                    <div className="flex items-center justify-center gap-3">
+                        {isCouponApplied && (
+                            <span className="text-2xl text-zinc-600 line-through decoration-red-500/50 decoration-2">₹199</span>
+                        )}
+                        <span className={`font-extrabold tracking-tight transition-all duration-500 ${isCouponApplied ? "text-5xl text-green-400" : "text-5xl text-white"}`}>
+                            ₹{price}
+                        </span>
+                    </div>
+                </div>
+
+                {/* Coupon Section */}
+                <div className="space-y-3 mb-8">
+                    <label className="text-xs text-zinc-400 font-bold uppercase flex items-center gap-1">
+                        <Tag size={12}/> Coupon Code
+                    </label>
+                    <div className="flex gap-2">
+                        <input 
+                            type="text" 
+                            placeholder="Ex: NEWYEAR100" 
+                            value={coupon}
+                            onChange={(e) => setCoupon(e.target.value.toUpperCase())}
+                            disabled={isCouponApplied}
+                            className="flex-1 bg-[#0a0a0a] border border-white/10 rounded-xl px-4 py-3 text-white focus:border-indigo-500 outline-none transition-colors placeholder:text-zinc-700 font-mono text-sm uppercase"
+                        />
+                        <button 
+                            onClick={handleApplyCoupon}
+                            disabled={isCouponApplied || !coupon}
+                            className={`px-4 rounded-xl font-bold text-sm transition-all border
+                            ${isCouponApplied 
+                                ? "bg-green-500/10 text-green-500 border-green-500/20" 
+                                : "bg-white/10 hover:bg-white/20 text-white border-white/10"
+                            }`}
+                        >
+                            {applyingCoupon ? <Loader2 className="animate-spin" size={18}/> : isCouponApplied ? "Applied" : "Apply"}
+                        </button>
+                    </div>
+                    {couponError && <p className="text-red-400 text-xs animate-pulse">{couponError}</p>}
+                    {isCouponApplied && <p className="text-green-400 text-xs flex items-center gap-1"><ShieldCheck size={12}/> 100% Discount Applied!</p>}
+                </div>
+
+                {/* Pay Button */}
+                <div className="mt-auto">
+                    <button 
+                        onClick={handleFinalPayment} 
+                        className="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-4 rounded-2xl flex items-center justify-center gap-2 shadow-lg shadow-indigo-600/20 transition-all hover:scale-[1.02] active:scale-[0.98]"
+                    >
+                        {isCouponApplied ? "Complete Free Upgrade" : `Pay ₹${price}`}
+                    </button>
+                    <p className="text-[10px] text-zinc-600 text-center mt-3 flex items-center justify-center gap-1">
+                        <ShieldCheck size={10}/> Secure 256-bit SSL Encrypted Payment
+                    </p>
+                </div>
               </div>
             )}
+
+            {/* --- STEP 2: PROCESSING (Google Pay Style Loader) --- */}
+            {step === 2 && (
+                <div className="flex flex-col items-center justify-center h-full p-8 text-center animate-in fade-in zoom-in duration-300">
+                    <div className="relative w-24 h-24 mb-6">
+                        <div className="absolute inset-0 border-4 border-indigo-500/30 rounded-full"></div>
+                        <div className="absolute inset-0 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+                        <div className="absolute inset-0 flex items-center justify-center">
+                            <ShieldCheck className="text-indigo-500" size={32}/>
+                        </div>
+                    </div>
+                    <h3 className="text-xl font-bold text-white mb-2">Processing Request...</h3>
+                    <p className="text-zinc-400 text-sm">Verifying coupon & details</p>
+                </div>
+            )}
+
+            {/* --- STEP 3: SUCCESS (Confetti) --- */}
+            {step === 3 && (
+                <div className="flex flex-col items-center justify-center h-full p-8 text-center animate-in fade-in zoom-in duration-500">
+                    <div className="w-20 h-20 bg-green-500 rounded-full flex items-center justify-center shadow-[0_0_50px_rgba(34,197,94,0.4)] mb-6 animate-bounce">
+                        <Check className="text-black" size={40} strokeWidth={4}/>
+                    </div>
+                    <h3 className="text-2xl font-bold text-white mb-2">Upgrade Successful!</h3>
+                    <p className="text-zinc-400 mb-8 max-w-[250px] mx-auto text-sm leading-relaxed">
+                        Your request for <span className="text-indigo-400 font-bold">Neo Plan</span> has been received. 
+                        Your account will be upgraded shortly.
+                    </p>
+                    <button 
+                        onClick={() => { setShowModal(false); onNavigate('home'); }} 
+                        className="w-full bg-white text-black font-bold py-4 rounded-2xl hover:bg-zinc-200 transition-colors"
+                    >
+                        Back to Dashboard
+                    </button>
+                    <div className="absolute top-10 left-10 text-yellow-500 animate-ping opacity-50"><PartyPopper/></div>
+                    <div className="absolute bottom-20 right-10 text-purple-500 animate-ping opacity-30 delay-100"><PartyPopper/></div>
+                </div>
+            )}
+            
           </div>
         </div>
       )}
