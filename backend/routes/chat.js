@@ -12,7 +12,7 @@ const router = express.Router();
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 // 🤖 Models Config
-const TEXT_MODEL_NAME = "gemini-1.5-flash"; 
+const TEXT_MODEL_NAME = "gemini-2.5-flash-lite"; 
 
 /* ============================
    1. TEXT PLAN LIMITS
