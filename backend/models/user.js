@@ -11,7 +11,7 @@ const userSchema = mongoose.Schema({
   // 👇 Plan & Token Tracking
   plan: { 
     type: String, 
-    enum: ['free', 'student', 'working', 'coder'], 
+    enum: ['free', 'neo', 'working', 'coder'], 
     default: 'free' 
   },
   usage: {

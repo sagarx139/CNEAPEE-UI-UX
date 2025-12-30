@@ -2,7 +2,7 @@ import express from 'express';
 import User from '../models/user.js';
 import Analytics from '../models/analytics.js';
 import Broadcast from '../models/Broadcast.js';
-import PaymentRequest from '../models/PaymentRequest.js'; // ✅ NEW MODEL IMPORT
+import PaymentRequest from '../models/PaymentRequest.js'; 
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import { Resend } from 'resend';
@@ -61,6 +61,7 @@ router.get('/stats', requireAdminToken, async (req, res) => {
 
 router.get('/users', requireAdminToken, async (req, res) => {
     try {
+        // We need 'usage' field to display in table, so default find is good
         const users = await User.find({}, '-password').sort({ createdAt: -1 });
         res.json(users);
     } catch (error) { res.status(500).json({ message: "Fetch Users Error" }); }
@@ -134,11 +135,11 @@ router.post('/send-email-broadcast', requireAdminToken, async (req, res) => {
             to: emailList, 
             subject: subject,
             html: `<div style="padding:20px; font-family:sans-serif; color:#333;">
-                     <h2 style="color:#4F46E5">${subject}</h2>
-                     <p style="font-size:16px;">${message}</p>
-                     <hr style="border:0; border-top:1px solid #eee; margin:20px 0;"/>
-                     <p style="color:#888; font-size:12px">© Cneapee AI Team</p>
-                   </div>`
+                      <h2 style="color:#4F46E5">${subject}</h2>
+                      <p style="font-size:16px;">${message}</p>
+                      <hr style="border:0; border-top:1px solid #eee; margin:20px 0;"/>
+                      <p style="color:#888; font-size:12px">© Cneapee AI Team</p>
+                    </div>`
         });
 
         res.json({ message: `Emails sent to ${users.length} users!` });
@@ -149,7 +150,7 @@ router.post('/send-email-broadcast', requireAdminToken, async (req, res) => {
 });
 
 // =========================================================
-// 💰 5. PAYMENT REQUEST SYSTEM (New Feature)
+// 💰 5. PAYMENT REQUEST SYSTEM
 // =========================================================
 
 // USER: Submit Request (Public Route)
@@ -178,19 +179,30 @@ router.get('/payment-requests', requireAdminToken, async (req, res) => {
     }
 });
 
-// ADMIN: Approve & Upgrade
+// ADMIN: Approve & Upgrade (CRITICAL FIX: Uses Email instead of ID to avoid crash)
 router.post('/approve-payment', requireAdminToken, async (req, res) => {
-    const { requestId, userId, planName } = req.body;
+    const { requestId, planName } = req.body; 
     try {
-        // 1. Upgrade User Plan
-        await User.findByIdAndUpdate(userId, { plan: planName.toLowerCase() });
+        // 1. Get the Payment Request First
+        const request = await PaymentRequest.findById(requestId);
+        if (!request) return res.status(404).json({ message: "Request not found" });
+
+        // 2. Upgrade User Plan using EMAIL (Safer than ID)
+        const updatedUser = await User.findOneAndUpdate(
+            { email: request.userEmail }, 
+            { plan: planName.toLowerCase() },
+            { new: true }
+        );
+
+        if (!updatedUser) return res.status(404).json({ message: "User not found via Email" });
         
-        // 2. Mark Request as Approved
+        // 3. Mark Request as Approved
         await PaymentRequest.findByIdAndUpdate(requestId, { status: 'approved' });
 
         res.json({ message: "User Upgraded Successfully!" });
     } catch (error) {
-        res.status(500).json({ message: "Approval Failed" });
+        console.error("Approval Backend Error:", error);
+        res.status(500).json({ message: "Approval Failed in Backend" });
     }
 });
 

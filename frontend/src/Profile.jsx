@@ -61,7 +61,7 @@ export default function Profile({ onNavigate }) {
   if (!userData) return <div className="h-screen flex items-center justify-center text-white">No User Data</div>;
 
   // --- 📊 TOKEN CALCULATION ---
-  const limits = { free: 4000, student: 27000, working: 60000, coder: 200000 };
+  const limits = { free: 4000, neo: 27000, working: 60000, coder: 200000 };
   const userPlan = userData.plan || 'free';
   const dailyLimit = limits[userPlan];
   const currentUsage = userData.usage?.dailyTokens || 0;

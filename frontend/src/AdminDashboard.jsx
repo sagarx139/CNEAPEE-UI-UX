@@ -3,10 +3,22 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { 
   Users, Shield, Search, Trash2, 
-  BarChart3, Eye, Zap, Lock, LogOut, Megaphone, Mail, Send, X, Check 
+  BarChart3, Eye, Zap, Lock, LogOut, Megaphone, Mail, Send, Check 
 } from 'lucide-react';
 
 const API_URL = "https://cneapee-backend-703598443794.asia-south1.run.app/api/admin";
+
+// --- 1. PLAN LIMITS HELPER ---
+const getPlanLimit = (planName) => {
+  const plan = planName?.toLowerCase() || 'free';
+  switch(plan) {
+    case 'neo': return 27000;
+    case 'working': return 60000;
+    case 'coder': return 204000;
+    case 'free': 
+    default: return 4000;
+  }
+};
 
 export default function AdminDashboard() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -19,7 +31,7 @@ export default function AdminDashboard() {
 
   // Dashboard Data
   const [users, setUsers] = useState([]);
-  const [requests, setRequests] = useState([]); // 💰 Pending Requests
+  const [requests, setRequests] = useState([]); 
   const [stats, setStats] = useState({ totalUsers: 0, dailyViews: 0, totalViews: 0 });
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
@@ -42,7 +54,7 @@ export default function AdminDashboard() {
     }
   }, []);
 
-  // --- 1. LOGIN ---
+  // --- LOGIN ---
   const handleAdminLogin = async (e) => {
     e.preventDefault();
     setIsChecking(true);
@@ -72,7 +84,7 @@ export default function AdminDashboard() {
     setIsAuthenticated(false);
   };
 
-  // --- 2. FETCH DATA (Users + Stats + Requests) ---
+  // --- FETCH DATA ---
   const fetchDashboardData = async (tokenOverride) => {
     setLoading(true);
     const token = tokenOverride || sessionStorage.getItem('admin_token');
@@ -82,7 +94,7 @@ export default function AdminDashboard() {
       const [statsRes, usersRes, reqRes] = await Promise.all([
         axios.get(`${API_URL}/stats`, config),
         axios.get(`${API_URL}/users`, config),
-        axios.get(`${API_URL}/payment-requests`, config) // Fetch Requests
+        axios.get(`${API_URL}/payment-requests`, config)
       ]);
 
       setStats(statsRes.data);
@@ -96,31 +108,35 @@ export default function AdminDashboard() {
     }
   };
 
-  // --- 3. ACTIONS ---
+  // --- ACTIONS ---
   
-  // Approve Payment Request
+  // FIX: Approve Payment with Better Error Handling
   const handleApprovePayment = async (req) => {
       if(!window.confirm(`Approve ${req.planName} for ${req.userName}?`)) return;
       try {
           const token = sessionStorage.getItem('admin_token');
           
+          console.log("Approving:", req); // Debug log
+
           await axios.post(`${API_URL}/approve-payment`, 
              { requestId: req._id, userId: req.userId, planName: req.planName },
              { headers: { 'x-admin-token': token } }
           );
           
-          // UI Update: Remove from request list
+          // UI Update
           setRequests(requests.filter(r => r._id !== req._id));
-          // Refresh User list to show new plan
           fetchDashboardData(token);
           
           alert("✅ User Upgraded!");
       } catch (error) { 
-          alert("Approval Failed"); 
+          console.error("Approval Error:", error);
+          // Show real error from backend
+          const msg = error.response?.data?.message || error.message || "Unknown Error";
+          alert(`Approval Failed: ${msg}`); 
       }
   };
 
-  // Update Plan Manually (Dropdown)
+  // Update Plan Manually
   const handleUpdatePlan = async (userId, newPlan) => {
     if (!window.confirm(`Change plan to ${newPlan}?`)) return;
     setUpdating(userId);
@@ -128,7 +144,7 @@ export default function AdminDashboard() {
       const token = sessionStorage.getItem('admin_token');
       await axios.put(`${API_URL}/update-plan/${userId}`, { plan: newPlan }, { headers: { 'x-admin-token': token } });
       setUsers(users.map(u => u._id === userId ? { ...u, plan: newPlan } : u));
-    } catch (error) { alert("Failed"); } 
+    } catch (error) { alert("Failed to update plan"); } 
     finally { setUpdating(null); }
   };
 
@@ -139,10 +155,10 @@ export default function AdminDashboard() {
         const token = sessionStorage.getItem('admin_token');
         await axios.delete(`${API_URL}/delete-user/${userId}`, { headers: { 'x-admin-token': token } });
         setUsers(users.filter(u => u._id !== userId));
-    } catch (error) { alert("Failed"); }
+    } catch (error) { alert("Failed to delete"); }
   };
 
-  // Send Broadcast
+  // Broadcasts
   const handleSendBroadcast = async () => {
     if(!broadcastMsg.trim()) return;
     if(!window.confirm("Set this live banner?")) return;
@@ -162,7 +178,6 @@ export default function AdminDashboard() {
     } catch (error) { alert("Failed"); }
   };
 
-  // Send Email
   const handleSendEmail = async () => {
     if (!emailSubject || !emailBody) return alert("Fill all fields");
     if (!window.confirm(`Email ALL ${users.length} users?`)) return;
@@ -179,7 +194,7 @@ export default function AdminDashboard() {
     finally { setSendingEmail(false); }
   };
 
-  // --- UI: LOGIN SCREEN ---
+  // --- UI ---
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen bg-[#050505] flex items-center justify-center p-4 font-sans selection:bg-indigo-500/30">
@@ -206,7 +221,6 @@ export default function AdminDashboard() {
     );
   }
 
-  // --- UI: DASHBOARD ---
   const filteredUsers = users.filter(u => u.name?.toLowerCase().includes(searchTerm.toLowerCase()) || u.email?.toLowerCase().includes(searchTerm.toLowerCase()));
 
   return (
@@ -227,7 +241,7 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      {/* --- 💰 PENDING PAYMENT REQUESTS (NEW SECTION) --- */}
+      {/* --- 💰 PENDING PAYMENT REQUESTS --- */}
       {requests.length > 0 && (
         <div className="max-w-7xl mx-auto mb-8 bg-[#0e0e11] border border-orange-500/30 rounded-3xl overflow-hidden shadow-2xl">
           <div className="p-5 border-b border-white/5 bg-orange-500/5 flex items-center justify-between">
@@ -287,8 +301,8 @@ export default function AdminDashboard() {
               <div className="space-y-3">
                   <input type="text" value={emailSubject} onChange={e => setEmailSubject(e.target.value)} placeholder="Subject..." className="w-full bg-black border border-white/10 rounded-xl px-4 py-2 text-sm focus:border-blue-500 outline-none" />
                   <div className="flex gap-2">
-                     <input type="text" value={emailBody} onChange={e => setEmailBody(e.target.value)} placeholder="Message Body..." className="flex-1 bg-black border border-white/10 rounded-xl px-4 py-2 text-sm focus:border-blue-500 outline-none" />
-                     <button onClick={handleSendEmail} disabled={sendingEmail} className="bg-blue-600 hover:bg-blue-500 p-3 rounded-xl disabled:opacity-50 text-white">{sendingEmail ? "..." : <Send size={18}/>}</button>
+                      <input type="text" value={emailBody} onChange={e => setEmailBody(e.target.value)} placeholder="Message Body..." className="flex-1 bg-black border border-white/10 rounded-xl px-4 py-2 text-sm focus:border-blue-500 outline-none" />
+                      <button onClick={handleSendEmail} disabled={sendingEmail} className="bg-blue-600 hover:bg-blue-500 p-3 rounded-xl disabled:opacity-50 text-white">{sendingEmail ? "..." : <Send size={18}/>}</button>
                   </div>
               </div>
           </div>
@@ -310,6 +324,7 @@ export default function AdminDashboard() {
                      <th className="p-5">User</th>
                      <th className="p-5">Role</th>
                      <th className="p-5">Plan</th>
+                     <th className="p-5">Token Usage (Used/Limit)</th>
                      <th className="p-5 text-right">Actions</th>
                    </tr>
                  </thead>
@@ -325,9 +340,23 @@ export default function AdminDashboard() {
                        <td className="p-5"><span className="px-2 py-1 rounded bg-zinc-800 text-xs text-zinc-400">{user.role}</span></td>
                        <td className="p-5">
                           <select value={user.plan || 'free'} onChange={(e) => handleUpdatePlan(user._id, e.target.value)} disabled={updating === user._id} className="bg-black border border-white/10 rounded px-2 py-1 text-xs text-zinc-300 outline-none cursor-pointer">
-                              <option value="free">Free</option><option value="student">Student</option><option value="working">Working</option><option value="coder">Coder</option>
+                              <option value="free">Free</option><option value="neo">Neo</option><option value="working">Working</option><option value="coder">Coder</option>
                           </select>
                        </td>
+
+                       {/* --- NEW TOKEN USAGE COLUMN --- */}
+                       <td className="p-5">
+                          <div className="flex flex-col">
+                            <span className="text-sm font-bold text-white text-xs font-mono">
+                               <Zap size={10} className="inline mr-1 text-yellow-500"/>
+                               {user.usage?.dailyTokens || 0} / {getPlanLimit(user.plan)}
+                            </span>
+                            <div className="w-24 h-1 bg-zinc-800 rounded-full mt-1 overflow-hidden">
+                               <div className="h-full bg-indigo-500" style={{ width: `${Math.min(((user.usage?.dailyTokens || 0) / getPlanLimit(user.plan)) * 100, 100)}%` }}></div>
+                            </div>
+                          </div>
+                       </td>
+
                        <td className="p-5 text-right"><button onClick={() => handleDeleteUser(user._id)} className="text-zinc-500 hover:text-red-500"><Trash2 size={16}/></button></td>
                      </tr>
                    ))}
