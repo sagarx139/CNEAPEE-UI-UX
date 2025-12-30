@@ -13,11 +13,7 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const MODEL_NAME = "gemini-2.5-flash-lite"; 
 
 /* ============================
-   PLAN LIMITS (UPDATED)
-   Free: 4000
-   Neo: 27000
-   Working: 60000
-   Coder: 204000
+   PLAN LIMITS
 ============================ */
 const PLAN_LIMITS = {
   free:    { daily: 4000,   monthly: 120000 },
@@ -43,10 +39,13 @@ Current Date: 2025.
 ============================ */
 router.post('/send', auth, async (req, res) => {
   try {
-    // 1. Receive Data (Text + Image)
+    // 1. Receive Data
     const { prompt, image, chatId } = req.body;
     const raw = (prompt || "").trim();
     const lower = raw.toLowerCase();
+
+    // Word Count Calculate (Space se split karke)
+    const wordCount = raw.split(/\s+/).length;
 
     /* --- USER CHECK --- */
     const user = await User.findById(req.user.id);
@@ -66,22 +65,34 @@ router.post('/send', auth, async (req, res) => {
       return res.status(429).json({ reply: "Daily usage limit reached. Please upgrade your plan." });
     }
 
-    /* --- HARD GUARDS (Skip if Image is there) --- */
-    if (!image) {
-        // Date/Time
-        if (lower.includes("date") || lower.includes("time") || lower.includes("today")) {
+    /* ============================
+       HARD GUARDS (Updated Logic)
+       Logic: Sirf tabhi check karega agar message 15 words ya usse kam ho.
+       Agar 15 words se zyada hai, toh ye block poora SKIP ho jayega.
+    ============================ */
+    if (!image && wordCount <= 15) {
+        
+        // 1. Date/Time Check (Sirf 'what date' ya 'what time' par)
+        if (lower.includes("what") && (lower.includes("date") || lower.includes("time"))) {
             const ist = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" }));
             const formatted = ist.toLocaleString("en-IN", {
                 day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false
             });
             return res.json({ reply: `Today's date and time is ${formatted} IST.`, chatId });
         }
-        // Identity
-        if (lower.includes("who are you") || lower === "cneapee") {
+
+        // 2. Identity Check
+        if (lower.includes("who are you") || lower === "cneapee" || lower.includes("who made you")) {
             return res.json({ reply: "CNEAPEE AI brings together knowledge, creativity, and holiday cheer into a single, unified ecosystem.", chatId });
         }
-        // Model Identity
-        if (lower.includes("model") || lower.includes("google") || lower.includes("gemini")) {
+
+        // 3. Model Check (Sirf specific questions par)
+        if (
+            lower.includes("which model") || 
+            lower.includes("base model") ||
+            (lower.includes("what") && lower.includes("model")) ||
+            (lower.includes("using") && lower.includes("gemini"))
+        ) {
             return res.json({ reply: "CNEAPEE AI v1.2. Version v1.8 is coming soon.", chatId });
         }
     }
@@ -94,24 +105,18 @@ router.post('/send', auth, async (req, res) => {
 
     let aiText = "";
 
-    // 🔥 CASE A: IMAGE + TEXT (Vision Handling)
+    // 🔥 CASE A: IMAGE + TEXT
     if (image) {
-        // Base64 cleaning
         const base64Data = image.includes("base64,") ? image.split(",")[1] : image;
-        
         const imagePart = {
-            inlineData: {
-                data: base64Data,
-                mimeType: "image/png"
-            }
+            inlineData: { data: base64Data, mimeType: "image/png" }
         };
 
-        // Send Prompt + Image
         const result = await model.generateContent([raw, imagePart]);
         const response = await result.response;
         aiText = response.text();
     } 
-    // 💬 CASE B: TEXT ONLY (History Support)
+    // 💬 CASE B: TEXT ONLY
     else {
         let history = [];
         if (chatId) {
@@ -139,7 +144,7 @@ router.post('/send', auth, async (req, res) => {
     if (chatId) chat = await Chat.findOne({ _id: chatId, userId: req.user.id });
 
     const userMsg = { role: "user", text: raw };
-    const aiMsg = { role: "assistant", text: aiText };
+    const aiMsg = { role: "model", text: aiText };
 
     if (chat) {
       chat.messages.push(userMsg, aiMsg);
@@ -157,26 +162,8 @@ router.post('/send', auth, async (req, res) => {
 
   } catch (err) {
     console.error("❌ AI Error:", err);
-    res.status(500).json({ reply: "Server error. If using 2.5-flash-lite, check model availability." });
+    res.status(500).json({ reply: "Server error. Please try again later." });
   }
-});
-
-/* ============================
-   HISTORY ROUTES
-============================ */
-router.get('/history', auth, async (req, res) => {
-  try {
-      const chats = await Chat.find({ userId: req.user.id }).sort({ updatedAt: -1 });
-      res.json(chats);
-  } catch(e) { res.status(500).json({message: "Error"}); }
-});
-
-router.get('/:id', auth, async (req, res) => {
-  try {
-      const chat = await Chat.findOne({ _id: req.params.id, userId: req.user.id });
-      if (!chat) return res.status(404).json({ message: "Chat not found" });
-      res.json(chat);
-  } catch(e) { res.status(500).json({message: "Error"}); }
 });
 
 export default router;

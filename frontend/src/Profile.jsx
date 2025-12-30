@@ -91,7 +91,7 @@ export default function Profile({ onNavigate }) {
           </button>
           <h1 className="text-2xl font-bold tracking-tight">My Profile</h1>
         </div>
-
+        
         {/* User Card */}
         <div className="bg-[#0e0e11] border border-white/10 rounded-3xl p-8 mb-6 relative overflow-hidden shadow-2xl">
            <div className="flex flex-col items-center gap-4 relative z-10">
@@ -112,7 +112,7 @@ export default function Profile({ onNavigate }) {
         <div className="bg-gradient-to-br from-[#121214] to-[#0a0a0c] border border-white/10 rounded-3xl p-6 mb-6 hover:border-white/20 transition-all">
           <div className="flex justify-between items-center mb-4">
              <div className="flex items-center gap-2 text-zinc-200 font-bold text-sm">
-                <Zap size={16} className="text-yellow-500" fill="currentColor"/> Daily Token Usage
+                <Zap size={16} className="text-yellow-500" fill="currentColor"/> Today's Usage
              </div>
              <div className={`text-xs font-mono font-bold ${percentage > 90 ? 'text-red-400' : 'text-zinc-400'}`}>
                 {percentage}% Used
