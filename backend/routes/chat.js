@@ -44,7 +44,7 @@ router.post('/send', auth, async (req, res) => {
     const raw = (prompt || "").trim();
     const lower = raw.toLowerCase();
 
-    // Word Count Calculate (Space se split karke)
+    // Word Count Calculate (Space se split karke count nikalna)
     const wordCount = raw.split(/\s+/).length;
 
     /* --- USER CHECK --- */
@@ -122,6 +122,7 @@ router.post('/send', auth, async (req, res) => {
         if (chatId) {
             const chatDoc = await Chat.findOne({ _id: chatId, userId: req.user.id });
             if (chatDoc?.messages) {
+                // IMPORTANT: Map roles correctly for Gemini ('user' and 'model')
                 history = chatDoc.messages.map(m => ({
                     role: m.role === "user" ? "user" : "model",
                     parts: [{ text: m.text }]
@@ -139,11 +140,12 @@ router.post('/send', auth, async (req, res) => {
     user.usage.monthlyTokens += inputTokens + outputTokens;
     await user.save();
 
-    /* --- SAVE CHAT --- */
+    /* --- SAVE CHAT HISTORY --- */
     let chat;
     if (chatId) chat = await Chat.findOne({ _id: chatId, userId: req.user.id });
 
     const userMsg = { role: "user", text: raw };
+    // DB me 'model' save kar rahe hain taaki next time history sync me error na aaye
     const aiMsg = { role: "model", text: aiText };
 
     if (chat) {
@@ -163,6 +165,33 @@ router.post('/send', auth, async (req, res) => {
   } catch (err) {
     console.error("❌ AI Error:", err);
     res.status(500).json({ reply: "Server error. Please try again later." });
+  }
+});
+
+/* ============================
+   HISTORY ROUTES (YE MISSING THE)
+============================ */
+
+// 1. Get All Chats (For Sidebar)
+router.get('/history', auth, async (req, res) => {
+  try {
+      const chats = await Chat.find({ userId: req.user.id }).sort({ updatedAt: -1 });
+      res.json(chats);
+  } catch(e) { 
+      console.error("History Error:", e);
+      res.status(500).json({message: "Error fetching history"}); 
+  }
+});
+
+// 2. Get Single Chat (For loading a conversation)
+router.get('/:id', auth, async (req, res) => {
+  try {
+      const chat = await Chat.findOne({ _id: req.params.id, userId: req.user.id });
+      if (!chat) return res.status(404).json({ message: "Chat not found" });
+      res.json(chat);
+  } catch(e) { 
+      console.error("Chat Load Error:", e);
+      res.status(500).json({message: "Error loading chat"}); 
   }
 });
 
