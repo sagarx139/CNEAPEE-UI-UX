@@ -1,22 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
 import {
-  Home,
-  Send,
-  Sparkles,
-  MessageSquare,
-  X,
-  Image as ImageIcon,
-  Mic,
-  MicOff,
-  Paperclip,
-  Palette,
-  Copy,
-  Check,
-  Download,
-  Bot,
-  User,
-  RefreshCw
+  Home, Send, Sparkles, MessageSquare, X,
+  Image as ImageIcon, Mic, MicOff, Paperclip, Palette,
+  Copy, Check, Download, Bot, User
 } from 'lucide-react';
 
 // 🔗 Backend API Base URL
@@ -24,12 +11,11 @@ const API_BASE = "https://cneapee-backend-703598443794.asia-south1.run.app/api";
 
 const DEFAULT_GREETING = {
   role: "assistant",
-  text: "Hello! 👋 I am CNEAPEE AI v1.2. \n\nI can write code, answer questions, analyze photos, and generate stunning AI art. \n\nHow can I help you today?"
+  text: "Hello! 👋 I am CNEAPEE AI v1.2. \n\nI can write code, analyze photos, and generate stunning AI art. \n\nHow can I help you today?"
 };
 
 /* =========================================
-   HELPER: TYPING ANIMATION COMPONENT
-   (Bouncing Dots like ChatGPT)
+   HELPER: TYPING ANIMATION
 ========================================= */
 const TypingIndicator = ({ isGenMode }) => (
   <div className="flex items-center gap-1.5 p-4 bg-[#18181b] border border-white/5 rounded-2xl w-fit animate-in fade-in slide-in-from-bottom-2">
@@ -67,16 +53,10 @@ export default function Chatbot({ onNavigate }) {
   const messagesEndRef = useRef(null);
   const fileInputRef = useRef(null);
 
-  /* ===========================
-      1. AUTO SCROLL
-  =========================== */
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isTyping, imagePreview]);
 
-  /* ===========================
-      2. FETCH HISTORY
-  =========================== */
   useEffect(() => {
     fetchHistory();
   }, []);
@@ -92,9 +72,6 @@ export default function Chatbot({ onNavigate }) {
     } catch { console.log("History fetch failed"); }
   };
 
-  /* ===========================
-      3. LOAD OLD CHAT
-  =========================== */
   const loadChat = async (chatId) => {
     try {
       setIsTyping(true);
@@ -108,9 +85,6 @@ export default function Chatbot({ onNavigate }) {
     } catch { setIsTyping(false); }
   };
 
-  /* ===========================
-      4. UTILS: COMPRESS, UPLOAD, PASTE
-  =========================== */
   const compressImage = (file) => {
     return new Promise((resolve) => {
       const reader = new FileReader();
@@ -119,18 +93,12 @@ export default function Chatbot({ onNavigate }) {
         const img = new Image();
         img.src = event.target.result;
         img.onload = () => {
-          const MAX_WIDTH = 800;
-          let width = img.width;
-          let height = img.height;
-          if (width > MAX_WIDTH) {
-            height *= MAX_WIDTH / width;
-            width = MAX_WIDTH;
-          }
           const canvas = document.createElement('canvas');
-          canvas.width = width;
-          canvas.height = height;
+          const scale = 800 / img.width;
+          canvas.width = 800;
+          canvas.height = img.height * scale;
           const ctx = canvas.getContext('2d');
-          ctx.drawImage(img, 0, 0, width, height);
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
           resolve(canvas.toDataURL('image/jpeg', 0.7));
         };
       };
@@ -165,74 +133,45 @@ export default function Chatbot({ onNavigate }) {
     if(fileInputRef.current) fileInputRef.current.value = "";
   };
 
-  /* ===========================
-      5. UTILS: COPY & DOWNLOAD
-  =========================== */
   const handleCopy = (text, id) => {
     navigator.clipboard.writeText(text);
     setCopiedId(id);
     setTimeout(() => setCopiedId(null), 2000);
   };
 
-  const handleDownload = async (imageUrl) => {
-    try {
-        // Pollinations images are easy to download directly
-        const response = await fetch(imageUrl);
-        const blob = await response.blob();
-        const blobUrl = window.URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = blobUrl;
-        link.download = `cneapee-art-${Date.now()}.png`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    } catch (error) {
-        console.error("Download failed:", error);
-        window.open(imageUrl, '_blank');
-    }
+  // ✅ FIXED DOWNLOAD FUNCTION FOR BASE64
+  const handleDownload = (imageUrl) => {
+    const link = document.createElement('a');
+    link.href = imageUrl;
+    link.download = `cneapee-ai-${Date.now()}.png`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
-  /* ===========================
-      6. VOICE INPUT (FIXED HERE)
-  =========================== */
+  // ✅ FIXED VOICE INPUT
   const toggleListening = () => {
     if (isListening) {
       window.speechRecognition?.stop();
       setIsListening(false);
       return;
     }
-    
-    // Browser Compatibility Check
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SpeechRecognition) {
-        return alert("Your browser does not support Voice Input. Try Chrome or Edge.");
-    }
+    if (!SpeechRecognition) return alert("Browser does not support Voice Input.");
 
     const recognition = new SpeechRecognition();
     recognition.lang = 'en-US'; 
     recognition.continuous = false;
-    recognition.interimResults = false;
-
     recognition.onstart = () => setIsListening(true);
     recognition.onend = () => setIsListening(false);
-    
     recognition.onresult = (event) => {
       const transcript = event.results[0][0].transcript;
       setInput(prev => (prev ? prev + " " + transcript : transcript));
     };
-
-    recognition.onerror = (event) => {
-        console.error("Speech Error:", event.error);
-        setIsListening(false);
-    };
-
     window.speechRecognition = recognition;
     recognition.start();
   };
 
-  /* ===========================
-      7. SEND MESSAGE
-  =========================== */
   const handleSend = async () => {
     if (!input.trim() && !selectedImage) return;
 
@@ -240,7 +179,6 @@ export default function Chatbot({ onNavigate }) {
     const userText = input;
     const userImage = selectedImage;
     
-    // Add User Message
     setMessages(prev => [
         ...prev, 
         { role: "user", text: userText, image: userImage }
@@ -253,7 +191,7 @@ export default function Chatbot({ onNavigate }) {
     try {
       let response;
       
-      // 🔥 BRANCH A: IMAGE GENERATION
+      // 🔥 IMAGE GENERATION (With Base64 Return)
       if (isGenMode) {
           response = await axios.post(
             `${API_BASE}/chat/generate-image`, 
@@ -261,14 +199,13 @@ export default function Chatbot({ onNavigate }) {
             { headers: { Authorization: `Bearer ${token}` } }
           );
           
-          // Add AI Response (Fixing the HTML Code issue here)
           setMessages(prev => [...prev, { 
               role: "assistant", 
               text: response.data.reply || "Here is your image:",
-              generatedImage: response.data.imageUrl // Expecting raw URL from backend
+              generatedImage: response.data.imageUrl // Backend sends Base64
           }]);
       } 
-      // 💬 BRANCH B: NORMAL CHAT
+      // 💬 NORMAL CHAT (Text & Vision)
       else {
           response = await axios.post(
             `${API_BASE}/chat/send`,
@@ -279,21 +216,16 @@ export default function Chatbot({ onNavigate }) {
           setMessages(prev => [...prev, { role: "assistant", text: response.data.reply }]);
       }
 
-      // Refresh History if new chat
       if (!activeChatId && response.data.chatId) {
         setActiveChatId(response.data.chatId);
         fetchHistory(); 
       }
 
     } catch (err) {
-      console.error("Chat Error:", err);
-      let msg = "❌ Connection Error. Please check your internet.";
-      
-      if (err.response) {
-          if (err.response.status === 429) msg = err.response.data.reply || "Limit reached.";
-          if (err.response.status === 403) msg = "⛔ Access Denied. Please upgrade your plan in Profile.";
-          if (err.response.status === 500) msg = "⚠️ Server Error. Please try again later.";
-      }
+      let msg = "❌ Connection error.";
+      if (err.response?.status === 429) msg = err.response.data?.reply;
+      if (err.response?.status === 403) msg = "⛔ " + err.response.data?.reply;
+      if (err.response?.status === 500) msg = "⚠️ Server Error. Please try again later.";
       
       setMessages(prev => [...prev, { role: "assistant", text: msg }]);
     } finally {
@@ -301,9 +233,6 @@ export default function Chatbot({ onNavigate }) {
     }
   };
 
-  /* ===========================
-      RENDER UI
-  =========================== */
   return (
     <div className="flex h-screen bg-[#050505] text-zinc-100 overflow-hidden font-sans selection:bg-indigo-500/30">
 
@@ -316,7 +245,6 @@ export default function Chatbot({ onNavigate }) {
               <button onClick={() => setShowHistory(false)} className="hover:text-red-400 transition"><X size={18} /></button>
             </div>
             <div className="flex-1 overflow-y-auto space-y-2 pr-2 scrollbar-thin scrollbar-thumb-zinc-800">
-                {history.length === 0 && <p className="text-zinc-600 text-xs text-center mt-10">No history found.</p>}
                 {history.map(chat => (
                 <button key={chat._id} onClick={() => { loadChat(chat._id); setShowHistory(false); }} className="w-full text-left p-3 rounded-xl text-xs text-zinc-400 hover:bg-white/5 hover:text-white truncate transition-all border border-transparent hover:border-white/5">
                     {chat.title}
@@ -368,15 +296,13 @@ export default function Chatbot({ onNavigate }) {
                     <img src={m.image} alt="User Upload" className="rounded-2xl border border-white/10 max-h-64 object-contain bg-black shadow-xl" />
                 )}
 
-                {/* AI Generated Image (Rendering Fix) */}
+                {/* AI Generated Image (Base64 Fixed) */}
                 {m.generatedImage && (
                     <div className="relative group/img">
                         <img 
                             src={m.generatedImage} 
                             alt="AI Generated" 
-                            className="rounded-2xl border border-purple-500/30 shadow-2xl shadow-purple-500/10 w-full max-h-96 object-cover bg-black cursor-pointer"
-                            onClick={() => window.open(m.generatedImage, '_blank')}
-                            loading="lazy"
+                            className="rounded-2xl border border-purple-500/30 shadow-2xl shadow-purple-500/10 w-full max-h-96 object-cover bg-black"
                         />
                         <div className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover/img:opacity-100 transition-all duration-300">
                             <button 
@@ -399,7 +325,7 @@ export default function Chatbot({ onNavigate }) {
                     
                     {m.text}
 
-                    {/* Copy Button (Only for Assistant Text) */}
+                    {/* Copy Button */}
                     {m.role === "assistant" && (
                         <div className="flex gap-2 mt-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                             <button 
@@ -457,13 +383,12 @@ export default function Chatbot({ onNavigate }) {
                     title={isGenMode ? "Switch to Chat" : "Switch to Image Gen"}
                 >
                     <Palette size={20} />
-                    {/* Tooltip */}
                     <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 text-[10px] bg-zinc-800 text-white px-2 py-1 rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap transition">
                         {isGenMode ? "Chat Mode" : "Art Mode"}
                     </span>
                 </button>
 
-                {/* B. File Upload (Disabled in Gen Mode) */}
+                {/* B. File Upload */}
                 {!isGenMode && (
                     <>
                         <input type="file" ref={fileInputRef} accept="image/*" onChange={(e) => handleImageFile(e.target.files[0])} hidden />

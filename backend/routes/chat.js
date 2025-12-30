@@ -8,11 +8,12 @@ import dotenv from 'dotenv';
 dotenv.config();
 const router = express.Router();
 
-// ✅ Google Gemini Config (Sirf Text ke liye)
+// ✅ Google Gemini Config
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 // 🤖 Models Config
 const TEXT_MODEL_NAME = "gemini-2.5-flash-lite"; 
+const IMAGE_MODEL_NAME = "gemini-2.5-flash-preview-image";
 
 /* ============================
    1. TEXT PLAN LIMITS
@@ -42,7 +43,7 @@ const estimateTokens = (text = "") => Math.ceil(text.length / TEXT_TOKEN_DIVISOR
 const SYSTEM_INSTRUCTION = `You are CNEAPEE AI. Never mention Google, Gemini, GPT, LLMs, or training sources.`;
 
 /* ============================
-   ROUTE 1: TEXT CHAT
+   ROUTE 1: TEXT & VISION CHAT
 ============================ */
 router.post('/send', auth, async (req, res) => {
   try {
@@ -53,7 +54,7 @@ router.post('/send', auth, async (req, res) => {
     const user = await User.findById(req.user.id);
     if (!user) return res.status(404).json({ reply: "User not found" });
 
-    // Initialize usage if missing
+    // Initialize usage
     if (!user.usage) {
       user.usage = { dailyTokens: 0, monthlyTokens: 0, generatedImages: 0 };
       if (!user.plan) user.plan = "free";
@@ -61,7 +62,7 @@ router.post('/send', auth, async (req, res) => {
       await user.save();
     }
 
-    const limits = TEXT_PLAN_LIMITS[user.plan || "free"] || TEXT_PLAN_LIMITS["free"];
+    const limits = TEXT_PLAN_LIMITS[user.plan || "free"];
     const imageCost = image ? IMAGE_UPLOAD_COST : 0;
     const inputTokens = estimateTokens(raw) + imageCost;
 
@@ -69,28 +70,47 @@ router.post('/send', auth, async (req, res) => {
       return res.status(429).json({ reply: "Daily text limit reached. Upgrade plan." });
     }
 
-    // Hard Guards
+    // Hard Guards (Identity Protection)
     if (!image && wordCount <= 15) {
         const lower = raw.toLowerCase();
-        if (lower.includes("model") || lower.includes("training")) {
+        if (lower.includes("who are you") || lower === "cneapee" || lower.includes("who made you")) {
+            return res.json({ reply: "CNEAPEE AI brings together knowledge, creativity, and holiday cheer into a single, unified ecosystem.", chatId });
+        }
+        if (lower.includes("model") || lower.includes("gemini")) {
             return res.json({ reply: "CNEAPEE AI v1.2.", chatId });
         }
     }
 
+    // Model Setup
     const model = genAI.getGenerativeModel({ model: TEXT_MODEL_NAME, systemInstruction: SYSTEM_INSTRUCTION });
     let aiText = "";
 
+    // 🔥 VISION LOGIC (Image reading)
     if (image) {
+        // Extract Base64 cleanly
         const base64Data = image.includes("base64,") ? image.split(",")[1] : image;
-        const imagePart = { inlineData: { data: base64Data, mimeType: "image/png" } };
+        
+        const imagePart = {
+            inlineData: {
+                data: base64Data,
+                mimeType: "image/png"
+            }
+        };
+        // Send both text and image to model
         const result = await model.generateContent([raw, imagePart]);
-        aiText = result.response.text();
-    } else {
+        const response = await result.response;
+        aiText = response.text();
+    } 
+    // 💬 TEXT ONLY
+    else {
         let history = [];
         if (chatId) {
             const chatDoc = await Chat.findOne({ _id: chatId, userId: req.user.id });
             if (chatDoc?.messages) {
-                history = chatDoc.messages.map(m => ({ role: m.role === "user" ? "user" : "model", parts: [{ text: m.text }] }));
+                history = chatDoc.messages.map(m => ({
+                    role: m.role === "user" ? "user" : "model",
+                    parts: [{ text: m.text }]
+                }));
             }
         }
         const session = model.startChat({ history });
@@ -98,11 +118,13 @@ router.post('/send', auth, async (req, res) => {
         aiText = result.response.text();
     }
 
+    // Update Token Usage
     const outputTokens = estimateTokens(aiText);
     user.usage.dailyTokens += inputTokens + outputTokens;
     user.usage.monthlyTokens += inputTokens + outputTokens;
     await user.save();
 
+    // Save Chat
     let chat;
     if (chatId) chat = await Chat.findOne({ _id: chatId, userId: req.user.id });
     
@@ -116,13 +138,13 @@ router.post('/send', auth, async (req, res) => {
 
   } catch (err) {
     console.error("Chat Error:", err);
-    res.status(500).json({ reply: "Server Busy." });
+    res.status(500).json({ reply: "Server Busy. Please try again." });
   }
 });
 
 /* ============================
-   ROUTE 2: IMAGE GENERATION (FIXED 500 ERROR)
-   Uses: Pollinations.ai (No Key Required, Very Fast)
+   ROUTE 2: IMAGE GENERATION (GOOGLE IMAGEN)
+   No Pollinations. Direct Base64.
 ============================ */
 router.post('/generate-image', auth, async (req, res) => {
   try {
@@ -130,7 +152,6 @@ router.post('/generate-image', auth, async (req, res) => {
     const user = await User.findById(req.user.id);
     if (!user) return res.status(404).json({ reply: "User not found" });
 
-    // Initialize usage/plan if missing
     if (!user.usage) user.usage = { generatedImages: 0 };
     if (!user.imagePlan) user.imagePlan = "none";
 
@@ -138,22 +159,31 @@ router.post('/generate-image', auth, async (req, res) => {
     const allowedImages = IMAGE_PLAN_LIMITS[userImagePlan] || 0;
     const currentImages = user.usage.generatedImages || 0;
 
-    // 1. Check Plan (This triggers 403 if plan is none)
+    // 1. Check Plan
     if (userImagePlan === 'none' || allowedImages === 0) {
-        return res.status(403).json({ reply: "Please purchase an Image Plan (Gen AI First) to start creating." });
+        return res.status(403).json({ reply: "Image Generation is locked. Purchase 'Gen AI First' plan." });
     }
 
     // 2. Check Limits
     if (currentImages >= allowedImages) {
-       return res.status(429).json({ reply: `Monthly limit reached (${currentImages}/${allowedImages}). Upgrade Plan.` });
+       return res.status(429).json({ reply: `Image limit reached (${currentImages}/${allowedImages}). Upgrade Plan.` });
     }
 
-    // 3. Generate Image URL (Pollinations AI - Fast & Reliable)
-    // We append a random seed to ensure uniqueness
-    const seed = Math.floor(Math.random() * 1000000);
-    const encodedPrompt = encodeURIComponent(prompt);
-    // Using 'flux' model for high quality
-    const imageUrl = `https://pollinations.ai/p/${encodedPrompt}?width=1024&height=1024&seed=${seed}&model=flux`;
+    // 3. Generate Image (Google Imagen)
+    const imagenModel = genAI.getGenerativeModel({ model: IMAGE_MODEL_NAME });
+    const result = await imagenModel.generateContent(prompt);
+    const response = await result.response;
+    
+    let imageUrl = "";
+    
+    // Extract Base64 from Google Response
+    if (response.candidates && response.candidates[0].content.parts[0].inlineData) {
+        const base64 = response.candidates[0].content.parts[0].inlineData.data;
+        const mimeType = response.candidates[0].content.parts[0].inlineData.mimeType || "image/png";
+        imageUrl = `data:${mimeType};base64,${base64}`;
+    } else {
+        throw new Error("No image returned from Google Model.");
+    }
 
     // 4. Update Usage
     user.usage.generatedImages = currentImages + 1;
@@ -163,17 +193,17 @@ router.post('/generate-image', auth, async (req, res) => {
     let chat;
     if (chatId) chat = await Chat.findOne({ _id: chatId, userId: req.user.id });
     const userMsg = { role: "user", text: `Generate: ${prompt}` };
-    // Save image URL in DB
+    // Save the Base64 String directly to DB
     const aiMsg = { role: "model", text: "Here is your generated image:", image: imageUrl };
 
     if (chat) { chat.messages.push(userMsg, aiMsg); await chat.save(); }
     else { chat = new Chat({ userId: req.user.id, title: `Img: ${prompt.substring(0, 15)}`, messages: [userMsg, aiMsg] }); await chat.save(); }
 
-    res.json({ reply: "Image Generated Successfully!", imageUrl, chatId: chat._id });
+    res.json({ reply: "Image Generated Successfully", imageUrl, chatId: chat._id });
 
   } catch (err) {
     console.error("Image Gen Error:", err);
-    res.status(500).json({ reply: "Image Generation Failed. Please try again later." });
+    res.status(500).json({ reply: "Image Generation Failed. Ensure API Key supports Imagen 3." });
   }
 });
 
