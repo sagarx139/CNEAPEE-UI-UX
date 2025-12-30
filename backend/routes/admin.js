@@ -10,8 +10,10 @@ import { Resend } from 'resend';
 dotenv.config();
 const router = express.Router();
 
-// Initialize Resend
 const resend = new Resend(process.env.RESEND_API_KEY);
+
+// ✅ LIST OF IMAGE PLANS (Ye User Model ke enum se match hone chahiye)
+const IMAGE_PLANS = ['gen_ai_first', 'lite', 'excess', 'max'];
 
 // --- 🔐 MIDDLEWARE: CHECK SPECIAL ADMIN TOKEN ---
 const requireAdminToken = (req, res, next) => {
@@ -61,16 +63,24 @@ router.get('/stats', requireAdminToken, async (req, res) => {
 
 router.get('/users', requireAdminToken, async (req, res) => {
     try {
-        // We need 'usage' field to display in table, so default find is good
         const users = await User.find({}, '-password').sort({ createdAt: -1 });
         res.json(users);
     } catch (error) { res.status(500).json({ message: "Fetch Users Error" }); }
 });
 
+// ✅ MANUAL UPDATE PLAN (Text or Image)
 router.put('/update-plan/:id', requireAdminToken, async (req, res) => {
     try {
-        const { plan } = req.body;
-        const user = await User.findByIdAndUpdate(req.params.id, { plan }, { new: true });
+        const { plan, type } = req.body; // type: 'text' or 'image'
+        
+        let updateData = {};
+        if (type === 'image') {
+            updateData = { imagePlan: plan };
+        } else {
+            updateData = { plan: plan };
+        }
+
+        const user = await User.findByIdAndUpdate(req.params.id, updateData, { new: true });
         res.json({ message: "Plan Updated", user });
     } catch (error) { res.status(500).json({ message: "Update Failed" }); }
 });
@@ -91,7 +101,7 @@ router.post('/track-view', async (req, res) => {
 });
 
 // =========================================================
-// 📢 3. BROADCAST SYSTEM (Banner)
+// 📢 3. BROADCAST SYSTEM
 // =========================================================
 router.post('/broadcast', requireAdminToken, async (req, res) => {
     try {
@@ -129,7 +139,6 @@ router.post('/send-email-broadcast', requireAdminToken, async (req, res) => {
         
         const emailList = users.map(u => u.email);
         
-        // 🚀 Sending via Resend
         await resend.emails.send({
             from: 'CNEAPEE AI <support@cneapee.com>', 
             to: emailList, 
@@ -157,7 +166,6 @@ router.post('/send-email-broadcast', requireAdminToken, async (req, res) => {
 router.post('/submit-payment-request', async (req, res) => {
     const { userId, userName, userEmail, planName } = req.body;
     try {
-        // Check duplicate pending request
         const existing = await PaymentRequest.findOne({ userId, status: 'pending' });
         if(existing) return res.status(400).json({ message: "Request already pending!" });
 
@@ -179,29 +187,44 @@ router.get('/payment-requests', requireAdminToken, async (req, res) => {
     }
 });
 
-// ADMIN: Approve & Upgrade (CRITICAL FIX: Uses Email instead of ID to avoid crash)
+// ✅ ADMIN: Approve & Upgrade (Detects Image vs Text Plan automatically)
 router.post('/approve-payment', requireAdminToken, async (req, res) => {
     const { requestId, planName } = req.body; 
+    
+    console.log("⚡ Approving:", planName);
+
     try {
-        // 1. Get the Payment Request First
+        // 1. Get Request Data
         const request = await PaymentRequest.findById(requestId);
         if (!request) return res.status(404).json({ message: "Request not found" });
 
-        // 2. Upgrade User Plan using EMAIL (Safer than ID)
+        // 2. Normalize Plan Name (e.g., "Gen AI First" -> "gen_ai_first")
+        const cleanPlan = planName.trim().toLowerCase().replace(/\s+/g, '_'); 
+        
+        let updateData = {};
+
+        // 3. Check if it matches an Image Plan or Text Plan
+        if (IMAGE_PLANS.includes(cleanPlan)) {
+            updateData = { imagePlan: cleanPlan };
+        } else {
+            updateData = { plan: cleanPlan };
+        }
+
+        // 4. Update User by Email (Safe Search)
         const updatedUser = await User.findOneAndUpdate(
             { email: request.userEmail }, 
-            { plan: planName.toLowerCase() },
-            { new: true }
+            updateData,
+            { new: true, runValidators: true }
         );
 
         if (!updatedUser) return res.status(404).json({ message: "User not found via Email" });
         
-        // 3. Mark Request as Approved
+        // 5. Close Request
         await PaymentRequest.findByIdAndUpdate(requestId, { status: 'approved' });
 
-        res.json({ message: "User Upgraded Successfully!" });
+        res.json({ message: `User upgraded to ${planName} Successfully!` });
     } catch (error) {
-        console.error("Approval Backend Error:", error);
+        console.error("Approval Error:", error);
         res.status(500).json({ message: "Approval Failed in Backend" });
     }
 });

@@ -3,12 +3,12 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { 
   Users, Shield, Search, Trash2, 
-  BarChart3, Eye, Zap, Lock, LogOut, Megaphone, Mail, Send, Check 
+  BarChart3, Eye, Zap, Lock, LogOut, Megaphone, Mail, Send, Check, Image as ImageIcon 
 } from 'lucide-react';
 
 const API_URL = "https://cneapee-backend-703598443794.asia-south1.run.app/api/admin";
 
-// --- 1. PLAN LIMITS HELPER ---
+// HELPER: Text Plan Limit
 const getPlanLimit = (planName) => {
   const plan = planName?.toLowerCase() || 'free';
   switch(plan) {
@@ -18,6 +18,18 @@ const getPlanLimit = (planName) => {
     case 'free': 
     default: return 4000;
   }
+};
+
+// HELPER: Image Plan Limit
+const getImagePlanLimit = (planName) => {
+    const plan = planName?.toLowerCase() || 'none';
+    switch(plan) {
+        case 'gen_ai_first': return 25;
+        case 'lite': return 99;
+        case 'excess': return 199;
+        case 'max': return 499;
+        default: return 0;
+    }
 };
 
 export default function AdminDashboard() {
@@ -110,45 +122,46 @@ export default function AdminDashboard() {
 
   // --- ACTIONS ---
   
-  // FIX: Approve Payment with Better Error Handling
   const handleApprovePayment = async (req) => {
       if(!window.confirm(`Approve ${req.planName} for ${req.userName}?`)) return;
       try {
           const token = sessionStorage.getItem('admin_token');
-          
-          console.log("Approving:", req); // Debug log
-
+          // Important: Sending both requestId and planName
           await axios.post(`${API_URL}/approve-payment`, 
              { requestId: req._id, userId: req.userId, planName: req.planName },
              { headers: { 'x-admin-token': token } }
           );
-          
-          // UI Update
           setRequests(requests.filter(r => r._id !== req._id));
           fetchDashboardData(token);
-          
-          alert("✅ User Upgraded!");
+          alert("✅ Plan Activated Successfully!");
       } catch (error) { 
-          console.error("Approval Error:", error);
-          // Show real error from backend
-          const msg = error.response?.data?.message || error.message || "Unknown Error";
+          const msg = error.response?.data?.message || "Unknown Error";
           alert(`Approval Failed: ${msg}`); 
       }
   };
 
-  // Update Plan Manually
-  const handleUpdatePlan = async (userId, newPlan) => {
-    if (!window.confirm(`Change plan to ${newPlan}?`)) return;
+  // ✅ UPDATED: Handle Both Plan Types (Text & Image)
+  const handleUpdatePlan = async (userId, newPlan, type) => {
+    if (!window.confirm(`Change ${type} plan to ${newPlan}?`)) return;
     setUpdating(userId);
     try {
       const token = sessionStorage.getItem('admin_token');
-      await axios.put(`${API_URL}/update-plan/${userId}`, { plan: newPlan }, { headers: { 'x-admin-token': token } });
-      setUsers(users.map(u => u._id === userId ? { ...u, plan: newPlan } : u));
+      await axios.put(`${API_URL}/update-plan/${userId}`, 
+        { plan: newPlan, type }, // Sending type to backend
+        { headers: { 'x-admin-token': token } }
+      );
+      
+      // Optimistic UI Update
+      setUsers(users.map(u => {
+          if (u._id === userId) {
+              return type === 'image' ? { ...u, imagePlan: newPlan } : { ...u, plan: newPlan };
+          }
+          return u;
+      }));
     } catch (error) { alert("Failed to update plan"); } 
     finally { setUpdating(null); }
   };
 
-  // Delete User
   const handleDeleteUser = async (userId) => {
     if (!window.confirm("⚠️ DELETE USER?")) return;
     try {
@@ -158,10 +171,8 @@ export default function AdminDashboard() {
     } catch (error) { alert("Failed to delete"); }
   };
 
-  // Broadcasts
   const handleSendBroadcast = async () => {
     if(!broadcastMsg.trim()) return;
-    if(!window.confirm("Set this live banner?")) return;
     try {
         const token = sessionStorage.getItem('admin_token');
         await axios.post(`${API_URL}/broadcast`, { message: broadcastMsg }, { headers: { 'x-admin-token': token } });
@@ -180,7 +191,6 @@ export default function AdminDashboard() {
 
   const handleSendEmail = async () => {
     if (!emailSubject || !emailBody) return alert("Fill all fields");
-    if (!window.confirm(`Email ALL ${users.length} users?`)) return;
     setSendingEmail(true);
     try {
         const token = sessionStorage.getItem('admin_token');
@@ -198,24 +208,16 @@ export default function AdminDashboard() {
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen bg-[#050505] flex items-center justify-center p-4 font-sans selection:bg-indigo-500/30">
-        <div className="w-full max-w-md bg-[#0e0e11] border border-white/10 rounded-3xl p-8 shadow-2xl relative overflow-hidden">
-          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500"></div>
-          <div className="flex justify-center mb-6">
-            <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center text-indigo-500 border border-white/5 shadow-lg">
-              <Shield size={32} />
-            </div>
-          </div>
+        <div className="w-full max-w-md bg-[#0e0e11] border border-white/10 rounded-3xl p-8 shadow-2xl">
           <h2 className="text-2xl font-bold text-white text-center mb-2">Admin Security</h2>
-          <p className="text-zinc-500 text-center mb-8 text-sm">Identity Verification Required.</p>
-          <form onSubmit={handleAdminLogin} className="space-y-4">
+          <form onSubmit={handleAdminLogin} className="space-y-4 mt-6">
             <input type="text" value={adminId} onChange={e => setAdminId(e.target.value)} className="w-full bg-black border border-white/10 rounded-xl p-3 text-white focus:border-indigo-500 outline-none" placeholder="Secure ID" />
             <input type="password" value={adminPass} onChange={e => setAdminPass(e.target.value)} className="w-full bg-black border border-white/10 rounded-xl p-3 text-white focus:border-indigo-500 outline-none" placeholder="Password" />
             {loginError && <div className="text-red-400 text-xs text-center font-bold">{loginError}</div>}
-            <button type="submit" disabled={isChecking} className="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3.5 rounded-xl transition-all mt-4 flex justify-center gap-2 items-center">
-              {isChecking ? "Verifying..." : <><Lock size={16}/> Unlock Console</>}
+            <button type="submit" disabled={isChecking} className="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3.5 rounded-xl transition-all">
+              {isChecking ? "Verifying..." : "Unlock Console"}
             </button>
           </form>
-          <button onClick={() => navigate('/')} className="w-full text-center text-zinc-600 text-xs mt-6 hover:text-white">&larr; Go Home</button>
         </div>
       </div>
     );
@@ -224,89 +226,40 @@ export default function AdminDashboard() {
   const filteredUsers = users.filter(u => u.name?.toLowerCase().includes(searchTerm.toLowerCase()) || u.email?.toLowerCase().includes(searchTerm.toLowerCase()));
 
   return (
-    <div className="min-h-screen bg-[#050505] text-white font-sans p-4 md:p-8 selection:bg-indigo-500/30">
+    <div className="min-h-screen bg-[#050505] text-white font-sans p-4 md:p-8">
       
       {/* Header */}
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center mb-8 gap-6">
         <div className="flex items-center gap-4 w-full md:w-auto">
            <button onClick={handleLogout} className="p-3 bg-white/5 rounded-full hover:bg-red-500/20 hover:text-red-400 transition border border-white/5"><LogOut size={20}/></button>
-           <div>
-             <h1 className="text-2xl font-bold flex items-center gap-2"><Shield className="text-indigo-500" fill="currentColor" /> Admin Console</h1>
-           </div>
+           <h1 className="text-2xl font-bold flex items-center gap-2"><Shield className="text-indigo-500" fill="currentColor" /> Admin Console</h1>
         </div>
         <div className="flex gap-3 overflow-x-auto pb-2 md:pb-0 scrollbar-hide">
             <StatCard label="Users" value={stats.totalUsers} icon={Users} color="text-blue-400" />
-            <StatCard label="Views Today" value={stats.dailyViews} icon={Eye} color="text-green-400" />
-            <StatCard label="Total Views" value={stats.totalViews} icon={BarChart3} color="text-purple-400" />
+            <StatCard label="Views" value={stats.dailyViews} icon={Eye} color="text-green-400" />
         </div>
       </div>
 
-      {/* --- 💰 PENDING PAYMENT REQUESTS --- */}
+      {/* --- PENDING REQUESTS --- */}
       {requests.length > 0 && (
-        <div className="max-w-7xl mx-auto mb-8 bg-[#0e0e11] border border-orange-500/30 rounded-3xl overflow-hidden shadow-2xl">
-          <div className="p-5 border-b border-white/5 bg-orange-500/5 flex items-center justify-between">
-            <h2 className="text-lg font-bold text-orange-400 flex items-center gap-2">
-              <Zap size={20}/> Pending Upgrades
-            </h2>
-            <span className="text-xs bg-orange-500/20 text-orange-400 px-3 py-1 rounded-full font-bold">{requests.length} pending</span>
-          </div>
-          
-          <div className="overflow-x-auto">
-            <table className="w-full text-left">
-              <tbody className="divide-y divide-white/5">
-                {requests.map(req => (
-                  <tr key={req._id} className="hover:bg-white/[0.02]">
-                    <td className="p-5">
-                      <div className="font-bold text-white">{req.userName}</div>
-                      <div className="text-xs text-zinc-500">{req.userEmail}</div>
-                    </td>
-                    <td className="p-5">
-                      <span className="text-indigo-400 font-bold bg-indigo-500/10 px-3 py-1 rounded-full text-xs border border-indigo-500/20">
-                        Requested: {req.planName}
-                      </span>
-                    </td>
-                    <td className="p-5 text-right">
-                      <button 
-                        onClick={() => handleApprovePayment(req)}
-                        className="bg-green-600 hover:bg-green-500 text-white px-4 py-2 rounded-lg transition font-bold text-xs flex items-center gap-2 float-right"
-                        title="Approve & Upgrade"
-                      >
-                        <Check size={16} /> Approve
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+        <div className="max-w-7xl mx-auto mb-8 bg-[#0e0e11] border border-orange-500/30 rounded-3xl overflow-hidden shadow-2xl p-4">
+          <h2 className="text-lg font-bold text-orange-400 flex items-center gap-2 mb-4"><Zap size={20}/> Pending Requests ({requests.length})</h2>
+          <div className="space-y-2">
+            {requests.map(req => (
+              <div key={req._id} className="flex justify-between items-center bg-white/5 p-4 rounded-xl border border-white/5 hover:border-orange-500/30 transition">
+                <div>
+                  <div className="font-bold">{req.userName}</div>
+                  <div className="text-xs text-zinc-500">{req.userEmail}</div>
+                  <div className="text-xs text-indigo-400 mt-1 font-bold">Req: {req.planName}</div>
+                </div>
+                <button onClick={() => handleApprovePayment(req)} className="bg-green-600 hover:bg-green-500 text-white px-4 py-2 rounded-lg text-xs font-bold flex items-center gap-2">
+                  <Check size={14}/> Approve
+                </button>
+              </div>
+            ))}
           </div>
         </div>
       )}
-
-      {/* --- BROADCAST & EMAIL CONTROL PANEL --- */}
-      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-          
-          {/* 📢 Banner Broadcast */}
-          <div className="bg-[#0e0e11] border border-white/5 rounded-2xl p-6 relative overflow-hidden">
-              <h2 className="text-lg font-bold mb-4 flex items-center gap-2"><Megaphone size={18} className="text-orange-400"/> Live Site Banner</h2>
-              <div className="flex gap-2">
-                  <input type="text" value={broadcastMsg} onChange={(e) => setBroadcastMsg(e.target.value)} placeholder="Type announcement..." className="flex-1 bg-black border border-white/10 rounded-xl px-4 py-2 text-white focus:border-orange-500 outline-none" />
-                  <button onClick={handleSendBroadcast} className="bg-orange-600 hover:bg-orange-500 p-3 rounded-xl"><Send size={18}/></button>
-                  <button onClick={handleClearBroadcast} className="bg-red-500/10 text-red-500 border border-red-500/20 p-3 rounded-xl"><Trash2 size={18}/></button>
-              </div>
-          </div>
-
-          {/* 📧 Email Broadcast */}
-          <div className="bg-[#0e0e11] border border-white/5 rounded-2xl p-6 relative overflow-hidden">
-              <h2 className="text-lg font-bold mb-4 flex items-center gap-2"><Mail size={18} className="text-blue-400"/> Email Newsletter</h2>
-              <div className="space-y-3">
-                  <input type="text" value={emailSubject} onChange={e => setEmailSubject(e.target.value)} placeholder="Subject..." className="w-full bg-black border border-white/10 rounded-xl px-4 py-2 text-sm focus:border-blue-500 outline-none" />
-                  <div className="flex gap-2">
-                      <input type="text" value={emailBody} onChange={e => setEmailBody(e.target.value)} placeholder="Message Body..." className="flex-1 bg-black border border-white/10 rounded-xl px-4 py-2 text-sm focus:border-blue-500 outline-none" />
-                      <button onClick={handleSendEmail} disabled={sendingEmail} className="bg-blue-600 hover:bg-blue-500 p-3 rounded-xl disabled:opacity-50 text-white">{sendingEmail ? "..." : <Send size={18}/>}</button>
-                  </div>
-              </div>
-          </div>
-      </div>
 
       {/* Search */}
       <div className="max-w-7xl mx-auto mb-6 relative group">
@@ -314,7 +267,7 @@ export default function AdminDashboard() {
           <input type="text" placeholder="Search users..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="w-full bg-[#0e0e11] border border-white/10 rounded-2xl py-3 pl-12 pr-4 focus:outline-none focus:border-indigo-500 transition text-sm text-white" />
       </div>
 
-      {/* Table */}
+      {/* Main Table */}
       <div className="max-w-7xl mx-auto bg-[#0e0e11] border border-white/5 rounded-3xl overflow-hidden shadow-2xl min-h-[400px]">
          {loading ? <div className="p-20 text-center text-zinc-500">Loading...</div> : (
              <div className="overflow-x-auto">
@@ -322,9 +275,9 @@ export default function AdminDashboard() {
                  <thead>
                    <tr className="bg-white/5 text-zinc-400 text-[10px] font-bold uppercase tracking-widest border-b border-white/5">
                      <th className="p-5">User</th>
-                     <th className="p-5">Role</th>
-                     <th className="p-5">Plan</th>
-                     <th className="p-5">Token Usage (Used/Limit)</th>
+                     <th className="p-5">Text Plan</th>
+                     <th className="p-5">Image Plan</th> {/* NEW COLUMN */}
+                     <th className="p-5">Usage (Txt / Img)</th>
                      <th className="p-5 text-right">Actions</th>
                    </tr>
                  </thead>
@@ -332,27 +285,38 @@ export default function AdminDashboard() {
                    {filteredUsers.map(user => (
                      <tr key={user._id} className="hover:bg-white/[0.02] transition">
                        <td className="p-5">
-                         <div className="flex items-center gap-3">
-                           <div className="w-8 h-8 rounded-full bg-indigo-500/20 flex items-center justify-center text-indigo-400 font-bold border border-white/5">{user.name?.charAt(0)}</div>
-                           <div><div className="font-bold text-zinc-200 text-sm">{user.name}</div><div className="text-xs text-zinc-500">{user.email}</div></div>
-                         </div>
+                         <div className="font-bold text-sm">{user.name}</div>
+                         <div className="text-xs text-zinc-500">{user.email}</div>
                        </td>
-                       <td className="p-5"><span className="px-2 py-1 rounded bg-zinc-800 text-xs text-zinc-400">{user.role}</span></td>
+                       
+                       {/* Text Plan */}
                        <td className="p-5">
-                          <select value={user.plan || 'free'} onChange={(e) => handleUpdatePlan(user._id, e.target.value)} disabled={updating === user._id} className="bg-black border border-white/10 rounded px-2 py-1 text-xs text-zinc-300 outline-none cursor-pointer">
+                          <select value={user.plan || 'free'} onChange={(e) => handleUpdatePlan(user._id, e.target.value, 'text')} className="bg-black border border-white/10 rounded px-2 py-1 text-xs text-zinc-300 outline-none cursor-pointer">
                               <option value="free">Free</option><option value="neo">Neo</option><option value="working">Working</option><option value="coder">Coder</option>
                           </select>
                        </td>
 
-                       {/* --- NEW TOKEN USAGE COLUMN --- */}
+                       {/* Image Plan (NEW) */}
                        <td className="p-5">
-                          <div className="flex flex-col">
-                            <span className="text-sm font-bold text-white text-xs font-mono">
-                               <Zap size={10} className="inline mr-1 text-yellow-500"/>
-                               {user.usage?.dailyTokens || 0} / {getPlanLimit(user.plan)}
-                            </span>
-                            <div className="w-24 h-1 bg-zinc-800 rounded-full mt-1 overflow-hidden">
-                               <div className="h-full bg-indigo-500" style={{ width: `${Math.min(((user.usage?.dailyTokens || 0) / getPlanLimit(user.plan)) * 100, 100)}%` }}></div>
+                          <select value={user.imagePlan || 'none'} onChange={(e) => handleUpdatePlan(user._id, e.target.value, 'image')} className="bg-black border border-purple-500/30 rounded px-2 py-1 text-xs text-purple-300 outline-none cursor-pointer">
+                              <option value="none">None</option>
+                              <option value="gen_ai_first">Gen AI First</option>
+                              <option value="lite">Lite</option>
+                              <option value="excess">Excess</option>
+                              <option value="max">Max</option>
+                          </select>
+                       </td>
+
+                       {/* Dual Stats */}
+                       <td className="p-5">
+                          <div className="flex flex-col gap-1">
+                            <div className="text-[10px] font-mono text-zinc-400 flex items-center gap-2">
+                               <Zap size={10} className="text-yellow-500"/>
+                               {user.usage?.dailyTokens || 0}/{getPlanLimit(user.plan)}
+                            </div>
+                            <div className="text-[10px] font-mono text-zinc-400 flex items-center gap-2">
+                               <ImageIcon size={10} className="text-purple-500"/>
+                               {user.usage?.generatedImages || 0}/{getImagePlanLimit(user.imagePlan)}
                             </div>
                           </div>
                        </td>
