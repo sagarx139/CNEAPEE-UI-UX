@@ -13,7 +13,7 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 // 🤖 Models Config
 const TEXT_MODEL_NAME = "gemini-2.5-flash-lite"; 
-const IMAGE_MODEL_NAME = "imagen-4.0-fast-generate-001"; // Latest Fast Model
+const IMAGE_MODEL_NAME = "imagen-4.0-fast-generate"; // Latest Fast Model
 
 /* ============================
    1. TEXT PLAN LIMITS (Tokens)
