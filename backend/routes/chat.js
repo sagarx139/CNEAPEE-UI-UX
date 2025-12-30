@@ -8,15 +8,14 @@ import dotenv from 'dotenv';
 dotenv.config();
 const router = express.Router();
 
-// ✅ Google Gemini Config
+// ✅ Google Gemini Config (Sirf Text ke liye)
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 // 🤖 Models Config
-const TEXT_MODEL_NAME = "gemini-2.5-flash-lite"; 
-const IMAGE_MODEL_NAME = "imagen-4.0-fast-generate"; // Latest Fast Model
+const TEXT_MODEL_NAME = "gemini-1.5-flash"; 
 
 /* ============================
-   1. TEXT PLAN LIMITS (Tokens)
+   1. TEXT PLAN LIMITS
 ============================ */
 const TEXT_PLAN_LIMITS = {
   free:    { daily: 4000,   monthly: 120000 },
@@ -26,7 +25,7 @@ const TEXT_PLAN_LIMITS = {
 };
 
 /* ============================
-   2. IMAGE GENERATION LIMITS (Count)
+   2. IMAGE GENERATION LIMITS
 ============================ */
 const IMAGE_PLAN_LIMITS = {
   none:          0,   
@@ -36,63 +35,45 @@ const IMAGE_PLAN_LIMITS = {
   max:           499  
 };
 
-// 💰 Token Costs
 const TEXT_TOKEN_DIVISOR = 4;
 const IMAGE_UPLOAD_COST = 300; 
-
 const estimateTokens = (text = "") => Math.ceil(text.length / TEXT_TOKEN_DIVISOR);
 
-/* ============================
-   SYSTEM PROMPT
-============================ */
-const SYSTEM_INSTRUCTION = `
-You are CNEAPEE AI.
-Never mention Google, Gemini, GPT, LLMs, or training sources.
-You are a proprietary AI assistant.
-Current Date: 2025.
-`;
+const SYSTEM_INSTRUCTION = `You are CNEAPEE AI. Never mention Google, Gemini, GPT, LLMs, or training sources.`;
 
 /* ============================
-   ROUTE 1: CHAT SEND (Text/Vision)
+   ROUTE 1: TEXT CHAT
 ============================ */
 router.post('/send', auth, async (req, res) => {
   try {
     const { prompt, image, chatId } = req.body;
     const raw = (prompt || "").trim();
-    const lower = raw.toLowerCase();
     const wordCount = raw.split(/\s+/).length;
 
     const user = await User.findById(req.user.id);
     if (!user) return res.status(404).json({ reply: "User not found" });
 
-    // Initialize usage
+    // Initialize usage if missing
     if (!user.usage) {
-      user.usage = { dailyTokens: 0, monthlyTokens: 0, generatedImages: 0, lastDailyReset: new Date(), lastMonthlyReset: new Date() };
+      user.usage = { dailyTokens: 0, monthlyTokens: 0, generatedImages: 0 };
       if (!user.plan) user.plan = "free";
       if (!user.imagePlan) user.imagePlan = "none";
       await user.save();
     }
 
-    const limits = TEXT_PLAN_LIMITS[user.plan || "free"];
+    const limits = TEXT_PLAN_LIMITS[user.plan || "free"] || TEXT_PLAN_LIMITS["free"];
     const imageCost = image ? IMAGE_UPLOAD_COST : 0;
     const inputTokens = estimateTokens(raw) + imageCost;
 
     if (user.usage.dailyTokens + inputTokens > limits.daily) {
-      return res.status(429).json({ reply: "Daily text usage limit reached. Please upgrade your Text Plan." });
+      return res.status(429).json({ reply: "Daily text limit reached. Upgrade plan." });
     }
 
-    /* --- HARD GUARDS --- */
+    // Hard Guards
     if (!image && wordCount <= 15) {
-        if (lower.includes("what") && (lower.includes("date") || lower.includes("time"))) {
-            const ist = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" }));
-            const formatted = ist.toLocaleString("en-IN", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false });
-            return res.json({ reply: `Today's date and time is ${formatted} IST.`, chatId });
-        }
-        if (lower.includes("who are you") || lower === "cneapee" || lower.includes("who made you")) {
-            return res.json({ reply: "CNEAPEE AI brings together knowledge, creativity, and holiday cheer into a single, unified ecosystem.", chatId });
-        }
-        if (lower.includes("which model") || lower.includes("base model") || (lower.includes("what") && lower.includes("model")) || (lower.includes("using") && lower.includes("gemini"))) {
-            return res.json({ reply: "CNEAPEE AI v1.2. Version v1.8 is coming soon.", chatId });
+        const lower = raw.toLowerCase();
+        if (lower.includes("model") || lower.includes("training")) {
+            return res.json({ reply: "CNEAPEE AI v1.2.", chatId });
         }
     }
 
@@ -103,8 +84,7 @@ router.post('/send', auth, async (req, res) => {
         const base64Data = image.includes("base64,") ? image.split(",")[1] : image;
         const imagePart = { inlineData: { data: base64Data, mimeType: "image/png" } };
         const result = await model.generateContent([raw, imagePart]);
-        const response = await result.response;
-        aiText = response.text();
+        aiText = result.response.text();
     } else {
         let history = [];
         if (chatId) {
@@ -125,27 +105,24 @@ router.post('/send', auth, async (req, res) => {
 
     let chat;
     if (chatId) chat = await Chat.findOne({ _id: chatId, userId: req.user.id });
-
+    
     const userMsg = { role: "user", text: raw };
     const aiMsg = { role: "model", text: aiText };
 
-    if (chat) {
-      chat.messages.push(userMsg, aiMsg);
-      await chat.save();
-    } else {
-      chat = new Chat({ userId: req.user.id, title: raw.split(" ").slice(0, 5).join(" ") + "...", messages: [userMsg, aiMsg] });
-      await chat.save();
-    }
+    if (chat) { chat.messages.push(userMsg, aiMsg); await chat.save(); } 
+    else { chat = new Chat({ userId: req.user.id, title: raw.substring(0, 20), messages: [userMsg, aiMsg] }); await chat.save(); }
 
     res.json({ reply: aiText, chatId: chat._id });
+
   } catch (err) {
-    console.error("❌ AI Error:", err);
-    res.status(500).json({ reply: "Server error. Please try again later." });
+    console.error("Chat Error:", err);
+    res.status(500).json({ reply: "Server Busy." });
   }
 });
 
 /* ============================
-   ROUTE 2: IMAGE GENERATION
+   ROUTE 2: IMAGE GENERATION (FIXED 500 ERROR)
+   Uses: Pollinations.ai (No Key Required, Very Fast)
 ============================ */
 router.post('/generate-image', auth, async (req, res) => {
   try {
@@ -153,55 +130,50 @@ router.post('/generate-image', auth, async (req, res) => {
     const user = await User.findById(req.user.id);
     if (!user) return res.status(404).json({ reply: "User not found" });
 
-    if (!user.usage) user.usage = { dailyTokens: 0, monthlyTokens: 0, generatedImages: 0 };
+    // Initialize usage/plan if missing
+    if (!user.usage) user.usage = { generatedImages: 0 };
     if (!user.imagePlan) user.imagePlan = "none";
 
-    const userImagePlan = user.imagePlan;
+    const userImagePlan = (user.imagePlan || "none").toLowerCase();
     const allowedImages = IMAGE_PLAN_LIMITS[userImagePlan] || 0;
     const currentImages = user.usage.generatedImages || 0;
 
+    // 1. Check Plan (This triggers 403 if plan is none)
     if (userImagePlan === 'none' || allowedImages === 0) {
-        return res.status(403).json({ reply: "Image Generation is not included. Purchase an Image Plan." });
+        return res.status(403).json({ reply: "Please purchase an Image Plan (Gen AI First) to start creating." });
     }
 
+    // 2. Check Limits
     if (currentImages >= allowedImages) {
-       return res.status(429).json({ reply: `Image limit reached (${currentImages}/${allowedImages}). Upgrade Plan.` });
+       return res.status(429).json({ reply: `Monthly limit reached (${currentImages}/${allowedImages}). Upgrade Plan.` });
     }
 
-    const imagenModel = genAI.getGenerativeModel({ model: IMAGE_MODEL_NAME });
-    const result = await imagenModel.generateContent(prompt);
-    const response = await result.response;
-    
-    let imageUrl = "";
-    if (response.candidates && response.candidates[0].content.parts[0].inlineData) {
-        const base64 = response.candidates[0].content.parts[0].inlineData.data;
-        const mimeType = response.candidates[0].content.parts[0].inlineData.mimeType || "image/png";
-        imageUrl = `data:${mimeType};base64,${base64}`;
-    } else {
-        throw new Error("No image data returned.");
-    }
+    // 3. Generate Image URL (Pollinations AI - Fast & Reliable)
+    // We append a random seed to ensure uniqueness
+    const seed = Math.floor(Math.random() * 1000000);
+    const encodedPrompt = encodeURIComponent(prompt);
+    // Using 'flux' model for high quality
+    const imageUrl = `https://pollinations.ai/p/${encodedPrompt}?width=1024&height=1024&seed=${seed}&model=flux`;
 
+    // 4. Update Usage
     user.usage.generatedImages = currentImages + 1;
     await user.save();
 
+    // 5. Save Chat
     let chat;
     if (chatId) chat = await Chat.findOne({ _id: chatId, userId: req.user.id });
-
-    const userMsg = { role: "user", text: `Generate image: ${prompt}` };
+    const userMsg = { role: "user", text: `Generate: ${prompt}` };
+    // Save image URL in DB
     const aiMsg = { role: "model", text: "Here is your generated image:", image: imageUrl };
 
-    if (chat) {
-        chat.messages.push(userMsg, aiMsg);
-        await chat.save();
-    } else {
-        chat = new Chat({ userId: req.user.id, title: `Image: ${prompt.substring(0, 20)}...`, messages: [userMsg, aiMsg] });
-        await chat.save();
-    }
+    if (chat) { chat.messages.push(userMsg, aiMsg); await chat.save(); }
+    else { chat = new Chat({ userId: req.user.id, title: `Img: ${prompt.substring(0, 15)}`, messages: [userMsg, aiMsg] }); await chat.save(); }
 
-    res.json({ reply: "Image Generated Successfully", imageUrl, chatId: chat._id });
+    res.json({ reply: "Image Generated Successfully!", imageUrl, chatId: chat._id });
+
   } catch (err) {
-    console.error("❌ Image Gen Error:", err);
-    res.status(500).json({ reply: "Image Generation Failed. Please try again." });
+    console.error("Image Gen Error:", err);
+    res.status(500).json({ reply: "Image Generation Failed. Please try again later." });
   }
 });
 
@@ -209,18 +181,13 @@ router.post('/generate-image', auth, async (req, res) => {
    3. HISTORY ROUTES
 ============================ */
 router.get('/history', auth, async (req, res) => {
-  try {
-      const chats = await Chat.find({ userId: req.user.id }).sort({ updatedAt: -1 });
-      res.json(chats);
-  } catch(e) { res.status(500).json({message: "Error fetching history"}); }
+  try { const chats = await Chat.find({ userId: req.user.id }).sort({ updatedAt: -1 }); res.json(chats); } 
+  catch(e) { res.status(500).json({message: "Error"}); }
 });
 
 router.get('/:id', auth, async (req, res) => {
-  try {
-      const chat = await Chat.findOne({ _id: req.params.id, userId: req.user.id });
-      if (!chat) return res.status(404).json({ message: "Chat not found" });
-      res.json(chat);
-  } catch(e) { res.status(500).json({message: "Error loading chat"}); }
+  try { const chat = await Chat.findOne({ _id: req.params.id, userId: req.user.id }); res.json(chat); } 
+  catch(e) { res.status(500).json({message: "Error"}); }
 });
 
 export default router;
