@@ -12,11 +12,11 @@ const API_URL = "https://cneapee-backend-703598443794.asia-south1.run.app/api/ad
 const getPlanLimit = (planName) => {
   const plan = planName?.toLowerCase() || 'free';
   switch(plan) {
-    case 'neo': return 27000;
-    case 'working': return 60000;
-    case 'coder': return 204000;
+    case 'neo': return 100000;
+    case 'flow': return 300000;
+    case 'maxx': return 1000000;
     case 'free': 
-    default: return 4000;
+    default: return 10000;
   }
 };
 
@@ -292,7 +292,7 @@ export default function AdminDashboard() {
                        {/* Text Plan */}
                        <td className="p-5">
                           <select value={user.plan || 'free'} onChange={(e) => handleUpdatePlan(user._id, e.target.value, 'text')} className="bg-black border border-white/10 rounded px-2 py-1 text-xs text-zinc-300 outline-none cursor-pointer">
-                              <option value="free">Free</option><option value="neo">Neo</option><option value="working">Working</option><option value="coder">Coder</option>
+                              <option value="free">Free</option><option value="neo">Neo</option><option value="flow">Flow</option><option value="maxx">Maxx</option>
                           </select>
                        </td>
 

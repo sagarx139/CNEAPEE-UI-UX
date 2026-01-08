@@ -5,63 +5,89 @@ import axios from 'axios';
 import { 
   ArrowRight, GraduationCap, HeartPulse, Newspaper, 
   Store, MessageCircle, Sparkles, ChevronRight, 
-  LogOut, User, Zap, MoreVertical, X, LayoutGrid, Megaphone, Shield 
+  LogOut, Zap, X, LayoutGrid, 
+  Megaphone, Shield, Sun, Moon, Search, Menu
 } from 'lucide-react';
 
-import LOGO from './assets/logo2026.png';
+import LOGO from './assets/logo2026.png'; 
 
-// ✅ CONFIRM YOUR BACKEND URL
 const API_URL = "https://cneapee-backend-703598443794.asia-south1.run.app/api";
 
-// ⚡ MEMOIZED COMPONENTS (Prevents Re-renders on scroll)
-const BentoCard = memo(({ title, desc, icon: Icon, color, className = "", onClick }) => (
-  <div onClick={onClick} className={`group relative p-5 bg-[#0e0e11] border border-white/5 hover:border-white/10 rounded-3xl cursor-pointer transition-all duration-300 active:scale-95 flex flex-col justify-between overflow-hidden ${className}`}>
-    {/* Static Gradient instead of Blur for Performance */}
-    <div className={`absolute top-0 right-0 w-24 h-24 ${color} opacity-[0.08] rounded-bl-full pointer-events-none`} />
-    
-    <div className="relative z-10">
-      <div className={`w-10 h-10 rounded-xl ${color} bg-opacity-10 flex items-center justify-center text-${color.replace('bg-', '')} mb-3 group-hover:scale-105 transition-transform duration-300`}>
-         <Icon size={20} className="text-white opacity-90" />
-      </div>
-      <h3 className="text-sm font-bold text-zinc-100">{title}</h3>
-      <p className="text-xs text-zinc-500 mt-1 font-medium">{desc}</p>
+// --- THEME HOOK ---
+const useTheme = () => {
+  const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'dark');
+  
+  useEffect(() => {
+    const root = window.document.documentElement;
+    root.classList.remove('light', 'dark');
+    root.classList.add(theme);
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => setTheme(prev => prev === 'dark' ? 'light' : 'dark');
+  return { theme, toggleTheme };
+};
+
+// --- BENTO CARD ---
+const BentoCard = memo(({ title, desc, icon: Icon, colorClass, onClick, isDark, className="" }) => (
+  <div 
+    onClick={onClick} 
+    className={`
+      group relative p-5 rounded-3xl cursor-pointer 
+      transition-all duration-300 active:scale-[0.98] transform-gpu
+      flex flex-col justify-between overflow-hidden
+      ${isDark 
+        ? 'bg-[#121214] border border-white/5 hover:border-white/10' 
+        : 'bg-white border border-zinc-200 shadow-sm hover:shadow-md hover:border-zinc-300'
+      } ${className}
+    `}
+  >
+    <div className={`
+      w-10 h-10 rounded-xl flex items-center justify-center mb-3 transition-colors
+      ${isDark ? 'bg-white/5 text-white' : 'bg-zinc-100 text-zinc-900'}
+    `}>
+         <Icon size={18} className={colorClass} />
     </div>
-    <div className="relative z-10 flex justify-end opacity-0 group-hover:opacity-100 transition-opacity duration-300 translate-y-2 group-hover:translate-y-0">
-      <ChevronRight size={16} className="text-zinc-400" />
+    
+    <div>
+      <h3 className={`text-sm font-bold tracking-tight ${isDark ? 'text-zinc-100' : 'text-zinc-900'}`}>{title}</h3>
+      <p className={`text-[12px] mt-1 font-medium leading-tight ${isDark ? 'text-zinc-500' : 'text-zinc-500'}`}>{desc}</p>
+    </div>
+    
+    <div className={`absolute bottom-5 right-5 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300`}>
+      <ChevronRight size={16} className={isDark ? 'text-zinc-500' : 'text-zinc-400'} />
     </div>
   </div>
 ));
 
-const MobileMenuItem = memo(({ onClick, label, icon: Icon, isDanger }) => (
-  <button onClick={onClick} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium active:scale-95 transition-transform ${isDanger ? 'text-red-400 bg-red-500/5' : 'text-zinc-300 hover:bg-white/5'}`}>
-    <Icon size={18} /> {label}
-  </button>
-));
-
 export default function Home({ user, onLoginSuccess, onLogout }) {
   const navigate = useNavigate();
+  const { theme, toggleTheme } = useTheme();
+  const isDark = theme === 'dark';
+  
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [broadcast, setBroadcast] = useState(null);
+  const [inputPrompt, setInputPrompt] = useState("");
   const menuRef = useRef(null);
 
-  // 1. Optimized Scroll Handler (Throttled via requestAnimationFrame)
   useEffect(() => {
-    let ticking = false;
-    const handleScroll = () => {
-      if (!ticking) {
-        window.requestAnimationFrame(() => {
-          setScrolled(window.scrollY > 20);
-          ticking = false;
-        });
-        ticking = true;
-      }
-    };
-    window.addEventListener('scroll', handleScroll, { passive: true }); // passive: true improves performance
+    const handleScroll = () => requestAnimationFrame(() => setScrolled(window.scrollY > 10));
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // 2. Click Outside
+  useEffect(() => {
+    axios.post(`${API_URL}/admin/track-view`).catch(() => {});
+    const fetchBroadcast = async () => {
+        try {
+            const { data } = await axios.get(`${API_URL}/admin/get-broadcast`);
+            if (data?.message) setBroadcast(data.message);
+        } catch (e) {}
+    };
+    fetchBroadcast();
+  }, []);
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
@@ -72,168 +98,198 @@ export default function Home({ user, onLoginSuccess, onLogout }) {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // 3. Analytics & Broadcast
-  useEffect(() => {
-    axios.post(`${API_URL}/admin/track-view`).catch(() => {});
-    const fetchBroadcast = async () => {
-        try {
-            const { data } = await axios.get(`${API_URL}/admin/get-broadcast`);
-            if (data && data.message) setBroadcast(data.message);
-        } catch (error) { console.error("Banner Error:", error); }
-    };
-    fetchBroadcast();
-  }, []);
-
   const handleProtectedNav = (path) => {
     setMobileMenuOpen(false);
     if (user) navigate(path);
     else document.getElementById('google-login-btn')?.click();
   };
 
+  const handlePromptSubmit = (e) => {
+    e.preventDefault();
+    if (!inputPrompt.trim()) return;
+    if (user) {
+        navigate('/chatbot', { state: { initialPrompt: inputPrompt } });
+    } else {
+        document.getElementById('google-login-btn')?.click();
+    }
+  };
+
   return (
-    // Removed noise overlay, using clean CSS radial gradient
-    <div className="min-h-screen bg-[#050505] text-white font-sans selection:bg-indigo-500/30 relative overflow-x-hidden bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#13111c] via-[#050505] to-[#050505]">
+    <div className={`min-h-screen font-sans selection:bg-indigo-500/30 transition-colors duration-300 ${isDark ? 'bg-[#050505] text-white' : 'bg-[#fafafa] text-zinc-900'}`}>
       
-      {/* --- BROADCAST BANNER --- */}
       {broadcast && (
-        <div className="fixed top-0 left-0 right-0 z-[100] bg-indigo-600 text-white text-xs font-bold py-2.5 px-4 text-center shadow-md animate-in slide-in-from-top duration-300 flex justify-between items-center">
+        <div className="fixed top-0 left-0 right-0 z-[100] bg-indigo-600 text-white text-xs font-bold py-2.5 px-4 text-center flex justify-between items-center animate-in slide-in-from-top">
             <div className="mx-auto flex items-center gap-2">
                 <Megaphone size={14} className="text-yellow-300 animate-pulse"/>
                 <span className="truncate max-w-[80vw]">{broadcast}</span>
             </div>
-            <button onClick={() => setBroadcast(null)} className="absolute right-2 p-1.5 opacity-70 hover:opacity-100">
-                <X size={14}/>
-            </button>
+            <button onClick={() => setBroadcast(null)} className="opacity-80 hover:opacity-100"><X size={14}/></button>
         </div>
       )}
 
-      {/* --- NAVBAR --- */}
+      {/* --- SINGLE PILL NAVBAR (RESPONSIVE FIX) --- */}
+      {/* Centered container */}
       <nav 
-        className={`fixed left-0 right-0 z-50 flex justify-center transition-all duration-300 ease-out will-change-transform
-        ${broadcast ? 'top-10' : 'top-0'} 
-        ${scrolled ? 'py-2' : 'py-6'}`}
+        className={`fixed left-0 right-0 z-50 flex justify-center transition-all duration-300 pointer-events-none
+        ${broadcast ? 'top-14' : 'top-6'} 
+        `}
       >
-        <div 
-          className={`
-            w-[92%] max-w-6xl px-5 h-14 md:h-16 flex items-center justify-between rounded-2xl transition-all duration-300
-            ${scrolled 
-                ? 'bg-[#0f0f11]/90 backdrop-blur-md border border-white/5 shadow-2xl shadow-black/50' 
-                : 'bg-transparent border border-transparent'}
-          `}
-        >
-          {/* LOGO */}
-          <div className="flex items-center gap-2.5 cursor-pointer active:opacity-70 transition-opacity" onClick={() => navigate('/')}>
-             <img src={LOGO} alt="Logo" className="w-7 h-7 object-contain" />
-             <span className="font-bold text-lg tracking-tight text-white hidden sm:block">CNEAPEE</span>
-          </div>
+        <div className={`
+          pointer-events-auto flex items-center gap-2 p-2 pl-4 pr-2 rounded-full shadow-2xl border backdrop-blur-xl transition-all duration-300
+          ${scrolled ? 'scale-[0.98]' : 'scale-100'}
+          ${isDark 
+            ? 'bg-[#121214]/90 border-white/10 shadow-black/50' 
+            : 'bg-white/90 border-zinc-200 shadow-zinc-200/50'}
+        `}>
+          
+            {/* Logo */}
+            <div className="flex items-center justify-center cursor-pointer shrink-0" onClick={() => navigate('/')}>
+                <img src={LOGO} alt="Logo" className="w-7 h-7 object-contain" />
+            </div>
 
-          {/* DESKTOP LINKS */}
-          <div className="hidden md:flex items-center gap-6 text-sm font-medium text-zinc-400">
-             {['Vision', 'Pricing', 'Privacy'].map((item) => (
-                 <button 
-                    key={item}
-                    onClick={() => handleProtectedNav(item === 'Privacy' ? '/policy' : `/${item.toLowerCase()}`)} 
-                    className="hover:text-white hover:bg-white/5 px-3 py-1.5 rounded-lg transition-all"
-                 >
-                    {item}
-                 </button>
-             ))}
-          </div>
+            {/* Desktop Links (Hidden on small screens) */}
+            <div className="hidden md:flex items-center gap-1 ml-2">
+                {['Vision', 'Pricing', 'Privacy'].map((item) => (
+                    <button 
+                        key={item}
+                        onClick={() => handleProtectedNav(item === 'Privacy' ? '/policy' : `/${item.toLowerCase()}`)} 
+                        className={`px-4 py-1.5 rounded-full text-xs font-medium transition-colors ${isDark ? 'text-zinc-400 hover:text-white hover:bg-white/10' : 'text-zinc-600 hover:text-black hover:bg-zinc-100'}`}
+                    >
+                        {item}
+                    </button>
+                ))}
+                
+                {/* Vertical Divider */}
+                <div className={`w-px h-5 mx-2 ${isDark ? 'bg-white/10' : 'bg-zinc-200'}`}></div>
+            </div>
 
-          {/* PROFILE / MENU */}
-          <div className="flex items-center gap-3">
+            {/* Spacer for Mobile (pushes controls to right) */}
+            <div className="md:hidden flex-1 w-2"></div>
+
+            {/* Mobile Menu Trigger (Visible on Mobile) */}
+            <div className="md:hidden relative shrink-0" ref={menuRef}>
+                <button 
+                    onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                    className={`p-2 rounded-full transition-colors ${isDark ? 'text-zinc-400 hover:bg-white/10' : 'text-zinc-600 hover:bg-zinc-100'}`}
+                >
+                    {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+                </button>
+
+                 {mobileMenuOpen && (
+                 <div className={`absolute top-12 right-0 w-48 p-2 rounded-2xl border shadow-2xl z-50 animate-in fade-in zoom-in-95 origin-top-right ${isDark ? 'bg-[#18181b] border-white/10' : 'bg-white border-zinc-200'}`}>
+                    {['Vision', 'Pricing', 'Privacy'].map(item => (
+                      <button key={item} onClick={() => handleProtectedNav(item === 'Privacy' ? '/policy' : `/${item.toLowerCase()}`)} className={`w-full text-left px-3 py-2.5 rounded-xl text-xs font-medium mb-1 ${isDark ? 'text-zinc-300 hover:bg-white/5' : 'text-zinc-700 hover:bg-zinc-50'}`}>
+                        {item}
+                      </button>
+                    ))}
+                    <div className={`h-px my-1 ${isDark ? 'bg-white/10' : 'bg-zinc-100'}`}></div>
+                    <button onClick={onLogout} className="w-full text-left px-3 py-2.5 rounded-xl text-xs font-medium text-red-500 hover:bg-red-500/10 flex items-center gap-2">
+                       <LogOut size={14}/> Logout
+                    </button>
+                 </div>
+               )}
+            </div>
+
+            {/* Theme Toggle */}
+            <button 
+                onClick={toggleTheme}
+                className={`p-2 rounded-full transition-colors shrink-0 ${isDark ? 'text-zinc-400 hover:text-yellow-300 hover:bg-white/10' : 'text-zinc-400 hover:text-indigo-600 hover:bg-zinc-100'}`}
+            >
+                {isDark ? <Moon size={20} /> : <Sun size={20} />}
+            </button>
+
+            {/* Profile Picture (Only Icon) */}
             {user ? (
-              <>
-                <div onClick={() => navigate('/profile')} className="flex items-center gap-2 pl-1 pr-3 py-1 rounded-full bg-zinc-800/50 border border-white/5 hover:border-white/20 transition-all cursor-pointer">
-                   <img src={user.picture} alt="User" className="w-6 h-6 rounded-full" referrerPolicy="no-referrer"/>
-                   <span className="text-xs font-bold text-zinc-200 hidden sm:block">{user.name.split(' ')[0]}</span>
+                <div onClick={() => navigate('/profile')} className="cursor-pointer relative group shrink-0 ml-1">
+                    <img 
+                        src={user.picture} 
+                        alt="Profile" 
+                        referrerPolicy="no-referrer"
+                        className={`w-9 h-9 rounded-full border-2 transition-all ${isDark ? 'border-zinc-700 group-hover:border-white/50' : 'border-white shadow-sm group-hover:border-zinc-300'}`} 
+                    />
                 </div>
-
-                {/* MOBILE MENU */}
-                <div className="relative md:hidden" ref={menuRef}>
-                  <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="p-2 rounded-xl bg-zinc-800/50 text-zinc-300 active:bg-zinc-700 transition">
-                    {mobileMenuOpen ? <X size={18} /> : <MoreVertical size={18} />}
-                  </button>
-                  {mobileMenuOpen && (
-                    <div className="absolute right-0 top-full mt-2 w-56 bg-[#18181b] border border-white/10 rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200 z-[60]">
-                      <div className="p-1.5 space-y-0.5">
-                         <MobileMenuItem onClick={() => handleProtectedNav('/vision')} label="Vision" icon={LayoutGrid} />
-                         <MobileMenuItem onClick={() => handleProtectedNav('/pricing')} label="Pricing" icon={Zap} />
-                         <MobileMenuItem onClick={() => handleProtectedNav('/policy')} label="Policy" icon={Shield} />
-                         <div className="h-px bg-white/5 my-1" />
-                         <MobileMenuItem onClick={() => navigate('/profile')} label="Profile" icon={User} />
-                         <MobileMenuItem onClick={onLogout} label="Logout" icon={LogOut} isDanger />
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </>
             ) : (
-              <div id="google-login-btn">
-                <GoogleLogin onSuccess={onLoginSuccess} onError={() => {}} theme="filled_black" shape="pill" size="medium" text="signin" />
-              </div>
+                <div id="google-login-btn" className="ml-1 shrink-0">
+                    <GoogleLogin onSuccess={onLoginSuccess} onError={() => {}} type="icon" theme={isDark ? "filled_black" : "outline"} shape="circle" />
+                </div>
             )}
-          </div>
         </div>
       </nav>
 
       {/* --- HERO SECTION --- */}
-      <main className="relative pt-36 px-4 max-w-6xl mx-auto pb-20">
+      <main className="relative pt-32 md:pt-48 px-4 max-w-6xl mx-auto pb-24">
         
-        {/* LIGHTWEIGHT BACKGROUND GLOW (CSS Gradient only) */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-indigo-600/10 blur-[80px] rounded-full pointer-events-none -z-10" />
+        <div className={`absolute top-20 left-1/2 -translate-x-1/2 w-[300px] md:w-[600px] h-[300px] md:h-[400px] rounded-full blur-[80px] md:blur-[100px] pointer-events-none -z-10 ${isDark ? 'bg-indigo-600/10' : 'bg-indigo-500/5'}`} />
 
-        <div className="text-center max-w-2xl mx-auto mb-12">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/5 text-indigo-300 text-[10px] font-bold uppercase tracking-wider mb-6">
-            🎉 Happy New Year 2026
-          </div>
-          <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-4 text-white drop-shadow-lg">
-            Limitless AI.
+        <div className="text-center max-w-3xl mx-auto mb-10 md:mb-14">
+          <h1 className={`text-5xl sm:text-6xl md:text-6xl font-bold tracking-tight mb-4 md:mb-6 ${isDark ? 'text-white' : 'text-zinc-900'}`}>
+             Limitless AI Ecosystem.
           </h1>
-          <p className="text-base text-zinc-400 max-w-md mx-auto leading-relaxed">
-            Your all-in-one ecosystem to create, learn, and organize.
+          
+          <p className={`text-[15px] sm:text-base max-w-xs md:max-w-xl mx-auto leading-relaxed ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>
+            Your intelligent ecosystem to create, learn, and organize. Experience the speed of thought.
           </p>
         </div>
 
-        {/* --- OPTIMIZED ASK BAR (No heavy blurs) --- */}
-        <div className="w-full max-w-lg mx-auto relative group z-20 mb-16">
-            <div className="absolute -inset-0.5 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full opacity-30 blur-md group-hover:opacity-60 transition duration-500"></div>
-            <button onClick={() => handleProtectedNav('/chatbot')} className="relative w-full flex items-center p-3.5 pl-5 rounded-full bg-[#09090b] text-white transition-transform active:scale-[0.98]">
-                <Sparkles className="mr-3 text-indigo-500" size={18} />
-                <span className="flex-1 text-left text-sm text-zinc-400 font-medium group-hover:text-zinc-200">
-                  Plan your year with Cneapee...
-                </span>
-                <div className="w-8 h-8 rounded-full bg-white/10 text-white flex items-center justify-center">
-                  <ArrowRight size={16} />
+        {/* --- INPUT BAR --- */}
+        <div className="w-full max-w-xl mx-auto mb-12 md:mb-20 px-1">
+             <form 
+                onSubmit={handlePromptSubmit}
+                className={`
+                  relative group flex items-center rounded-2xl p-2 transition-all duration-300 
+                  ${isDark 
+                    ? 'bg-[#121214] border border-white/10 focus-within:border-indigo-500/50 shadow-black/50' 
+                    : 'bg-white border border-zinc-200 focus-within:border-indigo-500/50 shadow-xl shadow-zinc-200/50'
+                  } shadow-lg
+                `}
+             >
+                <div className="pl-4 pr-3 text-zinc-400">
+                    <Sparkles size={18} className={isDark ? "text-indigo-400" : "text-indigo-600"} />
                 </div>
-            </button>
+                <input 
+                    type="text"
+                    value={inputPrompt}
+                    onChange={(e) => setInputPrompt(e.target.value)}
+                    placeholder="Ask Cneapee anything..."
+                    className={`flex-1 bg-transparent text-[15px] outline-none h-11 w-full ${isDark ? 'text-white placeholder:text-zinc-600' : 'text-zinc-900 placeholder:text-zinc-400'}`}
+                />
+                <button 
+                    type="submit"
+                    className={`
+                        p-3 rounded-xl transition-all duration-200 shrink-0
+                        ${inputPrompt.trim() 
+                          ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/20 transform scale-100' 
+                          : `scale-90 ${isDark ? 'bg-white/5 text-zinc-600' : 'bg-zinc-100 text-zinc-400'}`
+                        }
+                    `}
+                >
+                    <ArrowRight size={18} />
+                </button>
+             </form>
         </div>
 
-        {/* --- PERFORMANCE GRID --- */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 auto-rows-[130px]">
-          <BentoCard title="Learning+" desc="AI Tutor" icon={GraduationCap} color="bg-amber-500" className="col-span-2 md:col-span-1" onClick={() => handleProtectedNav('/learning')} />
-          <BentoCard title="Health+" desc="Wellness" icon={HeartPulse} color="bg-rose-500" className="col-span-2 md:col-span-1" onClick={() => handleProtectedNav('/health')} />
-          <BentoCard title="News+" desc="Insights" icon={Newspaper} color="bg-emerald-500" className="col-span-2 md:col-span-1" onClick={() => handleProtectedNav('/news')} />
-          <BentoCard title="Convo+" desc="Chat AI" icon={MessageCircle} color="bg-cyan-500" className="col-span-2 md:col-span-1" onClick={() => handleProtectedNav('/convo')} />
-          <BentoCard title="Store+" desc="Shop" icon={Store} color="bg-indigo-500" className="col-span-2 md:col-span-1" onClick={() => handleProtectedNav('/store')} />
+        {/* --- BENTO GRID (Responsive Fix: grid-cols-1 on small mobile) --- */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 auto-rows-[140px] md:auto-rows-[160px]">
           
-          <BentoCard title="Studio+" desc="Create" icon={Sparkles} color="bg-purple-500" className="col-span-2 md:col-span-2" onClick={() => handleProtectedNav('/studio')} />
-          
-          {/* Upgrade Card (Simplified) */}
-          <div onClick={() => handleProtectedNav('/pricing')} className="col-span-2 md:col-span-1 group relative p-5 rounded-3xl bg-gradient-to-b from-[#18181b] to-[#0e0e11] border border-white/10 hover:border-indigo-500/30 transition-all cursor-pointer active:scale-95 flex flex-col justify-between">
-             <div>
-               <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white mb-2 shadow-lg shadow-indigo-500/20"><Zap size={16}/></div>
-               <h3 className="text-sm font-bold text-white">Pro Plan</h3>
-             </div>
-             <div className="flex items-center justify-between text-indigo-400 text-xs font-bold uppercase tracking-wide">
-               <span>Upgrade</span> <ArrowRight size={14} />
-             </div>
-          </div>
+          <BentoCard title="Learning" desc="AI Teaching Environment" icon={GraduationCap} colorClass="text-amber-500" isDark={isDark} onClick={() => handleProtectedNav('/learning')} />
+          <BentoCard title="Health" desc="Wellness" icon={HeartPulse} colorClass="text-rose-500" isDark={isDark} onClick={() => handleProtectedNav('/health')} />
+          <BentoCard title="News" desc="Briefings" icon={Newspaper} colorClass="text-emerald-500" isDark={isDark} onClick={() => handleProtectedNav('/news')} />
+          <BentoCard title="Chat" desc="Assistant" icon={MessageCircle} colorClass="text-cyan-500" isDark={isDark} onClick={() => handleProtectedNav('/convo')} />
+          <BentoCard title="Store+" desc="Premium Gadgets from CNEAPEE" icon={Store} colorClass="text-indigo-500" isDark={isDark} onClick={() => handleProtectedNav('/store')} />
+          <BentoCard title="Audio Studio" desc="Creative Audio Suite" icon={Zap} colorClass="text-yellow-500" isDark={isDark} onClick={() => handleProtectedNav('/studio')} />
+          <BentoCard title="AI IMAGINE" desc="Image Generation" icon={LayoutGrid} colorClass="text-pink-500" isDark={isDark} onClick={() => handleProtectedNav('/imagine')} />
+          <BentoCard title="Enterprise Solutions" desc="Business Solutions" icon={Shield} colorClass="text-green-500" isDark={isDark} onClick={() => handleProtectedNav('/enterprise')} />
         </div>
       </main>
 
-      <footer className="py-6 text-center border-t border-white/5 text-zinc-700 text-[10px] uppercase tracking-widest">
-         CNEAPEE AI © 2026
+      <footer className={`py-10 text-center border-t ${isDark ? 'border-white/5 bg-[#050505]' : 'border-zinc-100 bg-[#fafafa]'}`}>
+         <div className="flex items-center justify-center gap-2 mb-4 opacity-50">
+            <img src={LOGO} alt="Logo" className="w-5 h-5 grayscale" />
+            <span className={`text-sm font-bold ${isDark ? 'text-white' : 'text-black'}`}>CNEAPEE WebApp v2.0.2</span>
+         </div>
+         <p className={`text-xs ${isDark ? 'text-zinc-600' : 'text-zinc-400'}`}>
+            © 2026 Cneapee AI Technologies. All rights reserved.
+         </p>
       </footer>
     </div>
   );

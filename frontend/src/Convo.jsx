@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Snowflake, Gift, Trees, ArrowRight, Bell, Home } from 'lucide-react';
-import config from './config';
+import { Sun, Wind, Send, ArrowRight, Bell, Home, MessageCircle } from 'lucide-react';
 
 const Convo = ({ onNavigate }) => {
-  const [isDarkMode, setIsDarkMode] = useState(true);
+  const [isDarkMode, setIsDarkMode] = useState(false);
 
   // Handle Body Class for Dark Mode
   useEffect(() => {
@@ -16,48 +15,60 @@ const Convo = ({ onNavigate }) => {
 
   const toggleTheme = () => setIsDarkMode(!isDarkMode);
 
-  // --- SNOW COMPONENT ---
-  const Snow = () => (
-    <div className="snow-container">
-        {[...Array(50)].map((_, i) => (
-            <div key={i} className="snowflake" style={{
+  // --- KITE COMPONENT (Replaces Snow) ---
+  const Kites = () => (
+    <div className="kite-container">
+        {[...Array(6)].map((_, i) => (
+            <div key={i} className="kite" style={{
                 left: `${Math.random() * 100}%`,
-                animationDuration: `${Math.random() * 3 + 5}s`,
-                animationDelay: `-${Math.random() * 5}s`,
-                opacity: Math.random()
-            }} />
+                top: `${Math.random() * 100}%`,
+                animationDuration: `${Math.random() * 10 + 15}s`,
+                animationDelay: `-${Math.random() * 10}s`,
+                transform: `scale(${0.5 + Math.random()})`,
+                opacity: 0.6
+            }}>
+              <div className="kite-diamond" style={{ backgroundColor: i % 2 === 0 ? '#ff8c00' : '#ffd700' }}></div>
+              <div className="kite-string"></div>
+            </div>
         ))}
+    </div>
+  );
+
+  // --- CHAT ANIMATION COMPONENT ---
+  const ChatPreview = () => (
+    <div className="chat-preview">
+        <div className="chat-bubble left">Happy Makar Sankranti! 🪁</div>
+        <div className="chat-bubble right">Kai Po Che! Let's fly kites today! ☀️</div>
+        <div className="chat-bubble left">The new Convo app looks amazing.</div>
     </div>
   );
 
   return (
     <div className="convo-app">
-      {/* Background Snow */}
-      <Snow />
+      <Kites />
 
       <style>{`
         :root {
-            /* Holiday Palette */
-            --holiday-red: #d42426;
-            --holiday-green: #165b33;
-            --holiday-gold: #f8b229;
-            --snow-white: #ffffff;
+            /* Makar Sankranti Palette */
+            --sankranti-orange: #ff8c00;
+            --sankranti-yellow: #ffd700;
+            --sky-blue: #87ceeb;
+            --harvest-green: #2e7d32;
             
             /* Light Theme */
-            --bg-light: #f4f6f9;
-            --text-light: #1c1c1e;
-            --card-light: rgba(255, 255, 255, 0.8);
+            --bg-light: #fffcf0;
+            --text-light: #2c2c2e;
+            --card-light: rgba(255, 255, 255, 0.9);
             
-            /* Dark Theme (Silent Night) */
-            --bg-dark: #0b0f19;
-            --text-dark: #f0f0f0;
-            --card-dark: rgba(20, 25, 35, 0.6);
+            /* Dark Theme */
+            --bg-dark: #1a120b;
+            --text-dark: #fefae0;
+            --card-dark: rgba(45, 35, 20, 0.7);
 
-            /* Default mappings */
             --background-color: var(--bg-light);
             --text-color: var(--text-light);
             --card-bg: var(--card-light);
-            --accent-color: var(--holiday-red);
+            --accent-color: var(--sankranti-orange);
         }
 
         body.dark-mode {
@@ -66,223 +77,108 @@ const Convo = ({ onNavigate }) => {
             --card-bg: var(--card-dark);
         }
 
-        /* Base Styles */
         .convo-app {
             font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
             background-color: var(--background-color);
             background-image: 
-                radial-gradient(circle at 10% 20%, rgba(212, 36, 38, 0.05) 0%, transparent 40%),
-                radial-gradient(circle at 90% 80%, rgba(22, 91, 51, 0.05) 0%, transparent 40%);
+                radial-gradient(circle at 10% 20%, rgba(255, 140, 0, 0.1) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(135, 206, 235, 0.1) 0%, transparent 40%);
             color: var(--text-color);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            transition: background-color 0.4s ease, color 0.4s ease;
+            transition: all 0.4s ease;
             position: relative;
             overflow: hidden;
         }
 
-        /* Snow Animation */
-        .snow-container {
+        /* Kite Animation */
+        .kite-container {
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
             pointer-events: none;
-            z-index: 0;
-            overflow: hidden;
+            z-index: 1;
         }
-        .snowflake {
+        .kite {
             position: absolute;
-            top: -10px;
-            width: 6px; 
-            height: 6px;
-            background: white;
-            border-radius: 50%;
-            filter: blur(1px);
-            animation: fall linear infinite;
+            animation: drift linear infinite;
         }
-        @keyframes fall {
-            to { transform: translateY(110vh); }
+        .kite-diamond {
+            width: 30px; height: 30px;
+            transform: rotate(45deg);
+            border: 2px solid rgba(0,0,0,0.1);
         }
-
-        /* Header */
-        .main-header {
-            padding: 24px 0;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .container {
-            max-width: 1000px;
+        .kite-string {
+            width: 1px; height: 50px;
+            background: rgba(0,0,0,0.2);
             margin: 0 auto;
-            padding: 0 24px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            transform: rotate(10deg);
+        }
+        @keyframes drift {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            50% { transform: translate(100px, -50px) rotate(10deg); }
+            100% { transform: translate(0, 0) rotate(0deg); }
         }
 
-        .logo {
-            font-size: 1.5rem;
-            font-weight: 800;
-            text-decoration: none;
-            color: var(--text-color);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .logo-badge {
-            font-size: 0.7rem;
-            background: var(--holiday-red);
-            color: white;
-            padding: 2px 8px;
-            border-radius: 20px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        /* Navigation Actions */
-        .nav-actions {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
+        /* Header Styles */
+        .main-header { padding: 24px 0; position: sticky; top: 0; z-index: 100; }
+        .container { max-width: 1000px; margin: 0 auto; padding: 0 24px; display: flex; justify-content: space-between; align-items: center; }
         
-        /* Icon Button (Square-ish) */
-        .icon-btn {
-            background: var(--card-bg);
-            border: 1px solid rgba(255,255,255,0.1);
-            width: 44px; height: 44px;
-            border-radius: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            color: var(--text-color);
-            backdrop-filter: blur(10px);
-            transition: all 0.2s;
-        }
-        .icon-btn:hover {
-            transform: scale(1.05);
-            background: var(--accent-color);
-            color: white;
-            border-color: var(--accent-color);
-        }
+        .logo { font-size: 1.5rem; font-weight: 800; text-decoration: none; color: var(--text-color); display: flex; align-items: center; gap: 10px; }
+        .logo-badge { font-size: 0.7rem; background: var(--sankranti-orange); color: white; padding: 2px 8px; border-radius: 20px; text-transform: uppercase; }
 
-        /* Pill Button (Home) */
-        .pill-btn {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 10px 20px;
-            background: var(--card-bg);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 50px; /* Pill Shape */
-            color: var(--text-color);
-            cursor: pointer;
-            backdrop-filter: blur(10px);
-            transition: all 0.2s;
-            font-weight: 600;
-            font-size: 0.9rem;
-            text-decoration: none;
+        .nav-actions { display: flex; align-items: center; gap: 12px; }
+        .icon-btn, .pill-btn { 
+            background: var(--card-bg); border: 1px solid rgba(0,0,0,0.05); 
+            border-radius: 14px; display: flex; align-items: center; justify-content: center;
+            cursor: pointer; color: var(--text-color); backdrop-filter: blur(10px); transition: all 0.2s;
         }
-        .pill-btn:hover {
-            transform: scale(1.05);
-            background: var(--text-color); /* Invert colors on hover */
-            color: var(--background-color);
-        }
+        .icon-btn { width: 44px; height: 44px; }
+        .pill-btn { padding: 10px 20px; border-radius: 50px; font-weight: 600; gap: 8px; }
+        
+        .icon-btn:hover, .pill-btn:hover { transform: scale(1.05); background: var(--accent-color); color: white; }
 
-        /* Hero */
-        .hero {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 40px 20px;
-            z-index: 10;
-        }
-
-        .gift-box-anim {
+        /* Hero & Chat Animation */
+        .hero { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 40px 20px; z-index: 10; }
+        
+        .chat-preview {
+            width: 100%; max-width: 320px;
             margin-bottom: 30px;
-            position: relative;
+            display: flex; flex-direction: column; gap: 10px;
         }
-        
-        .hero h1 {
-            font-size: 4rem;
-            font-weight: 800;
-            letter-spacing: -2px;
-            margin-bottom: 20px;
-            line-height: 1.1;
-            background: linear-gradient(135deg, var(--text-color) 0%, var(--secondary-text-color) 100%);
-            -webkit-background-clip: text;
+        .chat-bubble {
+            padding: 12px 18px; border-radius: 18px; font-size: 0.9rem;
+            max-width: 80%; animation: fadeInUp 0.5s ease-out forwards;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
         }
-        
-        .highlight-text {
-            color: var(--holiday-red);
-            position: relative;
-            display: inline-block;
-        }
-        .highlight-text::after {
-            content: '';
-            position: absolute;
-            bottom: 5px; left: 0; right: 0;
-            height: 12px;
-            background: rgba(212, 36, 38, 0.2);
-            z-index: -1;
-            transform: rotate(-2deg);
+        .chat-bubble.left { align-self: flex-start; background: var(--card-bg); border-bottom-left-radius: 4px; }
+        .chat-bubble.right { align-self: flex-end; background: var(--sankranti-orange); color: white; border-bottom-right-radius: 4px; }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        .hero p {
-            font-size: 1.2rem;
-            color: var(--text-color);
-            opacity: 0.8;
-            max-width: 500px;
-            margin: 0 auto 40px;
-            line-height: 1.6;
-        }
+        .hero h1 { font-size: 3.5rem; font-weight: 800; margin-bottom: 15px; }
+        .highlight-text { color: var(--sankranti-orange); }
 
-        /* Call to Action */
         .cta-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            text-decoration: none;
-            font-weight: 700;
-            font-size: 1.1rem;
-            padding: 16px 40px;
-            border-radius: 50px;
-            transition: all 0.3s ease;
-            background: var(--holiday-red);
-            color: white;
-            box-shadow: 0 10px 30px rgba(212, 36, 38, 0.3);
+            display: inline-flex; align-items: center; gap: 10px; text-decoration: none;
+            font-weight: 700; padding: 16px 40px; border-radius: 50px;
+            background: var(--sankranti-orange); color: white;
+            box-shadow: 0 10px 30px rgba(255, 140, 0, 0.3); transition: all 0.3s;
         }
-        .cta-btn:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 15px 40px rgba(212, 36, 38, 0.4);
-            background: #b51b1d;
-        }
+        .cta-btn:hover { transform: translateY(-4px); box-shadow: 0 15px 40px rgba(255, 140, 0, 0.4); }
 
-        /* Wish Card */
         .wish-card {
-            margin-top: 40px;
-            background: var(--card-bg);
-            border: 1px solid rgba(255,255,255,0.1);
-            backdrop-filter: blur(10px);
-            padding: 20px 30px;
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            max-width: 400px;
+            margin-top: 40px; background: var(--card-bg); padding: 20px;
+            border-radius: 20px; display: flex; align-items: center; gap: 15px;
+            max-width: 450px; border: 1px solid rgba(0,0,0,0.05);
         }
-        .wish-icon { color: var(--holiday-green); }
-
+        
         @media (max-width: 768px) {
-            .hero h1 { font-size: 2.8rem; }
-            .hero p { font-size: 1rem; }
-            .pill-btn span { display: none; } /* Hide text on small screens */
-            .pill-btn { padding: 12px; border-radius: 50%; } /* Circle on small screens */
+            .hero h1 { font-size: 2.5rem; }
+            .pill-btn span { display: none; }
         }
       `}</style>
 
@@ -290,21 +186,18 @@ const Convo = ({ onNavigate }) => {
       <header className="main-header">
         <div className="container">
           <a href="#" className="logo">
-            <Gift size={24} className="text-red-500" />
+            <Sun size={24} className="text-orange-500" />
             <span>Convo+</span>
-            <span className="logo-badge">XMAS</span>
+            <span className="logo-badge">UTTARAYAN</span>
           </a>
           
           <div className="nav-actions">
-            {/* PILL SHAPE HOME BUTTON */}
             <button onClick={() => onNavigate && onNavigate('home')} className="pill-btn">
                <Home size={18} />
                <span>Home</span>
             </button>
-            
-            {/* Theme Toggle */}
-            <button onClick={toggleTheme} className="icon-btn" aria-label="Toggle theme">
-               {isDarkMode ? <Snowflake size={20} /> : <Trees size={20} />}
+            <button onClick={toggleTheme} className="icon-btn">
+               {isDarkMode ? <Sun size={20} /> : <Wind size={20} />}
             </button>
           </div>
         </div>
@@ -313,45 +206,35 @@ const Convo = ({ onNavigate }) => {
       {/* Main Content */}
       <main className="hero">
         
-        {/* Animated Icon */}
-        <div className="gift-box-anim">
-            <div style={{ 
-                width: '80px', height: '80px', 
-                background: 'linear-gradient(135deg, #d42426, #b51b1d)', 
-                borderRadius: '20px', 
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                boxShadow: '0 20px 50px rgba(212, 36, 38, 0.4)',
-                transform: 'rotate(-10deg)'
-            }}>
-                <Gift size={40} color="white" />
-            </div>
-        </div>
+        {/* Chat Animation Preview */}
+        <ChatPreview />
 
-        <h1>Unwrapping <span className="highlight-text">Soon</span></h1>
+        <h1>Soaring to <span className="highlight-text">New Heights</span></h1>
         
-        <p>
-          We're crafting the future of messaging in our workshop. <br />
-          Secure, private, and just in time for the new year.
+        <p style={{ maxWidth: '600px', opacity: 0.8, marginBottom: '30px' }}>
+          As the sun enters Capricorn, we're launching the next generation of 
+          private conversations. Higher security, brighter connections.
         </p>
 
         <a href="#" className="cta-btn">
-            Get on the Nice List <ArrowRight size={20} />
+            Join the Launch <Send size={20} />
         </a>
 
-        {/* Holiday Wish */}
+        {/* Festival Wish */}
         <div className="wish-card">
-            <Bell size={24} className="wish-icon" />
+            <div style={{ background: '#fff3e0', padding: '10px', borderRadius: '12px' }}>
+                <Sun size={24} color="#ff8c00" />
+            </div>
             <div style={{ textAlign: 'left' }}>
-                <strong style={{ display: 'block', fontSize: '0.9rem' }}>Season's Greetings</strong>
-                <span style={{ fontSize: '0.85rem', opacity: 0.7 }}>Wishing you a Merry Christmas and a joyful New Year from the Convo Team.</span>
+                <strong style={{ display: 'block', fontSize: '0.9rem' }}>Happy Makar Sankranti!</strong>
+                <span style={{ fontSize: '0.85rem', opacity: 0.7 }}>May your life be as colorful and high-flying as the kites in the sky.</span>
             </div>
         </div>
-
       </main>
 
       {/* Footer */}
-      <footer style={{ padding: '24px', textAlign: 'center', opacity: 0.6, fontSize: '0.85rem', zIndex: 10 }}>
-        <p>© 2025 CNEAPEE+. Made with ❤️ & ❄️.</p>
+      <footer style={{ padding: '24px', textAlign: 'center', opacity: 0.6, fontSize: '0.85rem' }}>
+        <p>© 2026 CONVO+. Happy Makar Sankranti & Pongal! 🪁☀️</p>
       </footer>
     </div>
   );
