@@ -63,7 +63,7 @@ export default function Profile({ onNavigate }) {
     );
 
   // ---- SAME LOGIC ----
-  const textLimits = { free: 4000, neo: 27000, working: 60000, coder: 200000 };
+  const textLimits = { free: 4000, neo: 27000, flow: 60000, maxx: 200000 };
   const imageLimits = { none: 0, gen_ai_first: 25, lite: 99, excess: 199, max: 499 };
 
   const textPlan = userData.plan || "free";

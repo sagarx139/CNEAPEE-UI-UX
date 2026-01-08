@@ -5,10 +5,10 @@ import axios from 'axios';
 import { 
   ArrowRight, GraduationCap, HeartPulse, Newspaper, 
   Store, MessageCircle, Sparkles, ChevronRight, 
-  LogOut, User, Zap, MoreVertical, X, LayoutGrid, Megaphone 
+  LogOut, User, Zap, MoreVertical, X, LayoutGrid, Megaphone, Shield 
 } from 'lucide-react';
 
-import LOGO from './assets/logo.png';
+import LOGO from './assets/logo2026.png';
 
 // ✅ CONFIRM YOUR BACKEND URL
 const API_URL = "https://cneapee-backend-703598443794.asia-south1.run.app/api";
@@ -159,6 +159,7 @@ export default function Home({ user, onLoginSuccess, onLogout }) {
                       <div className="p-1.5 space-y-0.5">
                          <MobileMenuItem onClick={() => handleProtectedNav('/vision')} label="Vision" icon={LayoutGrid} />
                          <MobileMenuItem onClick={() => handleProtectedNav('/pricing')} label="Pricing" icon={Zap} />
+                         <MobileMenuItem onClick={() => handleProtectedNav('/policy')} label="Policy" icon={Shield} />
                          <div className="h-px bg-white/5 my-1" />
                          <MobileMenuItem onClick={() => navigate('/profile')} label="Profile" icon={User} />
                          <MobileMenuItem onClick={onLogout} label="Logout" icon={LogOut} isDanger />

@@ -9,8 +9,8 @@ const API_URL = "https://cneapee-backend-703598443794.asia-south1.run.app/api/ad
 const TEXT_PLANS = [
   { name: "Free", price: "₹0", features: ["Basic chat", "Standard speed", "Limited usage"], primary: false, btnText: "Current Plan", disabled: true },
   { name: "Neo", price: "₹199", features: ["High daily limits", "More detailed responses", "Priority access"], primary: true, btnText: "Get Started", disabled: false },
-  { name: "Working", price: "₹499", features: ["Advanced reasoning", "Longer context"], primary: false, btnText: "Coming Soon", disabled: true },
-  { name: "Coder", price: "₹999", features: ["Maximum capability", "Advanced coding"], primary: false, btnText: "Coming Soon", disabled: true }
+  { name: "flow", price: "₹499", features: ["Advanced reasoning", "Longer context"], primary: false, btnText: "Coming Soon", disabled: true },
+  { name: "Maxx", price: "₹999", features: ["Maximum capability", "Advanced coding"], primary: false, btnText: "Coming Soon", disabled: true }
 ];
 
 const IMAGE_PLANS = [

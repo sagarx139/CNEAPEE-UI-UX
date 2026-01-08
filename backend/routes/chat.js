@@ -16,10 +16,10 @@ const MODEL_NAME = "gemini-2.5-flash-lite";
    PLAN LIMITS
 ============================ */
 const PLAN_LIMITS = {
-  free:    { daily: 4000,   monthly: 120000 },
-  neo:     { daily: 27000,  monthly: 810000 },
-  working: { daily: 60000,  monthly: 1800000 },
-  coder:   { daily: 204000, monthly: 6120000 }
+  free:    { daily: 10000,   monthly: 300000 },
+  neo:     { daily: 100000,  monthly: 3000000 },
+  flow: { daily: 300000,  monthly: 9000000 },
+  maxx:   { daily: 1000000, monthly: 30000000 }
 };
 
 // Simple token estimation

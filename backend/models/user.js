@@ -11,7 +11,7 @@ const userSchema = mongoose.Schema({
   // 👇 1. TEXT PLAN (For Chat & Coding) - Default: free
   plan: { 
     type: String, 
-    enum: ['free', 'neo', 'working', 'coder'], 
+    enum: ['free', 'neo', 'flow', 'maxx'], 
     default: 'free' 
   },
 
