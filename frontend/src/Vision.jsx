@@ -272,7 +272,7 @@ const Vision = () => {
 
       {/* Navbar */}
       <nav className="fixed top-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 px-2 py-2 rounded-full border border-white/10 bg-black/60 backdrop-blur-2xl shadow-2xl">
-        <a href="/home.jsx" className="flex items-center gap-2 px-4 py-2 rounded-full bg-orange-500/10 hover:bg-orange-500/20 border border-orange-500/30 transition-all text-sm font-medium">
+        <a href="/" className="flex items-center gap-2 px-4 py-2 rounded-full bg-orange-500/10 hover:bg-orange-500/20 border border-orange-500/30 transition-all text-sm font-medium">
           <Home size={16} className="text-orange-400" />
           <span>Home</span>
         </a>
