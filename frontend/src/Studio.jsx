@@ -1,216 +1,186 @@
 import React, { useState } from "react";
-import config from './config';
 import {
   Home,
-  DollarSign,
   X,
-  Sparkles,
-  Layers,
-  Cloud,
-  Image,
+  Sparkles,       // AI Features
+  TextCursorInput, // Text-to-Speech
+  Speech,         // Text-to-Speech
+  Layers,         // Advanced Multi-Track
+  Upload,         // Import/Export
+  Download,       // Import/Export
+  Package,        // Feature package/bundle
+  Award,          // Recognition/Premium feel
 } from "lucide-react";
 
-// 1. Accepted onBack prop
+// --- Upcoming Features Data ---
+const upcomingFeaturesData = [
+  {
+    id: 'ai-enhancement',
+    name: "AI Audio Enhancement Suite",
+    icon: Sparkles,
+    description: "Leverage cutting-edge AI to intelligently clean up your audio. Features include noise reduction, de-essing, hum removal, and automatic mastering to give your tracks a professional polish with a single click.",
+    release: "Targeting March Release"
+  },
+  {
+    id: 'tts',
+    name: "AI Text-to-Speech (TTS)",
+    icon: Speech, // Using Speech icon, could also use TextCursorInput
+    description: "Generate realistic human-like voiceovers directly within the studio. Choose from a variety of voices, accents, and languages to quickly add narration or character voices to your projects.",
+    release: "Targeting Spring Release"
+  },
+  {
+    id: 'multi-track-v2',
+    name: "Advanced Multi-Track Editing",
+    icon: Layers,
+    description: "Enhanced multi-track capabilities allowing for more complex arrangements. Includes features like track freezing, sidechaining simulation, and improved automation curves for dynamic mixing.",
+    release: "Ongoing Development - Spring/Summer"
+  },
+  {
+    id: 'import-export',
+    name: "Advanced Import & Export Options",
+    icon: Download, // Using Download icon, representing output flexibility
+    description: "Support for a wider range of audio formats and codecs for both importing project assets and exporting finished masters. Includes options for stems, different sample rates, and bit depths.",
+    release: "March Release"
+  },
+  {
+    id: 'collaboration',
+    name: "Real-time Collaboration",
+    icon: Package, // Representing teamwork/shared projects
+    description: "Work seamlessly with others on the same project in real-time. Share your mixes, get feedback instantly, and build your sound together.",
+    release: "Targeting Spring Release"
+  },
+  {
+    id: 'pro-plugins',
+    name: "Integrated Professional Plugins",
+    icon: Award, // Representing premium quality tools
+    description: "Access a curated selection of professional-grade audio plugins directly within the studio environment, enhancing your creative possibilities.",
+    release: "Summer Release"
+  }
+];
+
 const Studio = ({ onBack }) => {
-  const [showPlans, setShowPlans] = useState(false);
-  const [floatPositions] = useState(() =>
-    Array.from({ length: 18 }).map(() => ({
-      top: Math.random() * 95,
-      left: Math.random() * 95,
+  const [showUpcomingFeatures, setShowUpcomingFeatures] = useState(true); // Start with features visible
+
+  // Subtle background animation elements
+  const [backgroundElements] = useState(() =>
+    Array.from({ length: 30 }).map((_, i) => ({
+      id: i,
+      x: Math.random() * 100,
+      y: Math.random() * 100,
+      size: Math.random() * 30 + 15,
+      speed: Math.random() * 8 + 4,
+      delay: Math.random() * 5,
     }))
   );
 
-  // initial floatPositions are set via lazy useState initializer above
-
   return (
-    <div className="min-h-screen bg-[#eef4fb] relative overflow-hidden font-sans">
-      
-      {/* Floating background shapes */}
-      <div className="absolute inset-0 pointer-events-none">
-        {floatPositions.map((p, i) => (
+    <div className="min-h-screen bg-gradient-to-br from-black to-gray-900 relative overflow-hidden font-sans text-white flex flex-col items-center justify-center p-8">
+
+      {/* --- Animated Background Elements --- */}
+      <div className="absolute inset-0 z-0 opacity-30">
+        {backgroundElements.map((el) => (
           <div
-            key={i}
-            className="absolute w-10 h-10 rounded-xl border border-white/40 bg-white/10"
+            key={el.id}
+            className="absolute rounded-full bg-gradient-to-br from-purple-600 to-blue-500 animate-float"
             style={{
-              top: `${p.top}%`,
-              left: `${p.left}%`,
+              left: `${el.x}%`,
+              top: `${el.y}%`,
+              width: `${el.size}px`,
+              height: `${el.size}px`,
+              animationDuration: `${el.speed}s`,
+              animationDelay: `-${el.delay}s`, // Start animation at different points
             }}
           />
         ))}
       </div>
 
-      {/* NAVBAR */}
-      <nav className="absolute top-6 left-1/2 -translate-x-1/2 z-30">
-        <div className="flex items-center gap-3 bg-white/90 backdrop-blur-md shadow-lg rounded-full px-4 py-2">
-          
-          {/* 2. Added onClick handler for Back */}
-          <button 
-            onClick={onBack}
-            className="p-2 rounded-full hover:bg-slate-100 transition text-slate-600 hover:text-slate-900"
-          >
-            <Home size={18} />
-          </button>
-
-          <div className="w-px h-6 bg-slate-200" />
-
-          <span className="text-sm font-semibold text-slate-900 px-2">
-            Creative Studio
-          </span>
-
-          <div className="w-px h-6 bg-slate-200" />
-
+      {/* --- Header --- */}
+      <header className="relative z-20 p-6 flex items-center justify-between w-full max-w-6xl mx-auto">
+        <div className="flex items-center gap-4">
           <button
-            onClick={() => setShowPlans(true)}
-            className="p-2 rounded-full hover:bg-slate-100 transition text-slate-600 hover:text-slate-900"
+            onClick={onBack}
+            className="p-3 rounded-full bg-white/5 hover:bg-white/10 transition text-gray-300 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-black focus:ring-blue-500"
+            aria-label="Go Back"
           >
-            <DollarSign size={18} />
+            <Home size={24} />
           </button>
+          <h1 className="text-3xl font-bold text-white flex items-center gap-2">
+            <Package size={30} className="text-blue-400" />
+            CNEAPEE
+            <span className="text-lg font-medium text-gray-300 ml-2">Future Features</span>
+          </h1>
         </div>
-      </nav>
+        {/* No buttons needed here anymore, focus is on the features */}
+      </header>
 
-      {/* MAIN CONTENT */}
-      <div className="flex flex-col items-center justify-center min-h-screen text-center px-6 relative z-10">
+      {/* --- Feature Showcase --- */}
+      <main className="relative z-10 flex-1 flex flex-col items-center justify-center w-full max-w-6xl mx-auto px-8 py-16">
+        <h2 className="text-5xl font-extrabold text-center mb-4 leading-tight">
+          Revolutionizing Audio Creation.
+          <br />
+          <span className="text-transparent bg-clip-text bg-gradient-to-br from-purple-400 to-blue-400">
+            See What's Next.
+          </span>
+        </h2>
+        <p className="text-xl text-gray-300 text-center max-w-3xl mb-16">
+          We're constantly innovating to bring you the most powerful and intuitive audio tools. Discover the groundbreaking features coming soon to CNEAPEE.
+        </p>
 
-        {/* 3. Feature Card - Moved into flow with margin-bottom (mb-8) */}
-        <div className="bg-white rounded-2xl shadow-lg px-5 py-4 flex items-start gap-3 max-w-xs mb-8 transition-transform hover:-translate-y-1 duration-300">
-          <div className="p-2 bg-purple-100 rounded-lg text-purple-600 shrink-0">
-            <Sparkles size={18} />
-          </div>
-          <div className="text-left">
-            <p className="text-sm font-semibold text-slate-900">
-              AI-Assisted Editing
-            </p>
-            <p className="text-xs text-slate-500">
-              Background removal, cleanup & intelligent enhancements
-            </p>
-            <span className="inline-block mt-1 px-2 py-0.5 text-xs rounded-full bg-yellow-100 text-yellow-700 font-semibold">
-              Coming Soon
-            </span>
-          </div>
-        </div>
-
-        {/* Center Card */}
-        <div className="bg-white rounded-3xl shadow-xl w-full max-w-[380px] p-8 relative">
-          <div className="w-14 h-14 rounded-2xl bg-purple-100 text-purple-600 flex items-center justify-center mx-auto mb-4">
-            <Image size={28} />
-          </div>
-
-          <h2 className="text-xl font-bold text-slate-900">
-            CNEAPEE Creative Studio
-          </h2>
-
-          <p className="text-sm text-slate-500 mt-2 leading-relaxed">
-            Browser-native photo editing inspired by professional tools.
-          </p>
-
-          <p className="text-xs text-slate-400 mt-3">
-            No uploads · Privacy-first · Real-time editing
-          </p>
-        </div>
-
-        {/* Side Pills - Kept absolute for decoration */}
-        <div className="hidden md:flex absolute left-10 lg:left-24 top-1/2 bg-white/80 backdrop-blur-sm rounded-full px-4 py-2 shadow-sm items-center gap-2 animate-pulse">
-          <Layers size={16} className="text-purple-600" />
-          <span className="text-xs font-semibold text-slate-600">Layer-Based</span>
-        </div>
-
-        <div className="hidden md:flex absolute right-10 lg:right-24 top-1/2 bg-white/80 backdrop-blur-sm rounded-full px-4 py-2 shadow-sm items-center gap-2 animate-pulse delay-700">
-          <Cloud size={16} className="text-blue-500" />
-          <span className="text-xs font-semibold text-slate-600">Cloud Sync</span>
-        </div>
-
-        {/* Bottom Stats */}
-        <div className="absolute bottom-10 md:bottom-20 flex gap-8 md:gap-16 text-center">
-          <div>
-            <p className="text-3xl md:text-4xl font-bold text-slate-900">0ms</p>
-            <p className="text-xs md:text-sm text-slate-500">Edit Latency</p>
-          </div>
-          <div>
-            <p className="text-3xl md:text-4xl font-bold text-slate-900">100%</p>
-            <p className="text-xs md:text-sm text-slate-500">Client-Side</p>
-          </div>
-          <div>
-            <p className="text-3xl md:text-4xl font-bold text-slate-900">60+</p>
-            <p className="text-xs md:text-sm text-slate-500">FPS Render</p>
-          </div>
-        </div>
-      </div>
-
-      {/* PRICING MODAL */}
-      {showPlans && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm p-4">
-          <div className="bg-white rounded-3xl w-full max-w-3xl p-6 md:p-8 relative shadow-2xl animate-in fade-in zoom-in duration-200">
-            <button
-              onClick={() => setShowPlans(false)}
-              className="absolute top-4 right-4 p-2 rounded-full hover:bg-slate-100 transition"
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 w-full">
+          {upcomingFeaturesData.map((feature) => (
+            <div
+              key={feature.id}
+              className="bg-white/5 backdrop-blur-lg border border-gray-700 rounded-3xl p-8 shadow-xl hover:shadow-2xl hover:scale-[1.02] transition-all duration-300 ease-in-out transform cursor-pointer group"
             >
-              <X size={18} />
-            </button>
-
-            <h2 className="text-2xl font-bold text-center mb-2">
-              Creative Studio Plans
-            </h2>
-            <p className="text-sm text-slate-500 text-center mb-8">
-              These are upcoming plans
-            </p>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {/* Lite */}
-              <div className="border rounded-2xl p-6 text-center hover:border-slate-300 transition">
-                <h3 className="font-bold text-lg">Studio Lite</h3>
-                <p className="text-2xl font-black my-2 text-slate-800">
-                  ₹129<span className="text-sm font-medium text-slate-500">/mo</span>
-                </p>
-                <ul className="text-sm text-slate-500 space-y-2 mb-6 text-left pl-4 list-disc">
-                  <li>Basic Tools</li>
-                  <li>1080p Export</li>
-                  <li>5GB Storage</li>
-                </ul>
-                <button className="w-full py-2 rounded-xl bg-slate-100 font-semibold cursor-not-allowed text-slate-400">
-                  Coming Soon
-                </button>
-              </div>
-
-              {/* EG */}
-              <div className="border-2 border-purple-500 rounded-2xl p-6 text-center shadow-lg transform md:-translate-y-2 bg-white relative">
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-purple-500 text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wide">
-                  Most Popular
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-4">
+                  <div className="p-3 rounded-xl bg-gradient-to-br from-purple-600 to-blue-500 text-white shadow-lg">
+                    <feature.icon size={28} />
+                  </div>
+                  <h3 className="text-2xl font-bold text-white group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-br from-purple-400 to-blue-400 transition-colors duration-300">
+                    {feature.name}
+                  </h3>
                 </div>
-                <h3 className="font-bold text-lg text-purple-700">Studio EG</h3>
-                <p className="text-2xl font-black my-2 text-slate-900">
-                  ₹299<span className="text-sm font-medium text-slate-500">/mo</span>
-                </p>
-                <ul className="text-sm text-slate-600 space-y-2 mb-6 text-left pl-4 list-disc">
-                  <li>Advanced Effects</li>
-                  <li>4K Export</li>
-                  <li>Stock Library</li>
-                </ul>
-                <button className="w-full py-2 rounded-xl bg-purple-600 text-white font-semibold cursor-not-allowed opacity-80">
-                  Coming Soon
-                </button>
               </div>
-
-              {/* X */}
-              <div className="border rounded-2xl p-6 text-center hover:border-slate-300 transition">
-                <h3 className="font-bold text-lg">Studio X</h3>
-                <p className="text-2xl font-black my-2 text-slate-800">
-                  ₹499<span className="text-sm font-medium text-slate-500">/mo</span>
-                </p>
-                <ul className="text-sm text-slate-500 space-y-2 mb-6 text-left pl-4 list-disc">
-                  <li>AI Gen Tools</li>
-                  <li>Team Collaboration</li>
-                  <li>Priority Rendering</li>
-                </ul>
-                <button className="w-full py-2 rounded-xl bg-slate-100 font-semibold cursor-not-allowed text-slate-400">
-                  Coming Soon
-                </button>
-              </div>
+              <p className="text-gray-300 text-base leading-relaxed">
+                {feature.description}
+              </p>
+              <p className="mt-6 text-sm font-semibold text-transparent bg-clip-text bg-gradient-to-br from-purple-500 to-blue-500">
+                {feature.release}
+              </p>
             </div>
-          </div>
+          ))}
         </div>
-      )}
+      </main>
+
+      {/* --- Footer --- */}
+      <footer className="relative z-20 p-6 text-center text-gray-500 text-sm border-t border-gray-700 w-full">
+        © {new Date().getFullYear()} CNEAPEE. All rights reserved. Innovation is our sound.
+      </footer>
     </div>
   );
 };
 
 export default Studio;
+
+// --- Global CSS (Add this to your global CSS file, e.g., index.css or App.css) ---
+/*
+@keyframes float {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 0.3;
+  }
+  50% {
+    transform: translateY(-20px) scale(1.1);
+    opacity: 0.5;
+  }
+  100% {
+    transform: translateY(0) scale(1);
+    opacity: 0.3;
+  }
+}
+
+.animate-float {
+  animation: float 15s ease-in-out infinite alternate forwards;
+}
+*/

@@ -1,5 +1,7 @@
 import React, { useState, useRef, useEffect, memo } from 'react';
 import axios from 'axios';
+import jsPDF from 'jspdf'; // Import jsPDF
+import { useLocation, useNavigate } from 'react-router-dom';
 import {
   Menu,
   Plus,
@@ -19,13 +21,97 @@ import {
   RotateCcw,
   StopCircle,
   Code,
-  Home
+  Home,
+  Search,
+  Brain,
+  Loader,
+  MoreHorizontal,
+  Edit2,
+  Trash2,
+  Share2,
+  Download // Added Download icon
 } from 'lucide-react';
 
 /* =========================================
    CONFIG
    ========================================= */
 const API_URL = "https://cneapee-backend-703598443794.asia-south1.run.app/api/chat";
+
+/* =========================================
+   HELPER: PDF GENERATOR
+   ========================================= */
+const exportChatToPDF = (chatId, messages) => {
+  const doc = new jsPDF();
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const pageHeight = doc.internal.pageSize.getHeight();
+  const margin = 14;
+  let cursorY = 20;
+
+  // --- 1. Header Section ---
+  doc.setFontSize(10);
+  doc.setTextColor(100); // Grey color
+  doc.setFont("helvetica", "bold");
+  doc.text("Generation Model : CNEAPEE AI v1.2", margin, cursorY);
+  
+  cursorY += 6;
+  doc.text(`CNEAPEE CHATID: ${chatId || 'Active_Session'}`, margin, cursorY);
+  
+  cursorY += 6;
+  doc.setTextColor(0, 0, 255); // Blue color for promo
+  doc.textWithLink("Explore CNEAPEE Neo Plan with a complimentary trial! Visit cneapee.com today to get started.", margin, cursorY, { url: 'https://cneapee.com' });
+  
+  cursorY += 8;
+  doc.setDrawColor(200);
+  doc.setLineWidth(0.5);
+  doc.line(margin, cursorY, pageWidth - margin, cursorY); // Horizontal Line
+  
+  cursorY += 15;
+
+  // --- 2. Chat Content ---
+  doc.setTextColor(0); // Reset to black
+  doc.setFontSize(11);
+
+  messages.forEach((msg) => {
+    // Role Label
+    const isUser = msg.role === 'user';
+    const roleLabel = isUser ? "You" : "CNEAPEE AI";
+    
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(isUser ? 50 : 0); // Slight grey for user
+    doc.text(roleLabel, margin, cursorY);
+    cursorY += 6;
+
+    // Message Text
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(20);
+    
+    // Handle text content safely
+    let textContent = "";
+    if (typeof msg.text === 'string') textContent = msg.text;
+    else if (msg.text && typeof msg.text === 'object') textContent = JSON.stringify(msg.text);
+
+    // Split text to fit page width
+    const splitText = doc.splitTextToSize(textContent, pageWidth - (margin * 2));
+    
+    // Check if we need a new page
+    if (cursorY + (splitText.length * 5) > pageHeight - margin) {
+      doc.addPage();
+      cursorY = 20; // Reset cursor on new page
+    }
+
+    doc.text(splitText, margin, cursorY);
+    cursorY += (splitText.length * 5) + 10; // Spacing between messages
+    
+    // Safety check for next loop
+    if (cursorY > pageHeight - margin) {
+        doc.addPage();
+        cursorY = 20;
+    }
+  });
+
+  // Save File
+  doc.save(`CNEAPEE_Chat_${chatId || 'Export'}.pdf`);
+};
 
 /* =========================================
    HELPER: TEXT FORMATTER & PARSING
@@ -69,14 +155,13 @@ const formatBoldText = (text) => {
   
   return parts.map((part, index) => {
     if (part.startsWith('**') && part.endsWith('**') && part.length >= 4) {
-      return <strong key={index} className="font-bold text-zinc-100">{part.slice(2, -2)}</strong>;
+      return <strong key={index} className="font-bold text-zinc-900 dark:text-zinc-100">{part.slice(2, -2)}</strong>;
     }
     return <span key={index}>{part}</span>;
   });
 };
 
 const MessageContentRenderer = ({ text }) => {
-  // Defensive: Force string type to prevent "Objects are not valid" error
   let safeText = "";
   if (typeof text === 'string') safeText = text;
   else if (typeof text === 'number') safeText = String(text);
@@ -108,6 +193,159 @@ const MessageContentRenderer = ({ text }) => {
         return <span key={idx} className="whitespace-pre-wrap break-words">{formatBoldText(part.content)}</span>;
       })}
     </>
+  );
+};
+
+/* =========================================
+   COMPONENT: THINKING INDICATOR
+   ========================================= */
+const ThinkingIndicator = ({ contextText }) => {
+  const [step, setStep] = useState(0);
+  
+  const steps = [
+    { text: "Thinking...", icon: Brain, color: "text-amber-500" },
+    { text: `Searching about "${contextText?.slice(0, 15)}${contextText?.length > 15 ? '...' : ''}"`, icon: Search, color: "text-blue-500" },
+    { text: "Analyzing results...", icon: Loader, color: "text-purple-500" },
+    { text: "Formulating response...", icon: Sparkles, color: "text-green-500" }
+  ];
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setStep((prev) => (prev + 1) % steps.length);
+    }, 1800); 
+    return () => clearInterval(interval);
+  }, []);
+
+  const CurrentIcon = steps[step].icon;
+
+  return (
+    <div className="flex w-full justify-start mb-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
+      <div className="flex items-center gap-3 bg-zinc-100 dark:bg-[#1e1e20] px-4 py-2.5 rounded-full border border-zinc-200 dark:border-zinc-700/50 shadow-sm">
+        <div className={`${steps[step].color} animate-pulse`}>
+           <CurrentIcon size={16} className={step === 2 ? "animate-spin" : ""} />
+        </div>
+        <span className="text-xs font-medium text-zinc-600 dark:text-zinc-300">
+          {steps[step].text}
+        </span>
+      </div>
+    </div>
+  );
+};
+
+/* =========================================
+   COMPONENT: HISTORY ITEM
+   ========================================= */
+const HistoryItem = ({ chat, isActive, onSelect, onRename, onDelete, onShare, onExport, theme }) => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isRenaming, setIsRenaming] = useState(false);
+  const [renameValue, setRenameValue] = useState(chat.title || "Untitled Chat");
+  const menuRef = useRef(null);
+  const inputRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setIsMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  useEffect(() => {
+    if (isRenaming && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [isRenaming]);
+
+  const handleRenameSubmit = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (renameValue.trim()) {
+      onRename(chat._id || chat.id, renameValue);
+    }
+    setIsRenaming(false);
+    setIsMenuOpen(false);
+  };
+
+  if (isRenaming) {
+    return (
+      <form onSubmit={handleRenameSubmit} className="px-2 py-1">
+        <input 
+          ref={inputRef}
+          value={renameValue}
+          onChange={(e) => setRenameValue(e.target.value)}
+          onBlur={handleRenameSubmit}
+          className={`w-full text-sm px-2 py-1.5 rounded-md outline-none border 
+          ${theme === 'dark' 
+            ? 'bg-[#1e1f20] text-zinc-200 border-indigo-500/50' 
+            : 'bg-white text-zinc-800 border-indigo-500'}`}
+        />
+      </form>
+    );
+  }
+
+  return (
+    <div className={`group relative flex items-center justify-between w-full p-2 px-3 rounded-full text-sm transition-colors cursor-pointer
+      ${isActive 
+        ? (theme === 'dark' ? 'bg-[#2f2f2f] text-zinc-100' : 'bg-zinc-100 text-zinc-900') 
+        : (theme === 'dark' ? 'text-zinc-400 hover:bg-[#2f2f2f]' : 'text-zinc-600 hover:bg-zinc-100')}`}
+      onClick={() => onSelect(chat._id || chat.id)}
+    >
+      <div className="flex items-center gap-3 overflow-hidden">
+        <MessageSquare size={16} className="flex-shrink-0" />
+        <span className="truncate">{chat.title || "Untitled Chat"}</span>
+      </div>
+
+      <div className="relative" ref={menuRef} onClick={(e) => e.stopPropagation()}>
+        <button 
+          onClick={() => setIsMenuOpen(!isMenuOpen)}
+          className={`p-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity 
+            ${isMenuOpen ? 'opacity-100 bg-black/10 dark:bg-white/10' : ''}
+            ${theme === 'dark' ? 'hover:text-white' : 'hover:text-black'}`}
+        >
+          <MoreHorizontal size={14} />
+        </button>
+
+        {isMenuOpen && (
+          <div className={`absolute right-0 top-6 w-32 rounded-xl shadow-xl border z-50 overflow-hidden animate-in fade-in zoom-in-95
+            ${theme === 'dark' ? 'bg-[#252526] border-zinc-700' : 'bg-white border-zinc-200'}`}
+          >
+            <button 
+              onClick={() => { setIsRenaming(true); setIsMenuOpen(false); }}
+              className={`w-full flex items-center gap-2 px-3 py-2 text-xs font-medium transition-colors
+                ${theme === 'dark' ? 'text-zinc-300 hover:bg-[#2f2f2f]' : 'text-zinc-600 hover:bg-zinc-50'}`}
+            >
+              <Edit2 size={12} /> Rename
+            </button>
+            
+            <button 
+              onClick={() => { onShare(chat._id || chat.id); setIsMenuOpen(false); }}
+              className={`w-full flex items-center gap-2 px-3 py-2 text-xs font-medium transition-colors
+                ${theme === 'dark' ? 'text-zinc-300 hover:bg-[#2f2f2f]' : 'text-zinc-600 hover:bg-zinc-50'}`}
+            >
+              <Share2 size={12} /> Share Link
+            </button>
+
+            <button 
+              onClick={() => { onExport(chat._id || chat.id); setIsMenuOpen(false); }}
+              className={`w-full flex items-center gap-2 px-3 py-2 text-xs font-medium transition-colors
+                ${theme === 'dark' ? 'text-zinc-300 hover:bg-[#2f2f2f]' : 'text-zinc-600 hover:bg-zinc-50'}`}
+            >
+              <Download size={12} /> Export PDF
+            </button>
+
+            <div className={`h-px mx-1 ${theme === 'dark' ? 'bg-zinc-700' : 'bg-zinc-100'}`}></div>
+            <button 
+              onClick={() => { onDelete(chat._id || chat.id); setIsMenuOpen(false); }}
+              className="w-full flex items-center gap-2 px-3 py-2 text-xs font-medium text-red-500 hover:bg-red-500/10 transition-colors"
+            >
+              <Trash2 size={12} /> Delete
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
   );
 };
 
@@ -207,9 +445,12 @@ const ChatMessage = memo(({ msg, onRegenerate }) => {
 });
 
 /* =========================================
-   MAIN CHATBOT COMPONENT (No Router Deps)
+   MAIN CHATBOT EXPORT
    ========================================= */
 export default function Chatbot() {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const [theme, setTheme] = useState(() => {
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme) return savedTheme;
@@ -227,11 +468,13 @@ export default function Chatbot() {
   const [loading, setLoading] = useState(false);
   const [imagePreview, setImagePreview] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
-  
   const [showVersionPopup, setShowVersionPopup] = useState(false);
-
-  // Fix: Add a ref to track if the initial prompt has been processed
+  
+  // Voice & Prompt Tracking
+  const [isListening, setIsListening] = useState(false);
+  const recognitionRef = useRef(null);
   const hasProcessedPrompt = useRef(false);
+  const lastPromptRef = useRef(""); 
 
   const bottomRef = useRef(null);
   const fileInputRef = useRef(null);
@@ -248,17 +491,15 @@ export default function Chatbot() {
       setTheme(prev => prev === 'dark' ? 'light' : 'dark');
   };
 
-  // --- 1. INITIAL LOAD & PROMPT HANDLING (Native History API) ---
+  // --- INITIAL LOAD & PROMPT HANDLING ---
   useEffect(() => {
-    // Access state directly from window.history
     const historyState = window.history.state;
-    const initialPrompt = historyState?.usr?.initialPrompt || historyState?.initialPrompt; // Handle both React Router and Native formats
+    const initialPrompt = historyState?.usr?.initialPrompt || historyState?.initialPrompt || location.state?.initialPrompt;
 
     if (initialPrompt && !hasProcessedPrompt.current) {
         hasProcessedPrompt.current = true;
         handleSend(initialPrompt);
         
-        // Clear state safely
         const newState = { ...historyState };
         if (newState.usr) delete newState.usr.initialPrompt;
         delete newState.initialPrompt;
@@ -278,6 +519,7 @@ export default function Chatbot() {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, loading]);
 
+  // --- ACTIONS: HISTORY, DELETE, RENAME, SHARE, EXPORT ---
   const fetchHistory = async () => {
     try {
         const token = localStorage.getItem('token');
@@ -286,10 +528,62 @@ export default function Chatbot() {
         if (Array.isArray(res.data)) {
             setHistory(res.data);
         } else {
-            console.warn("History response is not an array");
             setHistory([]);
         }
     } catch (e) { setHistory([]); }
+  };
+
+  const deleteChat = async (id) => {
+    if (!window.confirm("Delete this chat?")) return;
+    
+    setHistory(prev => prev.filter(c => (c._id || c.id) !== id));
+    if (activeChatId === id) {
+        setMessages([]);
+        setActiveChatId(null);
+    }
+
+    try {
+        const token = localStorage.getItem('token');
+        await axios.delete(`${API_URL}/${id}`, { headers: { Authorization: `Bearer ${token}` } });
+    } catch (e) {
+        console.error("Failed to delete chat", e);
+        fetchHistory(); // Revert on fail
+    }
+  };
+
+  const renameChat = async (id, newTitle) => {
+    setHistory(prev => prev.map(c => (c._id || c.id) === id ? { ...c, title: newTitle } : c));
+    try {
+        const token = localStorage.getItem('token');
+        await axios.put(`${API_URL}/${id}`, { title: newTitle }, { headers: { Authorization: `Bearer ${token}` } });
+    } catch (e) {
+        console.error("Failed to rename", e);
+    }
+  };
+
+  const shareChat = (id) => {
+    const shareUrl = `${window.location.origin}/chat/${id}`;
+    navigator.clipboard.writeText(shareUrl);
+    alert("Chat link copied to clipboard!");
+  };
+
+  // --- EXPORT PDF HANDLER ---
+  const handleExportPDF = async (chatId) => {
+    // If the chat we are exporting is the active one, use the state messages directly
+    if (chatId === activeChatId) {
+        exportChatToPDF(chatId, messages);
+    } else {
+        // If it's a history chat not currently loaded, fetch it first
+        try {
+            const token = localStorage.getItem('token');
+            const res = await axios.get(`${API_URL}/${chatId}`, { headers: { Authorization: `Bearer ${token}` } });
+            if (res.data && res.data.messages) {
+                exportChatToPDF(chatId, res.data.messages);
+            }
+        } catch (error) {
+            alert("Could not fetch chat data for export.");
+        }
+    }
   };
 
   const loadChat = async (chatId) => {
@@ -325,6 +619,46 @@ export default function Chatbot() {
       }
   };
 
+  const handlePaste = (e) => {
+    const items = e.clipboardData.items;
+    for (let i = 0; i < items.length; i++) {
+        if (items[i].type.indexOf("image") !== -1) {
+            e.preventDefault();
+            const blob = items[i].getAsFile();
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                setImagePreview(ev.target.result);
+                setSelectedImage(ev.target.result);
+            };
+            reader.readAsDataURL(blob);
+            return; 
+        }
+    }
+  };
+
+  const handleMicClick = () => {
+    if (isListening) {
+      if (recognitionRef.current) recognitionRef.current.stop();
+      setIsListening(false);
+      return;
+    }
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      alert("Voice input is not supported.");
+      return;
+    }
+    const recognition = new SpeechRecognition();
+    recognitionRef.current = recognition;
+    recognition.lang = 'en-US'; 
+    recognition.onstart = () => setIsListening(true);
+    recognition.onend = () => setIsListening(false);
+    recognition.onresult = (event) => {
+      const transcript = event.results[0][0].transcript;
+      setInput((prev) => (prev ? prev + " " + transcript : transcript));
+    };
+    recognition.start();
+  };
+
   const handleSend = async (textOverride) => {
       const text = typeof textOverride === 'string' ? textOverride : input;
       
@@ -335,6 +669,7 @@ export default function Chatbot() {
       
       setInput('');
       setImagePreview(null);
+      lastPromptRef.current = text; 
       
       const currentImage = selectedImage;
       setSelectedImage(null);
@@ -355,7 +690,7 @@ export default function Chatbot() {
 
           const aiResponse = { 
               role: 'assistant', 
-              text: res.data.reply || "" // Ensure string
+              text: res.data.reply || "" 
           };
           setMessages(prev => [...prev, aiResponse]);
 
@@ -390,13 +725,12 @@ export default function Chatbot() {
   };
 
   const goToHome = () => {
-      window.location.href = '/'; // Native Navigation
+      window.location.href = '/'; 
   };
 
   return (
     <div className={`flex h-[100dvh] supports-[height:100svh]:h-[100svh] font-sans overflow-hidden transition-colors duration-300 ${theme === 'dark' ? 'bg-[#131314] text-zinc-100' : 'bg-white text-zinc-900'}`}>
       
-      {/* --- VERSION POPUP --- */}
       {showVersionPopup && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-sm animate-in fade-in p-4">
             <div className={`p-6 rounded-2xl shadow-2xl max-w-sm w-full transform scale-100 transition-all border
@@ -411,12 +745,9 @@ export default function Chatbot() {
                     </button>
                 </div>
                 <p className={`mb-4 text-sm ${theme === 'dark' ? 'text-zinc-300' : 'text-zinc-600'}`}>
-                    <strong>v1.8 Flow</strong> is currently in development. Expect enhanced reasoning capabilities and UI improvements shortly.
+                    <strong>v1.8</strong>CAI-D32 Beta (v1.8) is currently in development, with an anticipated release in March 2026. This upcoming version promises significant enhancements, including advanced reasoning capabilities and a refined user interface. We look forward to merging these improvements shortly for an even more powerful and intuitive experience.
                 </p>
-                <button 
-                    onClick={() => setShowVersionPopup(false)}
-                    className="w-full py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-medium transition-colors"
-                >
+                <button onClick={() => setShowVersionPopup(false)} className="w-full py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-medium transition-colors">
                     Got it
                 </button>
             </div>
@@ -424,10 +755,7 @@ export default function Chatbot() {
       )}
 
       {isSidebarOpen && (
-        <div 
-            className="fixed inset-0 bg-black/50 z-40 md:hidden"
-            onClick={() => setSidebarOpen(false)}
-        />
+        <div className="fixed inset-0 bg-black/50 z-40 md:hidden" onClick={() => setSidebarOpen(false)} />
       )}
 
       <aside className={`
@@ -436,11 +764,7 @@ export default function Chatbot() {
         ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full md:w-0 md:-translate-x-0 md:overflow-hidden'}
       `}>
          <div className="p-4 flex items-center justify-between">
-            <button 
-                onClick={() => setSidebarOpen(false)} 
-                className={`p-2 rounded-full transition-colors ${theme === 'dark' ? 'hover:bg-[#2f2f2f] text-zinc-400' : 'hover:bg-zinc-200 text-zinc-600'}`}
-                title="Close Sidebar"
-            >
+            <button onClick={() => setSidebarOpen(false)} className={`p-2 rounded-full transition-colors ${theme === 'dark' ? 'hover:bg-[#2f2f2f] text-zinc-400' : 'hover:bg-zinc-200 text-zinc-600'}`}>
                 <PanelLeftClose size={20} />
             </button>
             <div className={`flex items-center gap-2 px-2 font-medium ${theme === 'dark' ? 'text-zinc-300' : 'text-zinc-700'}`}>
@@ -449,13 +773,8 @@ export default function Chatbot() {
          </div>
 
          <div className="px-4 pb-2">
-            <button 
-                onClick={startNewChat}
-                className={`w-full flex items-center gap-3 p-3 rounded-[18px] text-sm font-medium transition-colors border
-                ${theme === 'dark' 
-                    ? 'bg-[#1e1f20] hover:bg-[#333537] text-[#e3e3e3] border-transparent hover:border-zinc-700' 
-                    : 'bg-white hover:bg-zinc-100 text-zinc-800 border-zinc-200 shadow-sm'}`}
-            >
+            <button onClick={startNewChat} className={`w-full flex items-center gap-3 p-3 rounded-[18px] text-sm font-medium transition-colors border
+                ${theme === 'dark' ? 'bg-[#1e1f20] hover:bg-[#333537] text-[#e3e3e3] border-transparent hover:border-zinc-700' : 'bg-white hover:bg-zinc-100 text-zinc-800 border-zinc-200 shadow-sm'}`}>
                 <Plus size={18} className={theme === 'dark' ? "text-zinc-400" : "text-zinc-500"} />
                 <span>New chat</span>
             </button>
@@ -464,29 +783,25 @@ export default function Chatbot() {
          <div className="flex-1 overflow-y-auto px-2 py-2 space-y-1 scrollbar-thin scrollbar-thumb-zinc-700">
             <div className={`px-4 py-2 text-xs font-semibold ${theme === 'dark' ? 'text-zinc-500' : 'text-zinc-400'}`}>Recent</div>
             {Array.isArray(history) && history.length > 0 ? history.map((chat, idx) => (
-                <button 
+                <HistoryItem 
                     key={chat._id || chat.id || idx}
-                    // Fix: Ensure we check both _id (MongoDB default) and id
-                    onClick={() => loadChat(chat._id || chat.id)}
-                    className={`w-full flex items-center gap-3 p-2 px-3 rounded-full text-sm truncate group transition-colors
-                    ${theme === 'dark' 
-                        ? 'hover:bg-[#2f2f2f] text-zinc-300' 
-                        : 'hover:bg-zinc-200 text-zinc-700'}`}
-                >
-                    <MessageSquare size={16} className={theme === 'dark' ? "text-zinc-500 group-hover:text-zinc-300" : "text-zinc-400 group-hover:text-zinc-600"} />
-                    <span className="truncate">{chat.title ? String(chat.title) : "Untitled Chat"}</span>
-                </button>
+                    chat={chat}
+                    isActive={activeChatId === (chat._id || chat.id)}
+                    onSelect={() => loadChat(chat._id || chat.id)}
+                    onRename={renameChat}
+                    onDelete={deleteChat}
+                    onShare={shareChat}
+                    onExport={handleExportPDF} // Pass the export handler
+                    theme={theme}
+                />
             )) : (
                 <div className={`text-center text-xs py-10 ${theme === 'dark' ? 'text-zinc-600' : 'text-zinc-400'}`}>No history yet</div>
             )}
          </div>
 
          <div className={`p-4 border-t ${theme === 'dark' ? 'border-[#2f2f2f]' : 'border-zinc-200'}`}>
-             <button 
-                onClick={toggleTheme}
-                className={`w-full flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-colors
-                ${theme === 'dark' ? 'hover:bg-[#2f2f2f]' : 'hover:bg-zinc-200'}`}
-             >
+             <button onClick={toggleTheme} className={`w-full flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-colors
+                ${theme === 'dark' ? 'hover:bg-[#2f2f2f]' : 'hover:bg-zinc-200'}`}>
                 <div className={`w-8 h-8 rounded-full flex items-center justify-center ${theme === 'dark' ? 'bg-zinc-800 text-yellow-400' : 'bg-zinc-300 text-indigo-600'}`}>
                     {theme === 'dark' ? <Moon size={16} /> : <Sun size={16} />}
                 </div>
@@ -505,38 +820,21 @@ export default function Chatbot() {
             ${theme === 'dark' ? 'bg-[#131314]/90' : 'bg-white/90'}`}>
             <div className="flex items-center gap-3">
                 {!isSidebarOpen && (
-                    <button 
-                        onClick={() => setSidebarOpen(true)} 
-                        className={`p-2 rounded-full transition-colors ${theme === 'dark' ? 'hover:bg-[#2f2f2f] text-zinc-400' : 'hover:bg-zinc-100 text-zinc-600'}`}
-                        title="Open Sidebar"
-                    >
+                    <button onClick={() => setSidebarOpen(true)} className={`p-2 rounded-full transition-colors ${theme === 'dark' ? 'hover:bg-[#2f2f2f] text-zinc-400' : 'hover:bg-zinc-100 text-zinc-600'}`}>
                         <PanelLeftOpen size={20} />
                     </button>
                 )}
-                
-                <button 
-                    onClick={() => setSidebarOpen(true)} 
-                    className={`md:hidden p-2 rounded-full transition-colors ${theme === 'dark' ? 'hover:bg-[#2f2f2f] text-zinc-400' : 'hover:bg-zinc-100 text-zinc-600'}`}
-                >
+                <button onClick={() => setSidebarOpen(true)} className={`md:hidden p-2 rounded-full transition-colors ${theme === 'dark' ? 'hover:bg-[#2f2f2f] text-zinc-400' : 'hover:bg-zinc-100 text-zinc-600'}`}>
                     <Menu size={20} />
                 </button>
-
-                <button 
-                    onClick={() => setShowVersionPopup(true)} 
-                    className={`flex items-center gap-2 font-medium px-3 py-1.5 rounded-lg transition-colors
-                    ${theme === 'dark' ? 'text-zinc-300 hover:bg-[#1e1f20]' : 'text-zinc-700 hover:bg-zinc-100'}`}
-                >
-                    <span className="text-lg opacity-90 tracking-tight">CNEAPEE AI v1.2 Neo</span>
+                <button onClick={() => setShowVersionPopup(true)} className={`flex items-center gap-2 font-medium px-3 py-1.5 rounded-lg transition-colors
+                    ${theme === 'dark' ? 'text-zinc-300 hover:bg-[#1e1f20]' : 'text-zinc-700 hover:bg-zinc-100'}`}>
+                    <span className="text-lg opacity-90 tracking-tight">CNEAPEE v1.2</span>
                     <ChevronDown size={14} className="opacity-50" />
                 </button>
             </div>
-            
             <div className="flex items-center gap-2">
-                <button 
-                    onClick={goToHome}
-                    className={`p-2 rounded-full transition-colors ${theme === 'dark' ? 'hover:bg-[#2f2f2f] text-zinc-400' : 'hover:bg-zinc-100 text-zinc-600'}`}
-                    title="Go Home"
-                >
+                <button onClick={goToHome} className={`p-2 rounded-full transition-colors ${theme === 'dark' ? 'hover:bg-[#2f2f2f] text-zinc-400' : 'hover:bg-zinc-100 text-zinc-600'}`} title="Go Home">
                     <Home size={20} />
                 </button>
             </div>
@@ -550,14 +848,8 @@ export default function Chatbot() {
                     <div className="flex-1 flex flex-col items-center justify-center p-8 text-center mt-[-100px]">
                         <div className="flex flex-wrap justify-center gap-3 max-w-2xl mt-10">
                             {["Plan a trip to Japan", "Explain Quantum Physics", "Write python code for snake game", "Help me draft an email"].map((suggestion) => (
-                                <button 
-                                    key={suggestion}
-                                    onClick={() => handleSend(suggestion)}
-                                    className={`px-4 py-3 rounded-xl text-sm transition-colors border border-transparent
-                                    ${theme === 'dark' 
-                                        ? 'bg-[#1e1f20] hover:bg-[#2f2f2f] text-zinc-300 hover:border-zinc-700' 
-                                        : 'bg-zinc-100 hover:bg-zinc-200 text-zinc-700 hover:border-zinc-300'}`}
-                                >
+                                <button key={suggestion} onClick={() => handleSend(suggestion)} className={`px-4 py-3 rounded-xl text-sm transition-colors border border-transparent
+                                    ${theme === 'dark' ? 'bg-[#1e1f20] hover:bg-[#2f2f2f] text-zinc-300 hover:border-zinc-700' : 'bg-zinc-100 hover:bg-zinc-200 text-zinc-700 hover:border-zinc-300'}`}>
                                     {suggestion}
                                 </button>
                             ))}
@@ -566,22 +858,11 @@ export default function Chatbot() {
                 )}
 
                 {messages.map((msg, idx) => (
-                    <ChatMessage 
-                        key={idx} 
-                        msg={msg} 
-                        onRegenerate={handleRegenerate}
-                    />
+                    <ChatMessage key={idx} msg={msg} onRegenerate={handleRegenerate} />
                 ))}
 
-                {loading && (
-                    <div className="flex gap-4 mb-6 animate-in fade-in pl-1">
-                        <div className="flex items-center gap-1 mt-2 ml-2">
-                            <div className={`w-2 h-2 rounded-full animate-bounce ${theme === 'dark' ? 'bg-zinc-500' : 'bg-zinc-400'}`}></div>
-                            <div className={`w-2 h-2 rounded-full animate-bounce delay-100 ${theme === 'dark' ? 'bg-zinc-500' : 'bg-zinc-400'}`}></div>
-                            <div className={`w-2 h-2 rounded-full animate-bounce delay-200 ${theme === 'dark' ? 'bg-zinc-500' : 'bg-zinc-400'}`}></div>
-                        </div>
-                    </div>
-                )}
+                {/* THINKING INDICATOR */}
+                {loading && <ThinkingIndicator contextText={lastPromptRef.current} />}
                 
                 <div ref={bottomRef} className="h-4" />
             </div>
@@ -589,66 +870,42 @@ export default function Chatbot() {
 
          <div className={`w-full px-4 pb-6 pt-2 ${theme === 'dark' ? 'bg-[#131314]' : 'bg-white'}`}>
             <div className="max-w-[800px] mx-auto relative">
-                
                 {imagePreview && (
                     <div className="absolute bottom-full left-0 mb-3 ml-2 animate-in slide-in-from-bottom-2">
                         <div className="relative inline-block">
                             <img src={imagePreview} alt="Preview" className="h-20 w-auto rounded-lg border border-zinc-700 shadow-xl" />
-                            <button 
-                                onClick={() => { setImagePreview(null); setSelectedImage(null); }}
-                                className="absolute -top-2 -right-2 bg-zinc-800 rounded-full p-1 border border-zinc-600 hover:bg-red-500 transition-colors text-white"
-                            >
+                            <button onClick={() => { setImagePreview(null); setSelectedImage(null); }} className="absolute -top-2 -right-2 bg-zinc-800 rounded-full p-1 border border-zinc-600 hover:bg-red-500 transition-colors text-white">
                                 <X size={12} />
                             </button>
                         </div>
                     </div>
                 )}
 
-                <div className={`
-                    rounded-[28px] p-2 flex items-end gap-2 border transition-all duration-200
+                <div className={`rounded-[28px] p-2 flex items-end gap-2 border transition-all duration-200
                     ${theme === 'dark' 
                         ? `bg-[#1e1f20] ${input || imagePreview ? 'border-zinc-600' : 'border-[#1e1f20] hover:border-zinc-700'}`
-                        : `bg-[#f0f0f0] ${input || imagePreview ? 'border-zinc-300' : 'border-[#f0f0f0] hover:border-zinc-300'}`
-                    }
-                `}>
+                        : `bg-[#f0f0f0] ${input || imagePreview ? 'border-zinc-300' : 'border-[#f0f0f0] hover:border-zinc-300'}`}`}>
                     
-                    <button 
-                        onClick={() => fileInputRef.current?.click()}
-                        className={`p-3 rounded-full transition-colors mb-0.5 
-                        ${theme === 'dark' ? 'text-zinc-400 hover:text-zinc-200 hover:bg-[#2f2f2f]' : 'text-zinc-500 hover:text-zinc-800 hover:bg-zinc-200'}`}
-                    >
+                    <button onClick={() => fileInputRef.current?.click()} className={`p-3 rounded-full transition-colors mb-0.5 
+                        ${theme === 'dark' ? 'text-zinc-400 hover:text-zinc-200 hover:bg-[#2f2f2f]' : 'text-zinc-500 hover:text-zinc-800 hover:bg-zinc-200'}`}>
                         <Plus size={20} />
                     </button>
                     <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleImageSelect} />
 
-                    <textarea
-                        ref={textareaRef}
-                        value={input}
-                        onChange={(e) => setInput(e.target.value)}
-                        onKeyDown={(e) => {
-                            if (e.key === 'Enter' && !e.shiftKey) {
-                                e.preventDefault();
-                                handleSend();
-                            }
-                        }}
-                        placeholder="Message CNEAPEE v1.4 Neo"
-                        rows={1}
-                        className={`flex-1 bg-transparent text-[16px] py-3.5 max-h-[150px] resize-none focus:outline-none scrollbar-hide
-                        ${theme === 'dark' ? 'text-zinc-100 placeholder-zinc-500' : 'text-zinc-800 placeholder-zinc-400'}`}
-                    />
+                    <textarea ref={textareaRef} value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={(e) => {
+                            if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); }
+                        }} onPaste={handlePaste} placeholder="Message CNEAPEE v1.2" rows={1} className={`flex-1 bg-transparent text-[16px] py-3.5 max-h-[150px] resize-none focus:outline-none scrollbar-hide
+                        ${theme === 'dark' ? 'text-zinc-100 placeholder-zinc-500' : 'text-zinc-800 placeholder-zinc-400'}`} />
 
                     {(input.trim() || imagePreview) ? (
-                        <button 
-                            onClick={() => handleSend()}
-                            className={`p-3 rounded-full transition-all mb-0.5 animate-in zoom-in
-                            ${theme === 'dark' ? 'bg-zinc-100 text-black hover:bg-white' : 'bg-black text-white hover:bg-zinc-800'}`}
-                        >
+                        <button onClick={() => handleSend()} className={`p-3 rounded-full transition-all mb-0.5 animate-in zoom-in
+                            ${theme === 'dark' ? 'bg-zinc-100 text-black hover:bg-white' : 'bg-black text-white hover:bg-zinc-800'}`}>
                             <Send size={18} fill="currentColor" />
                         </button>
                     ) : (
-                        <button className={`p-3 rounded-full transition-colors mb-0.5
-                        ${theme === 'dark' ? 'text-zinc-400 hover:text-zinc-200 hover:bg-[#2f2f2f]' : 'text-zinc-500 hover:text-zinc-800 hover:bg-zinc-200'}`}>
-                            <Mic size={20} />
+                        <button onClick={handleMicClick} className={`p-3 rounded-full transition-all mb-0.5
+                            ${isListening ? 'bg-red-500 text-white animate-pulse' : (theme === 'dark' ? 'text-zinc-400 hover:text-zinc-200 hover:bg-[#2f2f2f]' : 'text-zinc-500 hover:text-zinc-800 hover:bg-zinc-200')}`}>
+                            {isListening ? <StopCircle size={20} /> : <Mic size={20} />}
                         </button>
                     )}
                 </div>
@@ -658,7 +915,6 @@ export default function Chatbot() {
                 </p>
             </div>
          </div>
-
       </main>
     </div>
   );
